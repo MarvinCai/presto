@@ -11,18 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.plugin.hive;
+package io.trino.spi.testing;
 
-import io.trino.plugin.hive.metastore.SemiTransactionalHiveMetastore;
-
-public class DefaultHiveMaterializedViewMetadataFactory
-        implements HiveMaterializedViewMetadataFactory
+// Must be defined in separate compilation unit from the test to effectively test private methods access
+public interface InterfaceWithPrivateMethod
 {
-    private static final HiveMaterializedViewMetadata NONE = new NoneHiveMaterializedViewMetadata();
+    void foo();
 
-    @Override
-    public HiveMaterializedViewMetadata create(SemiTransactionalHiveMetastore metastore)
+    default void bar()
     {
-        return NONE;
+        defaultBar();
+    }
+
+    private static void defaultBar()
+    {
+        throw new UnsupportedOperationException("bar not implemented");
     }
 }

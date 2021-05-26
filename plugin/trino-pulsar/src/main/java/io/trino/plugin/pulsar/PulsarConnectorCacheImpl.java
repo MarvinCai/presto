@@ -110,6 +110,7 @@ public class PulsarConnectorCacheImpl
         return new ManagedLedgerFactoryImpl(bkClientConfiguration, pulsarConnectorConfig.getZookeeperUri(), managedLedgerFactoryConfig);
     }
 
+    @Override
     public ManagedLedgerConfig getManagedLedgerConfig(NamespaceName namespaceName, OffloadPolicies offloadPolicies,
                                                       PulsarConnectorConfig pulsarConnectorConfig)
     {

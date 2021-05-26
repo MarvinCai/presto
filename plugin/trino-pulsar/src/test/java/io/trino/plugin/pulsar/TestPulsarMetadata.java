@@ -146,7 +146,7 @@ public class TestPulsarMetadata
                 TOPIC_1.getLocalName());
 
         try {
-            ConnectorTableMetadata tableMetadata = pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
+            pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
                     pulsarTableHandle);
             fail("Invalid schema should have generated an exception");
         }
@@ -167,7 +167,7 @@ public class TestPulsarMetadata
                 "wrong-topic");
 
         try {
-            ConnectorTableMetadata tableMetadata = pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
+            pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
                     pulsarTableHandle);
             fail("Invalid table should have generated an exception");
         }
@@ -210,7 +210,7 @@ public class TestPulsarMetadata
                 TOPIC_1.getLocalName());
 
         try {
-            ConnectorTableMetadata tableMetadata = pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
+            pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
                     pulsarTableHandle);
             fail("Table without schema should have generated an exception");
         }
@@ -239,7 +239,7 @@ public class TestPulsarMetadata
                 TOPIC_1.getLocalName());
 
         try {
-            ConnectorTableMetadata tableMetadata = pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
+            pulsarMetadata.getTableMetadata(TestingConnectorSession.SESSION,
                     pulsarTableHandle);
             fail("Table without schema should have generated an exception");
         }

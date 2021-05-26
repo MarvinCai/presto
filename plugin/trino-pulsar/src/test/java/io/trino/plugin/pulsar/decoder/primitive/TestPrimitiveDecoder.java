@@ -53,6 +53,7 @@ public class TestPrimitiveDecoder
 {
     public static final String PRIMITIVE_COLUMN_NAME = "__value__";
 
+    @Override
     @BeforeMethod
     public void init()
     {

@@ -44,8 +44,6 @@ public class MockManagedLedgerFactory
 
     private LongAdder completedBytes;
 
-    private int count;
-
     public MockManagedLedgerFactory(Map<String, Long> topicsToNumEntries, Map<String, Function<Integer, Object>> fooFunctions,
                                     Map<String, SchemaInfo> topicsToSchemas, LongAdder completedBytes)
     {
@@ -53,7 +51,6 @@ public class MockManagedLedgerFactory
         this.fooFunctions = fooFunctions;
         this.topicsToSchemas = topicsToSchemas;
         this.completedBytes = completedBytes;
-        this.count = 0;
     }
 
     @Override

@@ -45,6 +45,7 @@ public class ProtobufNativeDecoderTestUtil
         super();
     }
 
+    @Override
     public void checkPrimitiveValue(Object actual, Object expected)
     {
         if (actual == null || expected == null) {
@@ -83,6 +84,7 @@ public class ProtobufNativeDecoderTestUtil
         }
     }
 
+    @Override
     public void checkArrayValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");
@@ -131,6 +133,7 @@ public class ProtobufNativeDecoderTestUtil
         }
     }
 
+    @Override
     public void checkMapValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");
@@ -195,6 +198,7 @@ public class ProtobufNativeDecoderTestUtil
         }
     }
 
+    @Override
     public void checkRowValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");

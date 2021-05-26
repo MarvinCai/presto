@@ -48,6 +48,7 @@ public class AvroDecoderTestUtil
         super();
     }
 
+    @Override
     public void checkPrimitiveValue(Object actual, Object expected)
     {
         if (actual == null || expected == null) {
@@ -80,6 +81,7 @@ public class AvroDecoderTestUtil
         }
     }
 
+    @Override
     public void checkArrayValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");
@@ -135,6 +137,7 @@ public class AvroDecoderTestUtil
      * @param type
      * @param value
      */
+    @Override
     public void checkMapValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");
@@ -196,6 +199,7 @@ public class AvroDecoderTestUtil
         }
     }
 
+    @Override
     public void checkRowValues(Block block, Type type, Object value)
     {
         assertNotNull(type, "Type is null");

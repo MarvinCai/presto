@@ -56,6 +56,7 @@ public final class TestMsg
          */
         public static final int FAILOVER_VALUE = 1;
 
+        @Override
         public final int getNumber()
         {
             if (this == UNRECOGNIZED) {
@@ -96,18 +97,21 @@ public final class TestMsg
                 TestEnum> internalValueMap =
                 new org.apache.pulsar.shade.com.google.protobuf.Internal.EnumLiteMap<TestEnum>()
                 {
+                    @Override
                     public TestEnum findValueByNumber(int number)
                     {
                         return TestEnum.forNumber(number);
                     }
                 };
 
+        @Override
         public final org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumValueDescriptor
                 getValueDescriptor()
         {
             return getDescriptor().getValues().get(ordinal());
         }
 
+        @Override
         public final org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumDescriptor
                 getDescriptorForType()
         {
@@ -283,6 +287,7 @@ public final class TestMsg
             return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
         }
 
+        @Override
         protected FieldAccessorTable
                 internalGetFieldAccessorTable()
         {
@@ -427,6 +432,7 @@ public final class TestMsg
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
             }
 
+            @Override
             protected FieldAccessorTable
                     internalGetFieldAccessorTable()
             {
@@ -435,13 +441,13 @@ public final class TestMsg
                                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.class, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.Builder.class);
             }
 
-            private int bitField0;
             public static final int TITLE_FIELD_NUMBER = 1;
             private volatile Object title;
 
             /**
              * <code>string title = 1;</code>
              */
+            @Override
             public String getTitle()
             {
                 Object ref = title;
@@ -460,6 +466,7 @@ public final class TestMsg
             /**
              * <code>string title = 1;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString
                     getTitleBytes()
             {
@@ -482,6 +489,7 @@ public final class TestMsg
             /**
              * <code>repeated string urls = 2;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList
                     getUrlsList()
             {
@@ -491,6 +499,7 @@ public final class TestMsg
             /**
              * <code>repeated string urls = 2;</code>
              */
+            @Override
             public int getUrlsCount()
             {
                 return urls.size();
@@ -499,6 +508,7 @@ public final class TestMsg
             /**
              * <code>repeated string urls = 2;</code>
              */
+            @Override
             public String getUrls(int index)
             {
                 return urls.get(index);
@@ -507,6 +517,7 @@ public final class TestMsg
             /**
              * <code>repeated string urls = 2;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString
                     getUrlsBytes(int index)
             {
@@ -515,6 +526,7 @@ public final class TestMsg
 
             private byte memoizedIsInitialized = -1;
 
+            @Override
             public final boolean isInitialized()
             {
                 byte isInitialized = memoizedIsInitialized;
@@ -529,6 +541,7 @@ public final class TestMsg
                 return true;
             }
 
+            @Override
             public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
                     throws java.io.IOException
             {
@@ -541,6 +554,7 @@ public final class TestMsg
                 unknownFields.writeTo(output);
             }
 
+            @Override
             public int getSerializedSize()
             {
                 int size = memoizedSize;
@@ -697,6 +711,7 @@ public final class TestMsg
                         .parseWithIOException(PARSER, input, extensionRegistry);
             }
 
+            @Override
             public Builder newBuilderForType()
             {
                 return newBuilder();
@@ -712,6 +727,7 @@ public final class TestMsg
                 return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
             }
 
+            @Override
             public Builder toBuilder()
             {
                 return this == DEFAULT_INSTANCE
@@ -741,6 +757,7 @@ public final class TestMsg
                     return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
                 }
 
+                @Override
                 protected FieldAccessorTable
                         internalGetFieldAccessorTable()
                 {
@@ -766,10 +783,10 @@ public final class TestMsg
                 {
                     if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
                             .alwaysUseFieldBuilders) {
-                        boolean flag;
                     }
                 }
 
+                @Override
                 public Builder clear()
                 {
                     super.clear();
@@ -780,16 +797,19 @@ public final class TestMsg
                     return this;
                 }
 
+                @Override
                 public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
                 {
                     return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
                 }
 
+                @Override
                 public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage getDefaultInstanceForType()
                 {
                     return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.getDefaultInstance();
                 }
 
+                @Override
                 public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage build()
                 {
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage result = buildPartial();
@@ -799,27 +819,27 @@ public final class TestMsg
                     return result;
                 }
 
+                @Override
                 public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage buildPartial()
                 {
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage result = new io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage(this);
-                    int fromBitField0 = bitField0;
-                    int toBitField0 = 0;
                     result.title = title;
                     if (((bitField0 & 0x00000002) == 0x00000002)) {
                         urls = urls.getUnmodifiableView();
                         bitField0 = (bitField0 & ~0x00000002);
                     }
                     result.urls = urls;
-                    result.bitField0 = toBitField0;
                     onBuilt();
                     return result;
                 }
 
+                @Override
                 public Builder clone()
                 {
                     return (Builder) super.clone();
                 }
 
+                @Override
                 public Builder setField(
                         org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                         Object value)
@@ -827,18 +847,21 @@ public final class TestMsg
                     return (Builder) super.setField(field, value);
                 }
 
+                @Override
                 public Builder clearField(
                         org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
                 {
                     return (Builder) super.clearField(field);
                 }
 
+                @Override
                 public Builder clearOneof(
                         org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
                 {
                     return (Builder) super.clearOneof(oneof);
                 }
 
+                @Override
                 public Builder setRepeatedField(
                         org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                         int index, Object value)
@@ -846,6 +869,7 @@ public final class TestMsg
                     return (Builder) super.setRepeatedField(field, index, value);
                 }
 
+                @Override
                 public Builder addRepeatedField(
                         org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                         Object value)
@@ -853,6 +877,7 @@ public final class TestMsg
                     return (Builder) super.addRepeatedField(field, value);
                 }
 
+                @Override
                 public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
                 {
                     if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage) {
@@ -889,11 +914,13 @@ public final class TestMsg
                     return this;
                 }
 
+                @Override
                 public final boolean isInitialized()
                 {
                     return true;
                 }
 
+                @Override
                 public Builder mergeFrom(
                         org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                         org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -922,6 +949,7 @@ public final class TestMsg
                 /**
                  * <code>string title = 1;</code>
                  */
+                @Override
                 public String getTitle()
                 {
                     Object ref = title;
@@ -940,6 +968,7 @@ public final class TestMsg
                 /**
                  * <code>string title = 1;</code>
                  */
+                @Override
                 public org.apache.pulsar.shade.com.google.protobuf.ByteString getTitleBytes()
                 {
                     Object ref = title;
@@ -1009,6 +1038,7 @@ public final class TestMsg
                 /**
                  * <code>repeated string urls = 2;</code>
                  */
+                @Override
                 public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getUrlsList()
                 {
                     return urls.getUnmodifiableView();
@@ -1017,6 +1047,7 @@ public final class TestMsg
                 /**
                  * <code>repeated string urls = 2;</code>
                  */
+                @Override
                 public int getUrlsCount()
                 {
                     return urls.size();
@@ -1025,6 +1056,7 @@ public final class TestMsg
                 /**
                  * <code>repeated string urls = 2;</code>
                  */
+                @Override
                 public String getUrls(int index)
                 {
                     return urls.get(index);
@@ -1033,6 +1065,7 @@ public final class TestMsg
                 /**
                  * <code>repeated string urls = 2;</code>
                  */
+                @Override
                 public org.apache.pulsar.shade.com.google.protobuf.ByteString getUrlsBytes(int index)
                 {
                     return urls.getByteString(index);
@@ -1108,12 +1141,14 @@ public final class TestMsg
                     return this;
                 }
 
+                @Override
                 public final Builder setUnknownFields(
                         final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
                 {
                     return super.setUnknownFieldsProto3(unknownFields);
                 }
 
+                @Override
                 public final Builder mergeUnknownFields(
                         final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
                 {
@@ -1138,6 +1173,7 @@ public final class TestMsg
             private static final org.apache.pulsar.shade.com.google.protobuf.Parser<NestedMessage>
                     PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<NestedMessage>()
                     {
+                        @Override
                         public NestedMessage parsePartialFrom(
                                 org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                                 org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1158,6 +1194,7 @@ public final class TestMsg
                 return PARSER;
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage getDefaultInstanceForType()
             {
                 return DEFAULT_INSTANCE;
@@ -1170,6 +1207,7 @@ public final class TestMsg
         /**
          * <code>string foo = 1;</code>
          */
+        @Override
         public String getFoo()
         {
             Object ref = foo;
@@ -1188,6 +1226,7 @@ public final class TestMsg
         /**
          * <code>string foo = 1;</code>
          */
+        @Override
         public org.apache.pulsar.shade.com.google.protobuf.ByteString getFooBytes()
         {
             Object ref = foo;
@@ -1209,6 +1248,7 @@ public final class TestMsg
         /**
          * <code>double bar = 2;</code>
          */
+        @Override
         public double getBar()
         {
             return bar;
@@ -1220,6 +1260,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
          */
+        @Override
         public boolean hasNestedMessage()
         {
             return nestedMessage != null;
@@ -1228,6 +1269,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
          */
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage getNestedMessage()
         {
             return nestedMessage == null ? io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.getDefaultInstance() : nestedMessage;
@@ -1236,6 +1278,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
          */
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder getNestedMessageOrBuilder()
         {
             return getNestedMessage();
@@ -1243,6 +1286,7 @@ public final class TestMsg
 
         private byte memoizedIsInitialized = -1;
 
+        @Override
         public final boolean isInitialized()
         {
             byte isInitialized = memoizedIsInitialized;
@@ -1257,6 +1301,7 @@ public final class TestMsg
             return true;
         }
 
+        @Override
         public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
                 throws java.io.IOException
         {
@@ -1272,6 +1317,7 @@ public final class TestMsg
             unknownFields.writeTo(output);
         }
 
+        @Override
         public int getSerializedSize()
         {
             int size = memoizedSize;
@@ -1438,6 +1484,7 @@ public final class TestMsg
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
+        @Override
         public Builder newBuilderForType()
         {
             return newBuilder();
@@ -1453,6 +1500,7 @@ public final class TestMsg
             return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
         }
 
+        @Override
         public Builder toBuilder()
         {
             return this == DEFAULT_INSTANCE
@@ -1481,6 +1529,7 @@ public final class TestMsg
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
             }
 
+            @Override
             protected FieldAccessorTable internalGetFieldAccessorTable()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_fieldAccessorTable
@@ -1505,10 +1554,10 @@ public final class TestMsg
             {
                 if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
                         .alwaysUseFieldBuilders) {
-                    boolean flag;
                 }
             }
 
+            @Override
             public Builder clear()
             {
                 super.clear();
@@ -1526,16 +1575,19 @@ public final class TestMsg
                 return this;
             }
 
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage getDefaultInstanceForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.getDefaultInstance();
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage build()
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage result = buildPartial();
@@ -1545,6 +1597,7 @@ public final class TestMsg
                 return result;
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage buildPartial()
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage result = new io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage(this);
@@ -1560,11 +1613,13 @@ public final class TestMsg
                 return result;
             }
 
+            @Override
             public Builder clone()
             {
                 return (Builder) super.clone();
             }
 
+            @Override
             public Builder setField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
@@ -1572,18 +1627,21 @@ public final class TestMsg
                 return (Builder) super.setField(field, value);
             }
 
+            @Override
             public Builder clearField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
             {
                 return (Builder) super.clearField(field);
             }
 
+            @Override
             public Builder clearOneof(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
             {
                 return (Builder) super.clearOneof(oneof);
             }
 
+            @Override
             public Builder setRepeatedField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     int index, Object value)
@@ -1591,6 +1649,7 @@ public final class TestMsg
                 return (Builder) super.setRepeatedField(field, index, value);
             }
 
+            @Override
             public Builder addRepeatedField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
@@ -1598,6 +1657,7 @@ public final class TestMsg
                 return (Builder) super.addRepeatedField(field, value);
             }
 
+            @Override
             public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
             {
                 if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage) {
@@ -1629,11 +1689,13 @@ public final class TestMsg
                 return this;
             }
 
+            @Override
             public final boolean isInitialized()
             {
                 return true;
             }
 
+            @Override
             public Builder mergeFrom(
                     org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                     org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1660,6 +1722,7 @@ public final class TestMsg
             /**
              * <code>string foo = 1;</code>
              */
+            @Override
             public String getFoo()
             {
                 Object ref = foo;
@@ -1678,6 +1741,7 @@ public final class TestMsg
             /**
              * <code>string foo = 1;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString getFooBytes()
             {
                 Object ref = foo;
@@ -1739,6 +1803,7 @@ public final class TestMsg
             /**
              * <code>double bar = 2;</code>
              */
+            @Override
             public double getBar()
             {
                 return bar;
@@ -1771,6 +1836,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
              */
+            @Override
             public boolean hasNestedMessage()
             {
                 return nestedMessageBuilder != null || nestedMessage != null;
@@ -1779,6 +1845,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
              */
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage getNestedMessage()
             {
                 if (nestedMessageBuilder == null) {
@@ -1876,6 +1943,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
              */
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder getNestedMessageOrBuilder()
             {
                 if (nestedMessageBuilder != null) {
@@ -1905,12 +1973,14 @@ public final class TestMsg
                 return nestedMessageBuilder;
             }
 
+            @Override
             public final Builder setUnknownFields(
                     final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.setUnknownFieldsProto3(unknownFields);
             }
 
+            @Override
             public final Builder mergeUnknownFields(
                     final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
             {
@@ -1935,6 +2005,7 @@ public final class TestMsg
         private static final org.apache.pulsar.shade.com.google.protobuf.Parser<SubMessage>
                 PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<SubMessage>()
                 {
+                    @Override
                     public SubMessage parsePartialFrom(
                             org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                             org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1955,6 +2026,7 @@ public final class TestMsg
             return PARSER;
         }
 
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage getDefaultInstanceForType()
         {
             return DEFAULT_INSTANCE;
@@ -2327,6 +2399,7 @@ public final class TestMsg
         }
 
         @SuppressWarnings("rawtypes")
+        @Override
         protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMapField(
                 int number)
         {
@@ -2339,6 +2412,7 @@ public final class TestMsg
             }
         }
 
+        @Override
         protected FieldAccessorTable internalGetFieldAccessorTable()
         {
             return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_fieldAccessorTable
@@ -2346,13 +2420,13 @@ public final class TestMsg
                             io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage.class, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage.Builder.class);
         }
 
-        private int bitField0;
         public static final int STRINGFIELD_FIELD_NUMBER = 1;
         private volatile Object stringField;
 
         /**
          * <code>string stringField = 1;</code>
          */
+        @Override
         public String getStringField()
         {
             Object ref = stringField;
@@ -2371,6 +2445,7 @@ public final class TestMsg
         /**
          * <code>string stringField = 1;</code>
          */
+        @Override
         public org.apache.pulsar.shade.com.google.protobuf.ByteString getStringFieldBytes()
         {
             Object ref = stringField;
@@ -2392,6 +2467,7 @@ public final class TestMsg
         /**
          * <code>double doubleField = 2;</code>
          */
+        @Override
         public double getDoubleField()
         {
             return doubleField;
@@ -2403,6 +2479,7 @@ public final class TestMsg
         /**
          * <code>float floatField = 3;</code>
          */
+        @Override
         public float getFloatField()
         {
             return floatField;
@@ -2414,6 +2491,7 @@ public final class TestMsg
         /**
          * <code>int32 int32Field = 4;</code>
          */
+        @Override
         public int getInt32Field()
         {
             return int32Field;
@@ -2425,6 +2503,7 @@ public final class TestMsg
         /**
          * <code>int64 int64Field = 5;</code>
          */
+        @Override
         public long getInt64Field()
         {
             return int64Field;
@@ -2436,6 +2515,7 @@ public final class TestMsg
         /**
          * <code>uint32 uint32Field = 6;</code>
          */
+        @Override
         public int getUint32Field()
         {
             return uint32Field;
@@ -2447,6 +2527,7 @@ public final class TestMsg
         /**
          * <code>uint64 uint64Field = 7;</code>
          */
+        @Override
         public long getUint64Field()
         {
             return uint64Field;
@@ -2458,6 +2539,7 @@ public final class TestMsg
         /**
          * <code>sint32 sint32Field = 8;</code>
          */
+        @Override
         public int getSint32Field()
         {
             return sint32Field;
@@ -2469,6 +2551,7 @@ public final class TestMsg
         /**
          * <code>sint64 sint64Field = 9;</code>
          */
+        @Override
         public long getSint64Field()
         {
             return sint64Field;
@@ -2480,6 +2563,7 @@ public final class TestMsg
         /**
          * <code>fixed32 fixed32Field = 10;</code>
          */
+        @Override
         public int getFixed32Field()
         {
             return fixed32Field;
@@ -2491,6 +2575,7 @@ public final class TestMsg
         /**
          * <code>fixed64 fixed64Field = 11;</code>
          */
+        @Override
         public long getFixed64Field()
         {
             return fixed64Field;
@@ -2502,6 +2587,7 @@ public final class TestMsg
         /**
          * <code>sfixed32 sfixed32Field = 12;</code>
          */
+        @Override
         public int getSfixed32Field()
         {
             return sfixed32Field;
@@ -2513,6 +2599,7 @@ public final class TestMsg
         /**
          * <code>sfixed64 sfixed64Field = 13;</code>
          */
+        @Override
         public long getSfixed64Field()
         {
             return sfixed64Field;
@@ -2524,6 +2611,7 @@ public final class TestMsg
         /**
          * <code>bool boolField = 14;</code>
          */
+        @Override
         public boolean getBoolField()
         {
             return boolField;
@@ -2535,6 +2623,7 @@ public final class TestMsg
         /**
          * <code>bytes bytesField = 15;</code>
          */
+        @Override
         public org.apache.pulsar.shade.com.google.protobuf.ByteString getBytesField()
         {
             return bytesField;
@@ -2546,6 +2635,7 @@ public final class TestMsg
         /**
          * <code>.proto.TestEnum testEnum = 16;</code>
          */
+        @Override
         public int getTestEnumValue()
         {
             return testEnum;
@@ -2554,6 +2644,7 @@ public final class TestMsg
         /**
          * <code>.proto.TestEnum testEnum = 16;</code>
          */
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum getTestEnum()
         {
             io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum result = io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum.valueOf(testEnum);
@@ -2566,6 +2657,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage subMessage = 17;</code>
          */
+        @Override
         public boolean hasSubMessage()
         {
             return subMessage != null;
@@ -2574,6 +2666,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage subMessage = 17;</code>
          */
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage getSubMessage()
         {
             return subMessage == null ? io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.getDefaultInstance() : subMessage;
@@ -2582,6 +2675,7 @@ public final class TestMsg
         /**
          * <code>.proto.SubMessage subMessage = 17;</code>
          */
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder getSubMessageOrBuilder()
         {
             return getSubMessage();
@@ -2593,6 +2687,7 @@ public final class TestMsg
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
+        @Override
         public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getRepeatedFieldList()
         {
             return repeatedField;
@@ -2601,6 +2696,7 @@ public final class TestMsg
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
+        @Override
         public int getRepeatedFieldCount()
         {
             return repeatedField.size();
@@ -2609,6 +2705,7 @@ public final class TestMsg
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
+        @Override
         public String getRepeatedField(int index)
         {
             return repeatedField.get(index);
@@ -2617,6 +2714,7 @@ public final class TestMsg
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
+        @Override
         public org.apache.pulsar.shade.com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
         {
             return repeatedField.getByteString(index);
@@ -2649,6 +2747,7 @@ public final class TestMsg
             return mapField;
         }
 
+        @Override
         public int getMapFieldCount()
         {
             return internalGetMapField().getMap().size();
@@ -2657,7 +2756,7 @@ public final class TestMsg
         /**
          * <code>map&lt;string, double&gt; mapField = 19;</code>
          */
-
+        @Override
         public boolean containsMapField(
                 String key)
         {
@@ -2670,6 +2769,7 @@ public final class TestMsg
         /**
          * Use {@link #getMapFieldMap()} instead.
          */
+        @Override
         @Deprecated
         public java.util.Map<String, Double> getMapField()
         {
@@ -2679,7 +2779,7 @@ public final class TestMsg
         /**
          * <code>map&lt;string, double&gt; mapField = 19;</code>
          */
-
+        @Override
         public java.util.Map<String, Double> getMapFieldMap()
         {
             return internalGetMapField().getMap();
@@ -2689,6 +2789,7 @@ public final class TestMsg
          * <code>map&lt;string, double&gt; mapField = 19;</code>
          */
 
+        @Override
         public double getMapFieldOrDefault(
                 String key,
                 double defaultValue)
@@ -2704,7 +2805,7 @@ public final class TestMsg
         /**
          * <code>map&lt;string, double&gt; mapField = 19;</code>
          */
-
+        @Override
         public double getMapFieldOrThrow(
                 String key)
         {
@@ -2721,6 +2822,7 @@ public final class TestMsg
 
         private byte memoizedIsInitialized = -1;
 
+        @Override
         public final boolean isInitialized()
         {
             byte isInitialized = memoizedIsInitialized;
@@ -2735,6 +2837,7 @@ public final class TestMsg
             return true;
         }
 
+        @Override
         public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
                 throws java.io.IOException
         {
@@ -2801,6 +2904,7 @@ public final class TestMsg
             unknownFields.writeTo(output);
         }
 
+        @Override
         public int getSerializedSize()
         {
             int size = memoizedSize;
@@ -3117,6 +3221,7 @@ public final class TestMsg
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
+        @Override
         public Builder newBuilderForType()
         {
             return newBuilder();
@@ -3132,6 +3237,7 @@ public final class TestMsg
             return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
         }
 
+        @Override
         public Builder toBuilder()
         {
             return this == DEFAULT_INSTANCE
@@ -3161,6 +3267,7 @@ public final class TestMsg
             }
 
             @SuppressWarnings("rawtypes")
+            @Override
             protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMapField(
                     int number)
             {
@@ -3174,6 +3281,7 @@ public final class TestMsg
             }
 
             @SuppressWarnings("rawtypes")
+            @Override
             protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMutableMapField(
                     int number)
             {
@@ -3186,6 +3294,7 @@ public final class TestMsg
                 }
             }
 
+            @Override
             protected FieldAccessorTable internalGetFieldAccessorTable()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_fieldAccessorTable
@@ -3210,10 +3319,10 @@ public final class TestMsg
             {
                 if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
                         .alwaysUseFieldBuilders) {
-                    boolean flag;
                 }
             }
 
+            @Override
             public Builder clear()
             {
                 super.clear();
@@ -3262,16 +3371,19 @@ public final class TestMsg
                 return this;
             }
 
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_descriptor;
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage getDefaultInstanceForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage.getDefaultInstance();
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage build()
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage result = buildPartial();
@@ -3281,10 +3393,10 @@ public final class TestMsg
                 return result;
             }
 
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage buildPartial()
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage result = new io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage(this);
-                int toBitField0 = 0;
                 result.stringField = stringField;
                 result.doubleField = doubleField;
                 result.floatField = floatField;
@@ -3314,16 +3426,17 @@ public final class TestMsg
                 result.repeatedField = repeatedField;
                 result.mapField = internalGetMapField();
                 result.mapField.makeImmutable();
-                result.bitField0 = toBitField0;
                 onBuilt();
                 return result;
             }
 
+            @Override
             public Builder clone()
             {
                 return (Builder) super.clone();
             }
 
+            @Override
             public Builder setField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
@@ -3331,18 +3444,21 @@ public final class TestMsg
                 return (Builder) super.setField(field, value);
             }
 
+            @Override
             public Builder clearField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
             {
                 return (Builder) super.clearField(field);
             }
 
+            @Override
             public Builder clearOneof(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
             {
                 return (Builder) super.clearOneof(oneof);
             }
 
+            @Override
             public Builder setRepeatedField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     int index, Object value)
@@ -3350,6 +3466,7 @@ public final class TestMsg
                 return (Builder) super.setRepeatedField(field, index, value);
             }
 
+            @Override
             public Builder addRepeatedField(
                     org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
@@ -3357,6 +3474,7 @@ public final class TestMsg
                 return (Builder) super.addRepeatedField(field, value);
             }
 
+            @Override
             public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
             {
                 if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage) {
@@ -3443,11 +3561,13 @@ public final class TestMsg
                 return this;
             }
 
+            @Override
             public final boolean isInitialized()
             {
                 return true;
             }
 
+            @Override
             public Builder mergeFrom(
                     org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                     org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3476,6 +3596,7 @@ public final class TestMsg
             /**
              * <code>string stringField = 1;</code>
              */
+            @Override
             public String getStringField()
             {
                 Object ref = stringField;
@@ -3494,6 +3615,7 @@ public final class TestMsg
             /**
              * <code>string stringField = 1;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString getStringFieldBytes()
             {
                 Object ref = stringField;
@@ -3555,6 +3677,7 @@ public final class TestMsg
             /**
              * <code>double doubleField = 2;</code>
              */
+            @Override
             public double getDoubleField()
             {
                 return doubleField;
@@ -3585,6 +3708,7 @@ public final class TestMsg
             /**
              * <code>float floatField = 3;</code>
              */
+            @Override
             public float getFloatField()
             {
                 return floatField;
@@ -3615,6 +3739,7 @@ public final class TestMsg
             /**
              * <code>int32 int32Field = 4;</code>
              */
+            @Override
             public int getInt32Field()
             {
                 return int32Field;
@@ -3645,6 +3770,7 @@ public final class TestMsg
             /**
              * <code>int64 int64Field = 5;</code>
              */
+            @Override
             public long getInt64Field()
             {
                 return int64Field;
@@ -3675,6 +3801,7 @@ public final class TestMsg
             /**
              * <code>uint32 uint32Field = 6;</code>
              */
+            @Override
             public int getUint32Field()
             {
                 return uint32Field;
@@ -3705,6 +3832,7 @@ public final class TestMsg
             /**
              * <code>uint64 uint64Field = 7;</code>
              */
+            @Override
             public long getUint64Field()
             {
                 return uint64Field;
@@ -3735,6 +3863,7 @@ public final class TestMsg
             /**
              * <code>sint32 sint32Field = 8;</code>
              */
+            @Override
             public int getSint32Field()
             {
                 return sint32Field;
@@ -3765,6 +3894,7 @@ public final class TestMsg
             /**
              * <code>sint64 sint64Field = 9;</code>
              */
+            @Override
             public long getSint64Field()
             {
                 return sint64Field;
@@ -3795,6 +3925,7 @@ public final class TestMsg
             /**
              * <code>fixed32 fixed32Field = 10;</code>
              */
+            @Override
             public int getFixed32Field()
             {
                 return fixed32Field;
@@ -3825,6 +3956,7 @@ public final class TestMsg
             /**
              * <code>fixed64 fixed64Field = 11;</code>
              */
+            @Override
             public long getFixed64Field()
             {
                 return fixed64Field;
@@ -3855,6 +3987,7 @@ public final class TestMsg
             /**
              * <code>sfixed32 sfixed32Field = 12;</code>
              */
+            @Override
             public int getSfixed32Field()
             {
                 return sfixed32Field;
@@ -3885,6 +4018,7 @@ public final class TestMsg
             /**
              * <code>sfixed64 sfixed64Field = 13;</code>
              */
+            @Override
             public long getSfixed64Field()
             {
                 return sfixed64Field;
@@ -3915,6 +4049,7 @@ public final class TestMsg
             /**
              * <code>bool boolField = 14;</code>
              */
+            @Override
             public boolean getBoolField()
             {
                 return boolField;
@@ -3945,6 +4080,7 @@ public final class TestMsg
             /**
              * <code>bytes bytesField = 15;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString getBytesField()
             {
                 return bytesField;
@@ -3979,6 +4115,7 @@ public final class TestMsg
             /**
              * <code>.proto.TestEnum testEnum = 16;</code>
              */
+            @Override
             public int getTestEnumValue()
             {
                 return testEnum;
@@ -3997,6 +4134,7 @@ public final class TestMsg
             /**
              * <code>.proto.TestEnum testEnum = 16;</code>
              */
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum getTestEnum()
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum result = io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum.valueOf(testEnum);
@@ -4034,6 +4172,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage subMessage = 17;</code>
              */
+            @Override
             public boolean hasSubMessage()
             {
                 return subMessageBuilder != null || subMessage != null;
@@ -4042,6 +4181,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage subMessage = 17;</code>
              */
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage getSubMessage()
             {
                 if (subMessageBuilder == null) {
@@ -4139,6 +4279,7 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage subMessage = 17;</code>
              */
+            @Override
             public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder getSubMessageOrBuilder()
             {
                 if (subMessageBuilder != null) {
@@ -4181,6 +4322,7 @@ public final class TestMsg
             /**
              * <code>repeated string repeatedField = 18;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getRepeatedFieldList()
             {
                 return repeatedField.getUnmodifiableView();
@@ -4189,6 +4331,7 @@ public final class TestMsg
             /**
              * <code>repeated string repeatedField = 18;</code>
              */
+            @Override
             public int getRepeatedFieldCount()
             {
                 return repeatedField.size();
@@ -4197,6 +4340,7 @@ public final class TestMsg
             /**
              * <code>repeated string repeatedField = 18;</code>
              */
+            @Override
             public String getRepeatedField(int index)
             {
                 return repeatedField.get(index);
@@ -4205,6 +4349,7 @@ public final class TestMsg
             /**
              * <code>repeated string repeatedField = 18;</code>
              */
+            @Override
             public org.apache.pulsar.shade.com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
             {
                 return repeatedField.getByteString(index);
@@ -4305,6 +4450,7 @@ public final class TestMsg
                 return mapField;
             }
 
+            @Override
             public int getMapFieldCount()
             {
                 return internalGetMapField().getMap().size();
@@ -4313,7 +4459,7 @@ public final class TestMsg
             /**
              * <code>map&lt;string, double&gt; mapField = 19;</code>
              */
-
+            @Override
             public boolean containsMapField(
                     String key)
             {
@@ -4326,6 +4472,7 @@ public final class TestMsg
             /**
              * Use {@link #getMapFieldMap()} instead.
              */
+            @Override
             @Deprecated
             public java.util.Map<String, Double> getMapField()
             {
@@ -4335,7 +4482,7 @@ public final class TestMsg
             /**
              * <code>map&lt;string, double&gt; mapField = 19;</code>
              */
-
+            @Override
             public java.util.Map<String, Double> getMapFieldMap()
             {
                 return internalGetMapField().getMap();
@@ -4344,7 +4491,7 @@ public final class TestMsg
             /**
              * <code>map&lt;string, double&gt; mapField = 19;</code>
              */
-
+            @Override
             public double getMapFieldOrDefault(
                     String key,
                     double defaultValue)
@@ -4360,7 +4507,7 @@ public final class TestMsg
             /**
              * <code>map&lt;string, double&gt; mapField = 19;</code>
              */
-
+            @Override
             public double getMapFieldOrThrow(
                     String key)
             {
@@ -4434,12 +4581,14 @@ public final class TestMsg
                 return this;
             }
 
+            @Override
             public final Builder setUnknownFields(
                     final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.setUnknownFieldsProto3(unknownFields);
             }
 
+            @Override
             public final Builder mergeUnknownFields(
                     final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
             {
@@ -4463,6 +4612,7 @@ public final class TestMsg
         private static final org.apache.pulsar.shade.com.google.protobuf.Parser<TestMessage>
                 PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<TestMessage>()
                 {
+                    @Override
                     public TestMessage parsePartialFrom(
                             org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
                             org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -4483,6 +4633,7 @@ public final class TestMsg
             return PARSER;
         }
 
+        @Override
         public io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage getDefaultInstanceForType()
         {
             return DEFAULT_INSTANCE;
@@ -4506,9 +4657,6 @@ public final class TestMsg
             internal_static_proto_TestMessage_fieldAccessorTable;
     private static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
             internal_static_proto_TestMessage_MapFieldEntry_descriptor;
-    private static final
-            org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-            internal_static_proto_TestMessage_MapFieldEntry_fieldAccessorTable;
 
     public static org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor getDescriptor()
     {
@@ -4545,6 +4693,7 @@ public final class TestMsg
         org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
                 new org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner()
                 {
+                    @Override
                     public org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistry assignDescriptors(
                             org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor root)
                     {
@@ -4576,10 +4725,6 @@ public final class TestMsg
                 new String[]{"StringField", "DoubleField", "FloatField", "Int32Field", "Int64Field", "Uint32Field", "Uint64Field", "Sint32Field", "Sint64Field", "Fixed32Field", "Fixed64Field", "Sfixed32Field", "Sfixed64Field", "BoolField", "BytesField", "TestEnum", "SubMessage", "RepeatedField", "MapField"});
         internal_static_proto_TestMessage_MapFieldEntry_descriptor =
                 internal_static_proto_TestMessage_descriptor.getNestedTypes().get(0);
-        internal_static_proto_TestMessage_MapFieldEntry_fieldAccessorTable = new
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-                internal_static_proto_TestMessage_MapFieldEntry_descriptor,
-                new String[]{"Key", "Value"});
     }
 
     // @@protoc_insertion_point(outer_class_scope)

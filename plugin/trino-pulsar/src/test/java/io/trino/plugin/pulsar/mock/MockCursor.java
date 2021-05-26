@@ -206,7 +206,8 @@ public class MockCursor
     @Override
     public void asyncClose(AsyncCallbacks.CloseCallback closeCallback, Object o)
     { }
-
+    
+    @Override
     public MLDataFormats.ManagedLedgerInfo.LedgerInfo getCurrentLedgerInfo()
     {
         return MLDataFormats.ManagedLedgerInfo.LedgerInfo.newBuilder().setLedgerId(0).build();

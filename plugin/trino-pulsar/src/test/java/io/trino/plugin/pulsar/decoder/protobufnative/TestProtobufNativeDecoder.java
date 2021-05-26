@@ -51,6 +51,7 @@ public class TestProtobufNativeDecoder
 {
     private ProtobufNativeSchema schema;
 
+    @Override
     @BeforeMethod
     public void init()
     {

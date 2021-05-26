@@ -126,7 +126,7 @@ public class TestPulsarRecordCursor
 
     private static final Logger log = Logger.get(TestPulsarRecordCursor.class);
 
-    private class MockPulsarSqlSchemaInfoProvider
+    private static class MockPulsarSqlSchemaInfoProvider
                 implements SchemaInfoProvider
     {
         private SchemaInfo schemaInfo;
@@ -361,7 +361,7 @@ public class TestPulsarRecordCursor
         }
     }
 
-    private class MockKeyValueSchemaCursor
+    private static class MockKeyValueSchemaCursor
             extends MockCursor
     {
         private KeyValueSchema schema;
@@ -420,7 +420,7 @@ public class TestPulsarRecordCursor
         }
     }
 
-    private class MockKeyValueSchemaManagedLedgerFactory
+    private static class MockKeyValueSchemaManagedLedgerFactory
             extends MockManagedLedgerFactory
     {
         private long entriesNum;

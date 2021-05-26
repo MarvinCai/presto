@@ -36,8 +36,6 @@ import static java.util.Objects.requireNonNull;
 public class PulsarConnector
         implements Connector
 {
-    private static final Logger log = Logger.get(PulsarConnector.class);
-
     private final LifeCycleManager lifeCycleManager;
     private final PulsarMetadata metadata;
     private final PulsarSplitManager splitManager;

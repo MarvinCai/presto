@@ -64,6 +64,7 @@ public class TestAvroDecoder
 {
     private AvroSchema schema;
 
+    @Override
     @BeforeMethod
     public void init()
     {

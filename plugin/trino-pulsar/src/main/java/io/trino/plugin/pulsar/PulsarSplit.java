@@ -1,20 +1,15 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
@@ -27,10 +22,10 @@ import io.trino.spi.HostAddress;
 import io.trino.spi.connector.ColumnHandle;
 import io.trino.spi.connector.ConnectorSplit;
 import io.trino.spi.predicate.TupleDomain;
-import org.apache.bookkeeper.mledger.impl.PositionImpl;
 import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,13 +34,11 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 /**
- * This class represents information for a split.
+ * This class represents information for a Trion {@link ConnectorSplit} for Pulsar.
  */
 public class PulsarSplit
         implements ConnectorSplit
 {
-    private static final Logger log = Logger.get(PulsarSplit.class);
-
     private final long splitId;
     private final String connectorId;
     private final String tableName;

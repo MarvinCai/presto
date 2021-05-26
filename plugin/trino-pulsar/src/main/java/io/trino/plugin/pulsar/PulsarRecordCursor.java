@@ -1,20 +1,15 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
@@ -23,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import io.airlift.log.Logger;
 import io.airlift.slice.Slice;
-import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.util.CacheSizeAllocator;
@@ -33,26 +27,28 @@ import io.trino.spi.block.Block;
 import io.trino.spi.connector.ColumnHandle;
 import io.trino.spi.connector.RecordCursor;
 import io.trino.spi.type.Type;
-import org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.bookkeeper.mledger.Entry;
-import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.bookkeeper.mledger.Position;
-import org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.bookkeeper.mledger.impl.ReadOnlyCursorImpl;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.schema.SchemaInfoProvider;
 import org.apache.pulsar.client.impl.schema.KeyValueSchemaInfo;
+import org.apache.pulsar.common.api.raw.MessageParser;
 import org.apache.pulsar.common.api.raw.RawMessage;
-import org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.common.schema.KeyValue;
-import org.apache.pulsar.common.schema.KeyValueEncodingType;
-import org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
+import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.AsyncCallbacks;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Position;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValue;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValueEncodingType;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
 import org.jctools.queues.MessagePassingQueue;
 import org.jctools.queues.SpscArrayQueue;
 
@@ -73,7 +69,7 @@ import static io.trino.decoder.FieldValueProviders.longValueProvider;
 import static java.lang.Math.toIntExact;
 
 /**
- * Implementation of a cursor to read records from Pulsar topic to serve Trino query.
+ * A cursor to read records from Pulsar topic to serve Trino query.
  */
 public class PulsarRecordCursor
         implements RecordCursor
@@ -81,7 +77,7 @@ public class PulsarRecordCursor
     private List<PulsarColumnHandle> columnHandles;
     private PulsarSplit pulsarSplit;
     private PulsarConnectorConfig pulsarConnectorConfig;
-    private ReadOnlyCursor cursor;
+    private PulsarReadOnlyCursor cursor;
     private SpscArrayQueue<RawMessage> messageQueue;
     private CacheSizeAllocator messageQueueCacheSizeAllocator;
     private SpscArrayQueue<Entry> entryQueue;
@@ -105,7 +101,7 @@ public class PulsarRecordCursor
     private long entriesProcessed;
     private int partition = -1;
 
-    private PulsarSqlSchemaInfoProvider schemaInfoProvider;
+    private SchemaInfoProvider schemaInfoProvider;
 
     private FieldValueProvider[] currentRowValues;
 
@@ -117,12 +113,12 @@ public class PulsarRecordCursor
                               PulsarConnectorConfig pulsarConnectorConfig,
                               PulsarDispatchingRowDecoderFactory decoderFactory)
     {
-        this.splitSize = pulsarSplit.getSplitSize();
+        splitSize = pulsarSplit.getSplitSize();
         // Set start time for split
-        this.startTime = System.nanoTime();
+        startTime = System.nanoTime();
         PulsarConnectorCache pulsarConnectorCache;
         try {
-            pulsarConnectorCache = PulsarConnectorCache.getConnectorCache(pulsarConnectorConfig);
+            pulsarConnectorCache = PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
         }
         catch (Exception e) {
             log.error(e, "Failed to initialize Pulsar connector cache");
@@ -130,7 +126,8 @@ public class PulsarRecordCursor
             throw new RuntimeException(e);
         }
 
-        OffloadPolicies offloadPolicies = pulsarSplit.getOffloadPolicies();
+        OffloadPolicies offloadPolicies = pulsarSplit.getOffloadPolicies() == null ?
+                null : OffloadPolicies.create(pulsarSplit.getOffloadPolicies().toProperties());
         if (offloadPolicies != null) {
             offloadPolicies.setOffloadersDirectory(pulsarConnectorConfig.getOffloadersDirectory());
             offloadPolicies.setManagedLedgerOffloadMaxThreads(
@@ -153,7 +150,7 @@ public class PulsarRecordCursor
                        PulsarConnectorMetricsTracker pulsarConnectorMetricsTracker,
                        PulsarDispatchingRowDecoderFactory decoderFactory)
     {
-        this.splitSize = pulsarSplit.getSplitSize();
+        splitSize = pulsarSplit.getSplitSize();
         initialize(columnHandles, pulsarSplit, pulsarConnectorConfig, managedLedgerFactory, managedLedgerConfig,
                 pulsarConnectorMetricsTracker);
         this.decoderFactory = decoderFactory;
@@ -164,33 +161,36 @@ public class PulsarRecordCursor
                             PulsarConnectorMetricsTracker pulsarConnectorMetricsTracker)
     {
         this.columnHandles = columnHandles;
-        this.currentRowValues = new FieldValueProvider[columnHandles.size()];
+        currentRowValues = new FieldValueProvider[columnHandles.size()];
         this.pulsarSplit = pulsarSplit;
-        this.partition = TopicName.getPartitionIndex(pulsarSplit.getTableName());
+        partition = TopicName.getPartitionIndex(pulsarSplit.getTableName());
         this.pulsarConnectorConfig = pulsarConnectorConfig;
-        this.maxBatchSize = pulsarConnectorConfig.getMaxEntryReadBatchSize();
-        this.messageQueue = new SpscArrayQueue<>(pulsarConnectorConfig.getMaxSplitMessageQueueSize());
-        this.entryQueue = new SpscArrayQueue<>(pulsarConnectorConfig.getMaxSplitEntryQueueSize());
-        this.topicName = TopicName.get("persistent",
+        maxBatchSize = pulsarConnectorConfig.getMaxEntryReadBatchSize();
+        messageQueue = new SpscArrayQueue<>(pulsarConnectorConfig.getMaxSplitMessageQueueSize());
+        entryQueue = new SpscArrayQueue<>(pulsarConnectorConfig.getMaxSplitEntryQueueSize());
+        topicName = TopicName.get("persistent",
                 NamespaceName.get(pulsarSplit.getSchemaName()),
                 pulsarSplit.getTableName());
         this.metricsTracker = pulsarConnectorMetricsTracker;
-        this.readOffloaded = pulsarConnectorConfig.getManagedLedgerOffloadDriver() != null;
+        readOffloaded = pulsarConnectorConfig.getManagedLedgerOffloadDriver() != null;
         this.pulsarConnectorConfig = pulsarConnectorConfig;
         initEntryCacheSizeAllocator(pulsarConnectorConfig);
 
         try {
-            this.schemaInfoProvider = new PulsarSqlSchemaInfoProvider(this.topicName,
+            schemaInfoProvider = new PulsarSqlSchemaInfoProvider(this.topicName,
                     pulsarConnectorConfig.getPulsarAdmin());
         }
         catch (PulsarClientException e) {
             log.error(e, "Failed to init  Pulsar SchemaInfo Provider");
             throw new RuntimeException(e);
         }
-        log.info("Initializing split with parameters: %s", pulsarSplit);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing split with parameters: %s", pulsarSplit);
+        }
 
         try {
-            this.cursor = getCursor(TopicName.get("persistent", NamespaceName.get(pulsarSplit.getSchemaName()),
+            cursor = getCursor(TopicName.get("persistent", NamespaceName.get(pulsarSplit.getSchemaName()),
                     pulsarSplit.getTableName()), pulsarSplit.getStartPosition(), managedLedgerFactory, managedLedgerConfig);
         }
         catch (ManagedLedgerException | InterruptedException e) {
@@ -200,12 +200,12 @@ public class PulsarRecordCursor
         }
     }
 
-    private ReadOnlyCursor getCursor(TopicName topicName, Position startPosition, ManagedLedgerFactory
+    private PulsarReadOnlyCursor getCursor(TopicName topicName, Position startPosition, ManagedLedgerFactory
             managedLedgerFactory, ManagedLedgerConfig managedLedgerConfig)
             throws ManagedLedgerException, InterruptedException
     {
-        ReadOnlyCursor cursor = managedLedgerFactory.openReadOnlyCursor(topicName.getPersistenceNamingEncoding(),
-                startPosition, managedLedgerConfig);
+        PulsarReadOnlyCursor cursor = new PulsarReadOnlyCursorWrapper(managedLedgerFactory.openReadOnlyCursor(topicName.getPersistenceNamingEncoding(),
+                startPosition, managedLedgerConfig));
 
         return cursor;
     }
@@ -230,7 +230,7 @@ public class PulsarRecordCursor
     }
 
     @VisibleForTesting
-    public void setPulsarSqlSchemaInfoProvider(PulsarSqlSchemaInfoProvider schemaInfoProvider)
+    public void setPulsarSqlSchemaInfoProvider(SchemaInfoProvider schemaInfoProvider)
     {
         this.schemaInfoProvider = schemaInfoProvider;
     }
@@ -286,33 +286,37 @@ public class PulsarRecordCursor
                             metricsTracker.start_ENTRY_DESERIALIZE_TIME();
 
                             try {
-                                org.apache.pulsar.common.api.raw.MessageParser.parseMessage(topicName, entry.getLedgerId(), entry.getEntryId(), entry.getDataBuffer(), (message) -> {
-                                    try {
-                                        // start time for message queue read
-                                        metricsTracker.start_MESSAGE_QUEUE_ENQUEUE_WAIT_TIME();
+                                MessageParser.parseMessage(
+                                        org.apache.pulsar.common.naming.TopicName.get(topicName.getDomain().toString(),
+                                                topicName.getNamespace(), topicName.getTenant(), topicName.getLocalName()),
+                                        entry.getLedgerId(), entry.getEntryId(),
+                                        io.netty.buffer.Unpooled.wrappedBuffer(entry.getDataBuffer().nioBuffer()), (message) -> {
+                                        try {
+                                            // start time for message queue read
+                                            metricsTracker.start_MESSAGE_QUEUE_ENQUEUE_WAIT_TIME();
 
-                                        while (true) {
-                                            if (!haveAvailableCacheSize(
-                                                    messageQueueCacheSizeAllocator, messageQueue)
-                                                    || !messageQueue.offer(message)) {
-                                                Thread.sleep(1);
+                                            while (true) {
+                                                if (!haveAvailableCacheSize(
+                                                        messageQueueCacheSizeAllocator, messageQueue)
+                                                        || !messageQueue.offer(message)) {
+                                                    Thread.sleep(1);
+                                                }
+                                                else {
+                                                    messageQueueCacheSizeAllocator.allocate(
+                                                            message.getData().readableBytes());
+                                                    break;
+                                                }
                                             }
-                                            else {
-                                                messageQueueCacheSizeAllocator.allocate(
-                                                        message.getData().readableBytes());
-                                                break;
-                                            }
+
+                                            // stats for how long a read from message queue took
+                                            metricsTracker.end_MESSAGE_QUEUE_ENQUEUE_WAIT_TIME();
+                                            // stats for number of messages read
+                                            metricsTracker.incr_NUM_MESSAGES_DESERIALIZED_PER_ENTRY();
                                         }
-
-                                        // stats for how long a read from message queue took
-                                        metricsTracker.end_MESSAGE_QUEUE_ENQUEUE_WAIT_TIME();
-                                        // stats for number of messages read
-                                        metricsTracker.incr_NUM_MESSAGES_DESERIALIZED_PER_ENTRY();
-                                    }
-                                    catch (InterruptedException e) {
-                                        //no-op
-                                    }
-                                }, pulsarConnectorConfig.getMaxMessageSize());
+                                        catch (InterruptedException e) {
+                                            //no-op
+                                        }
+                                    }, pulsarConnectorConfig.getMaxMessageSize());
                             }
                             catch (IOException e) {
                                 log.error(e, "Failed to parse message from pulsar topic %s", topicName.toString());
@@ -365,14 +369,13 @@ public class PulsarRecordCursor
                     int batchSize = Math.min(maxBatchSize, entryQueue.capacity() - entryQueue.size());
 
                     if (batchSize > 0) {
-                        ReadOnlyCursorImpl readOnlyCursorImpl = ((ReadOnlyCursorImpl) cursor);
                         // check if ledger is offloaded
-                        if (!readOffloaded && readOnlyCursorImpl.getCurrentLedgerInfo().hasOffloadContext()) {
+                        if (!readOffloaded && cursor.getCurrentLedgerInfo().hasOffloadContext()) {
                             log.warn(
                                     "Ledger %s is offloaded for topic %s. Ignoring it because offloader is not configured",
-                                    readOnlyCursorImpl.getCurrentLedgerInfo().getLedgerId(), pulsarSplit.getTableName());
+                                    cursor.getCurrentLedgerInfo().getLedgerId(), pulsarSplit.getTableName());
 
-                            long numEntries = readOnlyCursorImpl.getCurrentLedgerInfo().getEntries();
+                            long numEntries = cursor.getCurrentLedgerInfo().getEntries();
                             long entriesToSkip =
                                     (numEntries - ((PositionImpl) cursor.getReadPosition()).getEntryId()) + 1;
                             cursor.skipEntries(toIntExact((entriesToSkip)));
@@ -508,7 +511,7 @@ public class PulsarRecordCursor
         SchemaInfo schemaInfo = getBytesSchemaInfo(pulsarSplit.getSchemaType(), pulsarSplit.getSchemaName());
         try {
             if (schemaInfo == null) {
-                schemaInfo = schemaInfoProvider.getSchemaByVersion(this.currentMessage.getSchemaVersion()).get();
+                schemaInfo = schemaInfoProvider.getSchemaByVersion(currentMessage.getSchemaVersion()).get();
             }
         }
         catch (InterruptedException | ExecutionException e) {
@@ -523,15 +526,15 @@ public class PulsarRecordCursor
 
             KeyValueEncodingType keyValueEncodingType = KeyValueSchemaInfo.decodeKeyValueEncodingType(schemaInfo);
             if (Objects.equals(keyValueEncodingType, KeyValueEncodingType.INLINE)) {
-                ByteBuf dataPayload = this.currentMessage.getData();
+                ByteBuf dataPayload = Unpooled.wrappedBuffer(currentMessage.getData().nioBuffer());
                 int keyLength = dataPayload.readInt();
                 keyByteBuf = dataPayload.readSlice(keyLength);
                 int valueLength = dataPayload.readInt();
                 valueByteBuf = dataPayload.readSlice(valueLength);
             }
             else {
-                keyByteBuf = this.currentMessage.getKeyBytes().get();
-                valueByteBuf = this.currentMessage.getData();
+                keyByteBuf = Unpooled.wrappedBuffer(currentMessage.getKeyBytes().get().nioBuffer());
+                valueByteBuf = Unpooled.wrappedBuffer(currentMessage.getData().nioBuffer());
             }
 
             KeyValue<SchemaInfo, SchemaInfo> kvSchemaInfo = KeyValueSchemaInfo.decodeKeyValueSchemaInfo(schemaInfo);
@@ -577,7 +580,7 @@ public class PulsarRecordCursor
                             .filter(col -> PulsarColumnHandle.HandleKeyValueType.NONE
                                     .equals(col.getHandleKeyValueType()))
                             .collect(toImmutableSet()));
-            ByteBuf copiedByteBuf = this.currentMessage.getData();
+            ByteBuf copiedByteBuf = Unpooled.wrappedBuffer(currentMessage.getData().nioBuffer());
             Optional<Map<DecoderColumnHandle, FieldValueProvider>> decodedValue =
                     messageDecoder.decodeRow(copiedByteBuf);
             copiedByteBuf.release();
@@ -591,31 +594,31 @@ public class PulsarRecordCursor
                 }
                 else if (PulsarInternalColumn.EVENT_TIME.getName().equals(columnHandle.getName())) {
                     currentRowValuesMap.put(columnHandle, PulsarFieldValueProviders.timeValueProvider(
-                            this.currentMessage.getEventTime(), this.currentMessage.getPublishTime() == 0));
+                            currentMessage.getEventTime(), currentMessage.getPublishTime() == 0));
                 }
                 else if (PulsarInternalColumn.PUBLISH_TIME.getName().equals(columnHandle.getName())) {
                     currentRowValuesMap.put(columnHandle, PulsarFieldValueProviders.timeValueProvider(
-                            this.currentMessage.getPublishTime(), this.currentMessage.getPublishTime() == 0));
+                            currentMessage.getPublishTime(), currentMessage.getPublishTime() == 0));
                 }
                 else if (PulsarInternalColumn.MESSAGE_ID.getName().equals(columnHandle.getName())) {
                     currentRowValuesMap.put(columnHandle, bytesValueProvider(
-                            this.currentMessage.getMessageId().toString().getBytes()));
+                            currentMessage.getMessageId().toString().getBytes()));
                 }
                 else if (PulsarInternalColumn.SEQUENCE_ID.getName().equals(columnHandle.getName())) {
-                    currentRowValuesMap.put(columnHandle, longValueProvider(this.currentMessage.getSequenceId()));
+                    currentRowValuesMap.put(columnHandle, longValueProvider(currentMessage.getSequenceId()));
                 }
                 else if (PulsarInternalColumn.PRODUCER_NAME.getName().equals(columnHandle.getName())) {
                     currentRowValuesMap.put(columnHandle,
-                            bytesValueProvider(this.currentMessage.getProducerName().getBytes()));
+                            bytesValueProvider(currentMessage.getProducerName().getBytes()));
                 }
                 else if (PulsarInternalColumn.KEY.getName().equals(columnHandle.getName())) {
-                    String key = this.currentMessage.getKey().orElse(null);
+                    String key = currentMessage.getKey().orElse(null);
                     currentRowValuesMap.put(columnHandle, bytesValueProvider(key == null ? null : key.getBytes()));
                 }
                 else if (PulsarInternalColumn.PROPERTIES.getName().equals(columnHandle.getName())) {
                     try {
                         currentRowValuesMap.put(columnHandle, bytesValueProvider(
-                                new ObjectMapper().writeValueAsBytes(this.currentMessage.getProperties())));
+                                new ObjectMapper().writeValueAsBytes(currentMessage.getProperties())));
                     }
                     catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
@@ -702,8 +705,6 @@ public class PulsarRecordCursor
     @Override
     public void close()
     {
-        log.info("Closing cursor record");
-
         if (currentMessage != null) {
             currentMessage.release();
         }
@@ -719,10 +720,9 @@ public class PulsarRecordCursor
         if (deserializeEntries != null) {
             deserializeEntries.interrupt();
         }
-
-        if (this.cursor != null) {
+        if (cursor != null) {
             try {
-                this.cursor.close();
+                cursor.close();
             }
             catch (Exception e) {
                 log.error(e);
@@ -730,9 +730,9 @@ public class PulsarRecordCursor
         }
 
         // set stat for total execution time of split
-        if (this.metricsTracker != null) {
-            this.metricsTracker.register_TOTAL_EXECUTION_TIME(System.nanoTime() - startTime);
-            this.metricsTracker.close();
+        if (metricsTracker != null) {
+            metricsTracker.register_TOTAL_EXECUTION_TIME(System.nanoTime() - startTime);
+            metricsTracker.close();
         }
     }
 
@@ -745,17 +745,14 @@ public class PulsarRecordCursor
     private void initEntryCacheSizeAllocator(PulsarConnectorConfig connectorConfig)
     {
         if (connectorConfig.getMaxSplitQueueSizeBytes() >= 0) {
-            this.entryQueueCacheSizeAllocator = new NoStrictCacheSizeAllocator(
+            entryQueueCacheSizeAllocator = new NoStrictCacheSizeAllocator(
                     connectorConfig.getMaxSplitQueueSizeBytes() / 2);
-            this.messageQueueCacheSizeAllocator = new NoStrictCacheSizeAllocator(
+            messageQueueCacheSizeAllocator = new NoStrictCacheSizeAllocator(
                     connectorConfig.getMaxSplitQueueSizeBytes() / 2);
-            log.info("Init cacheSizeAllocator with maxSplitEntryQueueSizeBytes {}.",
-                    connectorConfig.getMaxSplitQueueSizeBytes());
         }
         else {
-            this.entryQueueCacheSizeAllocator = new NullCacheSizeAllocator();
-            this.messageQueueCacheSizeAllocator = new NullCacheSizeAllocator();
-            log.info("Init cacheSizeAllocator with NullCacheSizeAllocator.");
+            entryQueueCacheSizeAllocator = new NullCacheSizeAllocator();
+            messageQueueCacheSizeAllocator = new NullCacheSizeAllocator();
         }
     }
 }

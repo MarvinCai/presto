@@ -1,66 +1,54 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.airlift.log.Logger;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.trino.plugin.pulsar.mock.MockCursor;
+import io.trino.plugin.pulsar.mock.MockManagedLedgerFactory;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.spi.type.RowType;
-import org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.bookkeeper.mledger.Entry;
-import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.bookkeeper.mledger.impl.EntryImpl;
-import org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.bookkeeper.mledger.impl.ReadOnlyCursorImpl;
-import org.apache.bookkeeper.mledger.proto.MLDataFormats;
-import org.apache.bookkeeper.stats.NullStatsProvider;
 import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.schema.SchemaInfoProvider;
 import org.apache.pulsar.client.impl.schema.KeyValueSchema;
-import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.protocol.Commands;
-import org.apache.pulsar.common.schema.KeyValue;
-import org.apache.pulsar.common.schema.KeyValueEncodingType;
-import org.mockito.ArgumentMatchers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.AsyncCallbacks;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Position;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.EntryImpl;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.shade.org.apache.bookkeeper.stats.NullStatsProvider;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValue;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValueEncodingType;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
 import org.testng.annotations.Test;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Function;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -138,6 +126,35 @@ public class TestPulsarRecordCursor
 
     private static final Logger log = Logger.get(TestPulsarRecordCursor.class);
 
+    private class MockPulsarSqlSchemaInfoProvider
+                implements SchemaInfoProvider
+    {
+        private SchemaInfo schemaInfo;
+
+        public MockPulsarSqlSchemaInfoProvider(SchemaInfo schemaInfo)
+        {
+            this.schemaInfo = schemaInfo;
+        }
+
+        @Override
+        public CompletableFuture<SchemaInfo> getSchemaByVersion(byte[] bytes)
+        {
+            return completedFuture(schemaInfo);
+        }
+
+        @Override
+        public CompletableFuture<SchemaInfo> getLatestSchema()
+        {
+            return null;
+        }
+
+        @Override
+        public String getTopicName()
+        {
+            return null;
+        }
+    }
+
     @Test(singleThreaded = true)
     public void testTopics() throws Exception
     {
@@ -148,8 +165,7 @@ public class TestPulsarRecordCursor
             List<PulsarColumnHandle> fooColumnHandles = topicsToColumnHandles.get(entry.getKey());
             PulsarRecordCursor pulsarRecordCursor = entry.getValue();
 
-            PulsarSqlSchemaInfoProvider pulsarSqlSchemaInfoProvider = mock(PulsarSqlSchemaInfoProvider.class);
-            when(pulsarSqlSchemaInfoProvider.getSchemaByVersion(ArgumentMatchers.any())).thenReturn(completedFuture(topicsToSchemas.get(entry.getKey().getSchemaName())));
+            SchemaInfoProvider pulsarSqlSchemaInfoProvider = new MockPulsarSqlSchemaInfoProvider(topicsToSchemas.get(entry.getKey().getSchemaName()));
             pulsarRecordCursor.setPulsarSqlSchemaInfoProvider(pulsarSqlSchemaInfoProvider);
 
             TopicName topicName = entry.getKey();
@@ -217,7 +233,7 @@ public class TestPulsarRecordCursor
                 count++;
             }
             assertEquals(count, topicsToNumEntries.get(topicName.getSchemaName()).longValue());
-            assertEquals(pulsarRecordCursor.getCompletedBytes(), completedBytes);
+            assertEquals(pulsarRecordCursor.getCompletedBytes(), completedBytes.longValue());
             cleanup();
             pulsarRecordCursor.close();
         }
@@ -345,6 +361,99 @@ public class TestPulsarRecordCursor
         }
     }
 
+    private class MockKeyValueSchemaCursor
+            extends MockCursor
+    {
+        private KeyValueSchema schema;
+
+        private KeyValue message;
+
+        public MockKeyValueSchemaCursor(String topic, String schemaName, long entries, Map<String, Integer> positions,
+                                        Map<String, Long> topicsToNumEntries, Map<String, Function<Integer, Object>> fooFunctions,
+                                        Map<String, SchemaInfo> topicsToSchemas, LongAdder completedBytes, KeyValueSchema schema,
+                                        KeyValue message)
+        {
+            super(topic, schemaName, entries, positions, topicsToNumEntries, fooFunctions,
+                    topicsToSchemas, completedBytes);
+            this.schema = schema;
+            this.message = message;
+        }
+
+        @Override
+        public void asyncReadEntries(int numberOfEntriesToRead, long maxSizeBytes, AsyncCallbacks.ReadEntriesCallback callback, Object ctx)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    List<Entry> entries = new LinkedList<>();
+                    for (int i = 0; i < numberOfEntriesToRead; i++) {
+                        org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata.Builder messageMetadataBuilder =
+                                org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata.newBuilder()
+                                        .setProducerName("test-producer").setSequenceId(positions.get(topic))
+                                        .setPublishTime(System.currentTimeMillis());
+
+                        if (KeyValueEncodingType.SEPARATED.equals(schema.getKeyValueEncodingType())) {
+                            messageMetadataBuilder
+                                    .setPartitionKey(new String(schema
+                                            .getKeySchema().encode(message.getKey()), Charset.forName(
+                                            "UTF-8")))
+                                    .setPartitionKeyB64Encoded(false);
+                        }
+
+                        org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata messageMetadata = messageMetadataBuilder.build();
+
+                        io.netty.buffer.ByteBuf dataPayload = io.netty.buffer.Unpooled
+                                .wrappedBuffer(schema.encode(message));
+
+                        io.netty.buffer.ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
+                                org.apache.pulsar.common.protocol.Commands.ChecksumType.Crc32c, messageMetadata, dataPayload);
+
+                        entries.add(EntryImpl.create(0, positions.get(topic), Unpooled.wrappedBuffer(byteBuf.nioBuffer())));
+                        positions.put(topic, positions.get(topic) + 1);
+                    }
+
+                    callback.readEntriesComplete(entries, ctx);
+                }
+            }).start();
+        }
+    }
+
+    private class MockKeyValueSchemaManagedLedgerFactory
+            extends MockManagedLedgerFactory
+    {
+        private long entriesNum;
+
+        private KeyValueSchema schema;
+
+        private KeyValue message;
+
+        public MockKeyValueSchemaManagedLedgerFactory(Map<String, Long> topicsToNumEntries,
+                                                      Map<String, Function<Integer, Object>> fooFunctions,
+                                                      Map<String, SchemaInfo> topicsToSchemas, LongAdder completedBytes,
+                                                      long entriesNum, KeyValueSchema schema, KeyValue message)
+        {
+            super(topicsToNumEntries, fooFunctions, topicsToSchemas, completedBytes);
+            this.entriesNum = entriesNum;
+            this.schema = schema;
+            this.message = message;
+        }
+
+        @Override
+        public ReadOnlyCursor openReadOnlyCursor(String topic, Position position, ManagedLedgerConfig managedLedgerConfig) throws InterruptedException, ManagedLedgerException
+        {
+            PositionImpl positionImpl = (PositionImpl) position;
+
+            int entryId = positionImpl.getEntryId() == -1 ? 0 : (int) positionImpl.getEntryId();
+
+            positions.put(topic, entryId);
+            return new MockKeyValueSchemaCursor(topic, "", entriesNum,
+                positions, null, null, null, null,
+                schema, message);
+        }
+    }
+
     /**
      * mock a simple PulsarRecordCursor for KeyValueSchema test.
      *
@@ -359,121 +468,8 @@ public class TestPulsarRecordCursor
     private PulsarRecordCursor mockKeyValueSchemaPulsarRecordCursor(final Long entriesNum, final TopicName topicName,
                                                                     final KeyValueSchema schema, KeyValue message, List<PulsarColumnHandle> columnHandles) throws Exception
     {
-        ManagedLedgerFactory managedLedgerFactory = mock(ManagedLedgerFactory.class);
-
-        when(managedLedgerFactory.openReadOnlyCursor(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).then(new Answer<ReadOnlyCursor>()
-        {
-            private Map<String, Integer> positions = new HashMap<>();
-
-            @Override
-            public ReadOnlyCursor answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String topic = (String) args[0];
-                PositionImpl positionImpl = (PositionImpl) args[1];
-                int position = positionImpl.getEntryId() == -1 ? 0 : (int) positionImpl.getEntryId();
-
-                positions.put(topic, position);
-                ReadOnlyCursorImpl readOnlyCursor = mock(ReadOnlyCursorImpl.class);
-                doReturn(entriesNum).when(readOnlyCursor).getNumberOfEntries();
-
-                doAnswer(new Answer<Void>()
-                {
-                    @Override
-                    public Void answer(InvocationOnMock invocation) throws Throwable
-                    {
-                        Object[] args = invocation.getArguments();
-                        Integer skipEntries = (Integer) args[0];
-                        positions.put(topic, positions.get(topic) + skipEntries);
-                        return null;
-                    }
-                }).when(readOnlyCursor).skipEntries(anyInt());
-
-                when(readOnlyCursor.getReadPosition()).thenAnswer(new Answer<PositionImpl>()
-                {
-                    @Override
-                    public PositionImpl answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        return PositionImpl.get(0, positions.get(topic));
-                    }
-                });
-
-                doAnswer(new Answer()
-                {
-                    @Override
-                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        Integer readEntries = (Integer) args[0];
-                        AsyncCallbacks.ReadEntriesCallback callback = (AsyncCallbacks.ReadEntriesCallback) args[2];
-                        Object ctx = args[3];
-
-                        new Thread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                List<Entry> entries = new LinkedList<>();
-                                for (int i = 0; i < readEntries; i++) {
-                                    MessageMetadata.Builder messageMetadataBuilder =
-                                            MessageMetadata.newBuilder()
-                                                    .setProducerName("test-producer").setSequenceId(positions.get(topic))
-                                                    .setPublishTime(System.currentTimeMillis());
-
-                                    if (KeyValueEncodingType.SEPARATED.equals(schema.getKeyValueEncodingType())) {
-                                        messageMetadataBuilder
-                                                .setPartitionKey(new String(schema
-                                                        .getKeySchema().encode(message.getKey()), Charset.forName(
-                                                        "UTF-8")))
-                                                .setPartitionKeyB64Encoded(false);
-                                    }
-
-                                    MessageMetadata messageMetadata = messageMetadataBuilder.build();
-
-                                    ByteBuf dataPayload = Unpooled
-                                            .copiedBuffer(schema.encode(message));
-
-                                    ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
-                                            Commands.ChecksumType.Crc32c, messageMetadata, dataPayload);
-
-                                    entries.add(EntryImpl.create(0, positions.get(topic), byteBuf));
-                                    positions.put(topic, positions.get(topic) + 1);
-                                }
-
-                                callback.readEntriesComplete(entries, ctx);
-                            }
-                        }).start();
-
-                        return null;
-                    }
-                }).when(readOnlyCursor).asyncReadEntries(anyInt(), anyLong(), ArgumentMatchers.any(), ArgumentMatchers.any());
-
-                when(readOnlyCursor.hasMoreEntries()).thenAnswer(new Answer<Boolean>()
-                {
-                    @Override
-                    public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        return positions.get(topic) < entriesNum;
-                    }
-                });
-
-                when(readOnlyCursor.getNumberOfEntries(ArgumentMatchers.any())).then(new Answer<Long>()
-                {
-                    @Override
-                    public Long answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        com.google.common.collect.Range<PositionImpl> range
-                                = (com.google.common.collect.Range<PositionImpl>) args[0];
-                        return (range.upperEndpoint().getEntryId() + 1) - range.lowerEndpoint().getEntryId();
-                    }
-                });
-
-                when(readOnlyCursor.getCurrentLedgerInfo()).thenReturn(MLDataFormats.ManagedLedgerInfo.LedgerInfo.newBuilder().setLedgerId(0).build());
-
-                return readOnlyCursor;
-            }
-        });
+        ManagedLedgerFactory managedLedgerFactory = new MockKeyValueSchemaManagedLedgerFactory(null, null,
+                null, completedBytes, entriesNum, schema, message);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -487,13 +483,12 @@ public class TestPulsarRecordCursor
                 objectMapper.writeValueAsString(
                         schema.getSchemaInfo().getProperties()), null);
 
-        PulsarRecordCursor pulsarRecordCursor = spy(new PulsarRecordCursor(
+        PulsarRecordCursor pulsarRecordCursor = new PulsarRecordCursor(
                 columnHandles, split,
                 pulsarConnectorConfig, managedLedgerFactory, new ManagedLedgerConfig(),
-                new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory));
+                new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory);
 
-        PulsarSqlSchemaInfoProvider pulsarSqlSchemaInfoProvider = mock(PulsarSqlSchemaInfoProvider.class);
-        when(pulsarSqlSchemaInfoProvider.getSchemaByVersion(ArgumentMatchers.any())).thenReturn(completedFuture(schema.getSchemaInfo()));
+        SchemaInfoProvider pulsarSqlSchemaInfoProvider = new MockPulsarSqlSchemaInfoProvider(schema.getSchemaInfo());
         pulsarRecordCursor.setPulsarSqlSchemaInfoProvider(pulsarSqlSchemaInfoProvider);
 
         return pulsarRecordCursor;

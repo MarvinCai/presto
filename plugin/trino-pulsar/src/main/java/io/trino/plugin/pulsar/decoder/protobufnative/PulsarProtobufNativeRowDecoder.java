@@ -1,32 +1,27 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
-import com.google.protobuf.DynamicMessage;
 import io.airlift.log.Logger;
-import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarRowDecoder;
 import io.trino.spi.TrinoException;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeSchema;
+import org.apache.pulsar.shade.com.google.protobuf.DynamicMessage;
+import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
 
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +33,7 @@ import static io.trino.spi.StandardErrorCode.GENERIC_INTERNAL_ERROR;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Pulsar {@link org.apache.pulsar.common.schema.SchemaType#PROTOBUF_NATIVE} RowDecoder.
+ * Pulsar {@link org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType#PROTOBUF_NATIVE} RowDecoder.
  */
 public class PulsarProtobufNativeRowDecoder
         implements PulsarRowDecoder

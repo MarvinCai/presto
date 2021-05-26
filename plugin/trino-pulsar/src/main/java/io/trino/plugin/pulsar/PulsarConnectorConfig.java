@@ -1,20 +1,15 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
@@ -24,10 +19,10 @@ import org.apache.bookkeeper.stats.NullStatsProvider;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminBuilder;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.common.naming.NamedEntity;
-import org.apache.pulsar.common.nar.NarClassLoader;
-import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.common.protocol.Commands;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamedEntity;
+import org.apache.pulsar.shade.org.apache.pulsar.common.nar.NarClassLoader;
+import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.ClientBuilder;
@@ -39,7 +34,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 
 /**
- * Stores configuration of the Pulsar connector for Trino.
+ * Configuration of the Pulsar connector for Trino.
  */
 public class PulsarConnectorConfig
         implements AutoCloseable
@@ -109,13 +104,13 @@ public class PulsarConnectorConfig
 
     public int getMaxMessageSize()
     {
-        return this.maxMessageSize;
+        return maxMessageSize;
     }
 
     @NotNull
     public String getZookeeperUri()
     {
-        return this.zookeeperUri;
+        return zookeeperUri;
     }
 
     @Config("pulsar.zookeeper-uri")
@@ -128,7 +123,7 @@ public class PulsarConnectorConfig
     @NotNull
     public int getMaxEntryReadBatchSize()
     {
-        return this.entryReadBatchSize;
+        return entryReadBatchSize;
     }
 
     @Config("pulsar.max-entry-read-batch-size")
@@ -141,7 +136,7 @@ public class PulsarConnectorConfig
     @NotNull
     public int getTargetNumSplits()
     {
-        return this.targetNumSplits;
+        return targetNumSplits;
     }
 
     @Config("pulsar.target-num-splits")
@@ -154,7 +149,7 @@ public class PulsarConnectorConfig
     @NotNull
     public int getMaxSplitMessageQueueSize()
     {
-        return this.maxSplitMessageQueueSize;
+        return maxSplitMessageQueueSize;
     }
 
     @Config("pulsar.max-split-message-queue-size")
@@ -167,7 +162,7 @@ public class PulsarConnectorConfig
     @NotNull
     public int getMaxSplitEntryQueueSize()
     {
-        return this.maxSplitEntryQueueSize;
+        return maxSplitEntryQueueSize;
     }
 
     @Config("pulsar.max-split-entry-queue-size")
@@ -180,7 +175,7 @@ public class PulsarConnectorConfig
     @NotNull
     public long getMaxSplitQueueSizeBytes()
     {
-        return this.maxSplitQueueSizeBytes;
+        return maxSplitQueueSizeBytes;
     }
 
     @Config("pulsar.max-split-queue-cache-size")
@@ -250,7 +245,7 @@ public class PulsarConnectorConfig
 
     public int getManagedLedgerOffloadMaxThreads()
     {
-        return this.managedLedgerOffloadMaxThreads;
+        return managedLedgerOffloadMaxThreads;
     }
 
     @Config("pulsar.managed-ledger-offload-max-threads")
@@ -263,7 +258,7 @@ public class PulsarConnectorConfig
 
     public String getManagedLedgerOffloadDriver()
     {
-        return this.managedLedgerOffloadDriver;
+        return managedLedgerOffloadDriver;
     }
 
     @Config("pulsar.managed-ledger-offload-driver")
@@ -275,7 +270,7 @@ public class PulsarConnectorConfig
 
     public String getOffloadersDirectory()
     {
-        return this.offloadersDirectory;
+        return offloadersDirectory;
     }
 
     @Config("pulsar.offloaders-directory")
@@ -287,7 +282,7 @@ public class PulsarConnectorConfig
 
     public Map<String, String> getOffloaderProperties()
     {
-        return this.offloaderProperties;
+        return offloaderProperties;
     }
 
     @Config("pulsar.offloader-properties")
@@ -301,7 +296,7 @@ public class PulsarConnectorConfig
 
     public String getAuthPlugin()
     {
-        return this.authPluginClassName;
+        return authPluginClassName;
     }
 
     @Config("pulsar.auth-plugin")
@@ -313,7 +308,7 @@ public class PulsarConnectorConfig
 
     public String getAuthParams()
     {
-        return this.authParams;
+        return authParams;
     }
 
     @Config("pulsar.auth-params")
@@ -511,7 +506,7 @@ public class PulsarConnectorConfig
     }
 
     @Override
-    public void close() throws Exception
+    public void close()
     {
         this.pulsarAdmin.close();
     }

@@ -154,7 +154,7 @@ Provider to collect Pulsar Trino connector stats. Default is 'NullStatsProvider'
 ``pulsar.stats-provider-configs``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Configuration for StatsProvider in key-value format. e.g. `{"httpServerEnabled":"false", "prometheusStatsHttpPort":"9092", "prometheusStatsHttpEnable":"true"}`
+Configuration for StatsProvider in key-value format. e.g. {"httpServerEnabled":"false", "prometheusStatsHttpPort":"9092", "prometheusStatsHttpEnable":"true"}
 
 ``pulsar.namespace-delimiter-rewrite-enable``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

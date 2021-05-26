@@ -1,20 +1,15 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar.decoder.json;
 
@@ -22,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
-import io.airlift.log.Logger;
 import io.airlift.slice.Slice;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
@@ -47,8 +41,8 @@ import io.trino.spi.type.TinyintType;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
-import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +75,7 @@ import static java.util.Objects.requireNonNull;
  * 1) support {@link ArrayType}.
  * 2) support {@link MapType}.
  * 3) support {@link RowType}.
- * 4) support {@link TimestampType},{@link DateType},
- * {@link TimeType}.
+ * 4) support {@link TimestampType},{@link DateType},{@link TimeType}.
  * 5) support {@link RealType}.
  */
 public class PulsarJsonFieldDecoder
@@ -98,28 +91,28 @@ public class PulsarJsonFieldDecoder
         if (!isSupportedType(columnHandle.getType())) {
             JsonRowDecoderFactory.throwUnsupportedColumnType(columnHandle);
         }
-        Pair<Long, Long> range = getNumRangeByType(columnHandle.getType());
+        AbstractMap.SimpleEntry<Long, Long> range = getNumRangeByType(columnHandle.getType());
         minValue = range.getKey();
         maxValue = range.getValue();
     }
 
-    private static Pair<Long, Long> getNumRangeByType(Type type)
+    private static AbstractMap.SimpleEntry<Long, Long> getNumRangeByType(Type type)
     {
         if (type == TINYINT) {
-            return Pair.of((long) Byte.MIN_VALUE, (long) Byte.MAX_VALUE);
+            return new AbstractMap.SimpleEntry((long) Byte.MIN_VALUE, (long) Byte.MAX_VALUE);
         }
         else if (type == SMALLINT) {
-            return Pair.of((long) Short.MIN_VALUE, (long) Short.MAX_VALUE);
+            return new AbstractMap.SimpleEntry((long) Short.MIN_VALUE, (long) Short.MAX_VALUE);
         }
         else if (type == INTEGER) {
-            return Pair.of((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE);
+            return new AbstractMap.SimpleEntry((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE);
         }
         else if (type == BIGINT) {
-            return Pair.of((long) Long.MIN_VALUE, (long) Long.MAX_VALUE);
+            return new AbstractMap.SimpleEntry((long) Long.MIN_VALUE, (long) Long.MAX_VALUE);
         }
         else {
             // those values will not be used if column type is not one of mentioned above
-            return Pair.of(Long.MIN_VALUE, Long.MAX_VALUE);
+            return new AbstractMap.SimpleEntry(Long.MIN_VALUE, Long.MAX_VALUE);
         }
     }
 
@@ -217,7 +210,7 @@ public class PulsarJsonFieldDecoder
         @Override
         public Slice getSlice()
         {
-            return getSlice(value, columnHandle.getType(), columnHandle.getName());
+            return getSlice(value, columnHandle.getType());
         }
 
         @Override
@@ -283,7 +276,7 @@ public class PulsarJsonFieldDecoder
                     format("could not parse value '%s' as '%s' for column '%s'", value.asText(), type, columnName));
         }
 
-        private static Slice getSlice(JsonNode value, Type type, String columnName)
+        private static Slice getSlice(JsonNode value, Type type)
         {
             String textValue = value.isValueNode() ? value.asText() : value.toString();
             Slice slice = utf8Slice(textValue);
@@ -365,7 +358,7 @@ public class PulsarJsonFieldDecoder
                     || type instanceof IntegerType || type instanceof SmallintType
                     || type instanceof TinyintType || type instanceof TimestampType
                     || type instanceof TimeType || type instanceof DateType) {
-                Pair<Long, Long> numRange = getNumRangeByType(type);
+                AbstractMap.SimpleEntry<Long, Long> numRange = getNumRangeByType(type);
                 type.writeLong(blockBuilder, getLong(value, type, columnName, numRange.getKey(), numRange.getValue()));
                 return;
             }
@@ -376,7 +369,7 @@ public class PulsarJsonFieldDecoder
             }
 
             if (type instanceof VarcharType || type instanceof VarbinaryType) {
-                type.writeSlice(blockBuilder, getSlice(value, type, columnName));
+                type.writeSlice(blockBuilder, getSlice(value, type));
                 return;
             }
 
@@ -457,6 +450,4 @@ public class PulsarJsonFieldDecoder
             return null;
         }
     }
-
-    private static final Logger log = Logger.get(PulsarJsonFieldDecoder.class);
 }

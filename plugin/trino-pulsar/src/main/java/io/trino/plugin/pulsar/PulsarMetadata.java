@@ -1,24 +1,20 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -39,15 +35,14 @@ import io.trino.spi.connector.Constraint;
 import io.trino.spi.connector.SchemaTableName;
 import io.trino.spi.connector.SchemaTablePrefix;
 import io.trino.spi.connector.TableNotFoundException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.schema.KeyValueSchemaInfo;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.schema.KeyValue;
-import org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValue;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
 
 import javax.inject.Inject;
 
@@ -65,7 +60,7 @@ import static io.trino.spi.StandardErrorCode.QUERY_REJECTED;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Metadata for Trino pulsar connector.
+ * Metadata for Trino Pulsar connector.
  */
 public class PulsarMetadata
         implements ConnectorMetadata
@@ -102,7 +97,7 @@ public class PulsarMetadata
         this.connectorId = requireNonNull(connectorId, "connectorId is null").toString();
         this.pulsarConnectorConfig = pulsarConnectorConfig;
         try {
-            this.pulsarAdmin = pulsarConnectorConfig.getPulsarAdmin();
+            pulsarAdmin = pulsarConnectorConfig.getPulsarAdmin();
         }
         catch (PulsarClientException e) {
             throw new RuntimeException(e);
@@ -125,7 +120,7 @@ public class PulsarMetadata
                 throw new TrinoException(QUERY_REJECTED, "Failed to get schemas from pulsar: Unauthorized");
             }
             throw new RuntimeException("Failed to get schemas from pulsar: "
-                    + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                    + Throwables.getRootCause(e).getLocalizedMessage(), e);
         }
         return trinoSchemas;
     }
@@ -135,7 +130,7 @@ public class PulsarMetadata
     {
         TopicName topicName = getMatchedTopicName(tableName);
         return new PulsarTableHandle(
-                this.connectorId,
+                connectorId,
                 tableName.getSchemaName(),
                 tableName.getTableName(),
                 topicName.getLocalName());
@@ -185,7 +180,7 @@ public class PulsarMetadata
             else {
                 List<String> pulsarTopicList = null;
                 try {
-                    pulsarTopicList = this.pulsarAdmin.topics()
+                    pulsarTopicList = pulsarAdmin.topics()
                             .getList(PulsarConnectorUtils.restoreNamespaceDelimiterIfNeeded(schemaNameOrNull, pulsarConnectorConfig));
                 }
                 catch (PulsarAdminException e) {
@@ -198,7 +193,7 @@ public class PulsarMetadata
                                 String.format("Failed to get tables/topics in %s: Unauthorized", schemaNameOrNull));
                     }
                     throw new RuntimeException("Failed to get tables/topics in " + schemaNameOrNull + ": "
-                            + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                            + Throwables.getRootCause(e).getLocalizedMessage(), e);
                 }
                 if (pulsarTopicList != null) {
                     pulsarTopicList.stream()
@@ -295,10 +290,9 @@ public class PulsarMetadata
 
         SchemaInfo schemaInfo;
         try {
-            schemaInfo = this.pulsarAdmin.schemas().getSchemaInfo(topicName.getSchemaName());
+            schemaInfo = pulsarAdmin.schemas().getSchemaInfo(topicName.getSchemaName());
         }
         catch (PulsarAdminException e) {
-            System.out.println(e.getStatusCode() + "******");
             if (e.getStatusCode() == 404) {
                 // use default schema because there is no schema
                 schemaInfo = PulsarSqlSchemaInfoProvider.defaultSchema();
@@ -310,7 +304,7 @@ public class PulsarMetadata
             }
             else {
                 throw new RuntimeException("Failed to get pulsar topic schema information for topic "
-                        + topicName + ": " + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                        + topicName + ": " + Throwables.getRootCause(e).getLocalizedMessage(), e);
             }
         }
         List<ColumnMetadata> handles = getPulsarColumns(
@@ -400,7 +394,7 @@ public class PulsarMetadata
 
         Set<String> topicsSetWithoutPartition;
         try {
-            List<String> allTopics = this.pulsarAdmin.topics().getList(namespace);
+            List<String> allTopics = pulsarAdmin.topics().getList(namespace);
             topicsSetWithoutPartition = allTopics.stream()
                     .map(t -> t.split(TopicName.PARTITIONED_TOPIC_SUFFIX)[0])
                     .collect(Collectors.toSet());
@@ -414,7 +408,7 @@ public class PulsarMetadata
                         String.format("Failed to get topics in schema %s: Unauthorized", namespace));
             }
             throw new RuntimeException("Failed to get topics in schema " + namespace
-                    + ": " + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                    + ": " + Throwables.getRootCause(e).getLocalizedMessage(), e);
         }
 
         List<String> matchedTopics = topicsSetWithoutPartition.stream()
@@ -432,7 +426,9 @@ public class PulsarMetadata
             log.error(errMsg);
             throw new TableNotFoundException(schemaTableName, errMsg);
         }
-        log.info("matched topic %s for table %s ", matchedTopics.get(0), schemaTableName);
+        if (log.isDebugEnabled()) {
+            log.debug("matched topic %s for table %s ", matchedTopics.get(0), schemaTableName);
+        }
         return TopicName.get(matchedTopics.get(0));
     }
 }

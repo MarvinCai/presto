@@ -1,28 +1,22 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import io.airlift.log.Logger;
-import io.netty.buffer.ByteBuf;
 import io.trino.spi.TrinoException;
 import io.trino.spi.connector.ColumnHandle;
 import io.trino.spi.connector.ConnectorSession;
@@ -35,21 +29,20 @@ import io.trino.spi.predicate.Domain;
 import io.trino.spi.predicate.Range;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.spi.type.IntegerType;
-import org.apache.bookkeeper.mledger.Entry;
-import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.MessageImpl;
-import org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
 
 import javax.inject.Inject;
 
@@ -65,10 +58,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.trino.spi.StandardErrorCode.QUERY_REJECTED;
 import static java.lang.Math.toIntExact;
 import static java.util.Objects.requireNonNull;
-import static org.apache.bookkeeper.mledger.ManagedCursor.FindPositionConstraint.SearchAllAvailableEntries;
+import static org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedCursor.FindPositionConstraint.SearchAllAvailableEntries;
 
 /**
- * The class helping to manage splits.
+ * The class helping to manage Trino Pulsar splits.
  */
 public class PulsarSplitManager
         implements ConnectorSplitManager
@@ -129,7 +122,7 @@ public class PulsarSplitManager
             else {
                 throw new RuntimeException("Failed to get pulsar topic schema for topic "
                         + String.format("%s/%s", namespace, tableHandle.getTopicName())
-                        + ": " + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                        + ": " + Throwables.getRootCause(e).getLocalizedMessage(), e);
             }
         }
 
@@ -145,12 +138,16 @@ public class PulsarSplitManager
             if (!PulsarConnectorUtils.isPartitionedTopic(topicName, this.pulsarAdmin)) {
                 splits = getSplitsNonPartitionedTopic(
                         numSplits, topicName, tableHandle, schemaInfo, tupleDomain, offloadPolicies);
-                log.debug("Splits for non-partitioned topic %s: %s", topicName, splits);
+                if (log.isDebugEnabled()) {
+                    log.debug("Splits for non-partitioned topic %s: %s", topicName, splits);
+                }
             }
             else {
                 splits = getSplitsPartitionedTopic(
                         numSplits, topicName, tableHandle, schemaInfo, tupleDomain, offloadPolicies);
-                log.debug("Splits for partitioned topic %s: %s", topicName, splits);
+                if (log.isDebugEnabled()) {
+                    log.debug("Splits for partitioned topic %s: %s", topicName, splits);
+                }
             }
         }
         catch (Exception e) {
@@ -161,7 +158,7 @@ public class PulsarSplitManager
     }
 
     @VisibleForTesting
-    Collection<PulsarSplit> getSplitsPartitionedTopic(int numSplits, TopicName topicName, PulsarTableHandle
+    protected Collection<PulsarSplit> getSplitsPartitionedTopic(int numSplits, TopicName topicName, PulsarTableHandle
             tableHandle, SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
                                                       OffloadPolicies offloadPolicies) throws Exception
     {
@@ -176,7 +173,7 @@ public class PulsarSplitManager
 
         int splitRemainder = actualNumSplits % predicatedPartitions.size();
 
-        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCache.getConnectorCache(pulsarConnectorConfig);
+        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
         ManagedLedgerFactory managedLedgerFactory = pulsarConnectorCache.getManagedLedgerFactory();
         ManagedLedgerConfig managedLedgerConfig = pulsarConnectorCache.getManagedLedgerConfig(
                 topicName.getNamespaceObject(), offloadPolicies, pulsarConnectorConfig);
@@ -212,7 +209,7 @@ public class PulsarSplitManager
             }
 
             throw new RuntimeException("Failed to get metadata for partitioned topic "
-                    + topicName + ": " + ExceptionUtils.getRootCause(e).getLocalizedMessage(), e);
+                    + topicName + ": " + Throwables.getRootCause(e).getLocalizedMessage(), e);
         }
         List<Integer> predicatePartitions = new ArrayList<>();
         if (tupleDomain.getDomains().isPresent()) {
@@ -251,11 +248,11 @@ public class PulsarSplitManager
     }
 
     @VisibleForTesting
-    Collection<PulsarSplit> getSplitsNonPartitionedTopic(int numSplits, TopicName topicName,
+    protected Collection<PulsarSplit> getSplitsNonPartitionedTopic(int numSplits, TopicName topicName,
                                                          PulsarTableHandle tableHandle, SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
                                                          OffloadPolicies offloadPolicies) throws Exception
     {
-        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCache.getConnectorCache(pulsarConnectorConfig);
+        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
         ManagedLedgerFactory managedLedgerFactory = pulsarConnectorCache.getManagedLedgerFactory();
         ManagedLedgerConfig managedLedgerConfig = pulsarConnectorCache.getManagedLedgerConfig(
                 topicName.getNamespaceObject(), offloadPolicies, pulsarConnectorConfig);
@@ -273,7 +270,7 @@ public class PulsarSplitManager
     }
 
     @VisibleForTesting
-    Collection<PulsarSplit> getSplitsForTopic(String topicNamePersistenceEncoding,
+    protected Collection<PulsarSplit> getSplitsForTopic(String topicNamePersistenceEncoding,
                                               ManagedLedgerFactory managedLedgerFactory,
                                               ManagedLedgerConfig managedLedgerConfig,
                                               int numSplits,
@@ -340,7 +337,7 @@ public class PulsarSplitManager
                         endPosition.getLedgerId(),
                         tupleDomain,
                         objectMapper.writeValueAsString(schemaInfo.getProperties()),
-                        offloadPolicies);
+                        offloadPolicies == null ? null : org.apache.pulsar.common.policies.data.OffloadPolicies.create(offloadPolicies.toProperties()));
                 splits.add(pulsarSplit);
             }
             return splits;
@@ -360,13 +357,11 @@ public class PulsarSplitManager
     private static class PredicatePushdownInfo
     {
         private PositionImpl startPosition;
-        private PositionImpl endPosition;
         private long numOfEntries;
 
-        private PredicatePushdownInfo(PositionImpl startPosition, PositionImpl endPosition, long numOfEntries)
+        private PredicatePushdownInfo(PositionImpl startPosition, long numOfEntries)
         {
             this.startPosition = startPosition;
-            this.endPosition = endPosition;
             this.numOfEntries = numOfEntries;
         }
 
@@ -432,16 +427,18 @@ public class PulsarSplitManager
                             // Just use a close bound since trino can always filter out the extra entries even if
                             // the bound
                             // should be open or a mixture of open and closed
-                            com.google.common.collect.Range<PositionImpl> posRange =
-                                    com.google.common.collect.Range.range(overallStartPos,
-                                            com.google.common.collect.BoundType.CLOSED,
-                                            overallEndPos, com.google.common.collect.BoundType.CLOSED);
+                            org.apache.pulsar.shade.com.google.common.collect.Range<PositionImpl> posRange =
+                                    org.apache.pulsar.shade.com.google.common.collect.Range.range(overallStartPos,
+                                            org.apache.pulsar.shade.com.google.common.collect.BoundType.CLOSED,
+                                            overallEndPos, org.apache.pulsar.shade.com.google.common.collect.BoundType.CLOSED);
 
                             long numOfEntries = readOnlyCursor.getNumberOfEntries(posRange) - 1;
 
                             PredicatePushdownInfo predicatePushdownInfo =
-                                    new PredicatePushdownInfo(overallStartPos, overallEndPos, numOfEntries);
-                            log.debug("Predicate pushdown optimization calculated: %s", predicatePushdownInfo);
+                                    new PredicatePushdownInfo(overallStartPos, numOfEntries);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Predicate pushdown optimization calculated: %s", predicatePushdownInfo);
+                            }
                             return predicatePushdownInfo;
                         }
                     }
@@ -470,11 +467,8 @@ public class PulsarSplitManager
             ManagedLedgerException,
             InterruptedException
     {
-        return (PositionImpl) readOnlyCursor.findNewestMatching(SearchAllAvailableEntries, new Predicate<Entry>()
-        {
-            @Override
-            public boolean apply(Entry entry)
-            {
+        return (PositionImpl) readOnlyCursor.findNewestMatching(SearchAllAvailableEntries,
+            entry -> {
                 MessageImpl msg = null;
                 ByteBuf copiedByteBuf = null;
                 try {
@@ -494,7 +488,6 @@ public class PulsarSplitManager
                     }
                 }
                 return false;
-            }
-        });
+            });
     }
 }

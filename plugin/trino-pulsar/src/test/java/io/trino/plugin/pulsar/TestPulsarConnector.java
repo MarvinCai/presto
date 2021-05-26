@@ -1,71 +1,61 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import io.airlift.log.Logger;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.trino.plugin.pulsar.mock.MockManagedLedgerFactory;
+import io.trino.plugin.pulsar.mock.MockNamespaces;
+import io.trino.plugin.pulsar.mock.MockPulsarAdmin;
+import io.trino.plugin.pulsar.mock.MockPulsarConnectorCache;
+import io.trino.plugin.pulsar.mock.MockPulsarConnectorConfig;
+import io.trino.plugin.pulsar.mock.MockPulsarSplitManager;
+import io.trino.plugin.pulsar.mock.MockSchemas;
+import io.trino.plugin.pulsar.mock.MockTenants;
+import io.trino.plugin.pulsar.mock.MockTopics;
 import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.connector.ConnectorContext;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.testing.TestingConnectorContext;
-import org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.bookkeeper.mledger.Entry;
-import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.bookkeeper.mledger.Position;
-import org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.bookkeeper.mledger.impl.EntryImpl;
-import org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.bookkeeper.mledger.impl.ReadOnlyCursorImpl;
-import org.apache.bookkeeper.mledger.proto.MLDataFormats;
-import org.apache.bookkeeper.stats.NullStatsProvider;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.admin.Namespaces;
 import org.apache.pulsar.client.admin.PulsarAdmin;
-import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Schemas;
 import org.apache.pulsar.client.admin.Tenants;
 import org.apache.pulsar.client.admin.Topics;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.api.schema.SchemaDefinition;
+import org.apache.pulsar.client.impl.conf.ClientConfigurationData;
 import org.apache.pulsar.client.impl.schema.AvroSchema;
 import org.apache.pulsar.client.impl.schema.JSONSchema;
-import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-import org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
-import org.apache.pulsar.common.protocol.Commands;
-import org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.common.schema.SchemaType;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
+import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.EntryImpl;
+import org.apache.pulsar.shade.org.apache.bookkeeper.stats.NullStatsProvider;
+import org.apache.pulsar.shade.org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.core.Response;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -77,16 +67,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.toIntExact;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertNotNull;
 
 @Test(singleThreaded = true)
@@ -162,11 +147,11 @@ public abstract class TestPulsarConnector
         public double field4;
         public boolean field5;
         public long field6;
-        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
+        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
         public long timestamp;
-        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
+        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
         public int time;
-        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
+        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
         public int date;
         public Bar bar;
         public TestEnum field7;
@@ -353,7 +338,7 @@ public abstract class TestPulsarConnector
     public static PulsarMetadata mockColumnMetadata()
     {
         ConnectorContext trinoConnectorContext = new TestingConnectorContext();
-        PulsarConnectorConfig pulsarConnectorConfig = spy(new PulsarConnectorConfig());
+        PulsarConnectorConfig pulsarConnectorConfig = new PulsarConnectorConfig();
         pulsarConnectorConfig.setMaxEntryReadBatchSize(1);
         pulsarConnectorConfig.setMaxSplitEntryQueueSize(10);
         pulsarConnectorConfig.setMaxSplitMessageQueueSize(100);
@@ -401,7 +386,7 @@ public abstract class TestPulsarConnector
             ByteBuf payload = Unpooled
                     .copiedBuffer(schema.encode(foo));
 
-            ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
+            ByteBuf byteBuf = org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
                     Commands.ChecksumType.Crc32c, messageMetadata, payload);
 
             Entry entry = EntryImpl.create(0, i, byteBuf);
@@ -411,7 +396,7 @@ public abstract class TestPulsarConnector
         return entries;
     }
 
-    public long completedBytes;
+    public LongAdder completedBytes = new LongAdder();
 
     private static final Logger log = Logger.get(TestPulsarConnector.class);
 
@@ -448,278 +433,37 @@ public abstract class TestPulsarConnector
     @BeforeMethod
     public void setup() throws Exception
     {
-        this.pulsarConnectorConfig = spy(new PulsarConnectorConfig());
+        Tenants tenants = new MockTenants(new LinkedList<>(topicNames.stream()
+                .map(TopicName::getTenant)
+                .collect(Collectors.toSet())));
+
+        Namespaces namespaces = new MockNamespaces(topicNames);
+
+        Topics topics = new MockTopics(topicNames, partitionedTopicNames, partitionedTopicsToPartitions);
+
+        schemas = new MockSchemas(topicsToSchemas);
+
+        pulsarAdmin = new MockPulsarAdmin("http://localhost", new ClientConfigurationData(),
+                tenants, namespaces, topics, schemas);
+
+        this.pulsarConnectorConfig = new MockPulsarConnectorConfig(pulsarAdmin);
         this.pulsarConnectorConfig.setMaxEntryReadBatchSize(1);
         this.pulsarConnectorConfig.setMaxSplitEntryQueueSize(10);
         this.pulsarConnectorConfig.setMaxSplitMessageQueueSize(100);
 
-        Tenants tenants = mock(Tenants.class);
-        doReturn(new LinkedList<>(topicNames.stream()
-                .map(TopicName::getTenant)
-                .collect(Collectors.toSet()))).when(tenants).getTenants();
-
-        Namespaces namespaces = mock(Namespaces.class);
-
-        when(namespaces.getNamespaces(ArgumentMatchers.anyString())).thenAnswer(new Answer<List<String>>()
-        {
-            @Override
-            public List<String> answer(InvocationOnMock invocation) throws Throwable
-            {
-                Object[] args = invocation.getArguments();
-                String tenant = (String) args[0];
-                List<String> ns = getNamespace(tenant);
-                if (ns.isEmpty()) {
-                    throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
-                }
-                return ns;
-            }
-        });
-
-        Topics topics = mock(Topics.class);
-        when(topics.getList(ArgumentMatchers.anyString())).thenAnswer(new Answer<List<String>>()
-        {
-            @Override
-            public List<String> answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String ns = (String) args[0];
-                List<String> topics = getTopics(ns);
-                if (topics.isEmpty()) {
-                    throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
-                }
-                return topics;
-            }
-        });
-
-        when(topics.getPartitionedTopicList(ArgumentMatchers.anyString())).thenAnswer(new Answer<List<String>>()
-        {
-            @Override
-            public List<String> answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String ns = (String) args[0];
-                List<String> topics = getPartitionedTopics(ns);
-                if (topics.isEmpty()) {
-                    throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
-                }
-                return topics;
-            }
-        });
-
-        when(topics.getPartitionedTopicMetadata(ArgumentMatchers.anyString())).thenAnswer(new Answer<PartitionedTopicMetadata>()
-        {
-            @Override
-            public PartitionedTopicMetadata answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String topic = (String) args[0];
-                int partitions = partitionedTopicsToPartitions.get(topic) == null
-                        ? 0 : partitionedTopicsToPartitions.get(topic);
-                return new PartitionedTopicMetadata(partitions);
-            }
-        });
-
-        schemas = mock(Schemas.class);
-        when(schemas.getSchemaInfo(ArgumentMatchers.anyString())).thenAnswer(new Answer<SchemaInfo>()
-        {
-            @Override
-            public SchemaInfo answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String topic = (String) args[0];
-                if (topicsToSchemas.get(topic) != null) {
-                    return topicsToSchemas.get(topic);
-                }
-                else {
-                    throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
-                }
-            }
-        });
-
-        pulsarAdmin = mock(PulsarAdmin.class);
-        doReturn(tenants).when(pulsarAdmin).tenants();
-        doReturn(namespaces).when(pulsarAdmin).namespaces();
-        doReturn(topics).when(pulsarAdmin).topics();
-        doReturn(schemas).when(pulsarAdmin).schemas();
-        doReturn(pulsarAdmin).when(this.pulsarConnectorConfig).getPulsarAdmin();
-
         this.pulsarMetadata = new PulsarMetadata(pulsarConnectorId, this.pulsarConnectorConfig, dispatchingRowDecoderFactory);
-        this.pulsarSplitManager = Mockito.spy(new PulsarSplitManager(pulsarConnectorId, this.pulsarConnectorConfig));
+        this.pulsarSplitManager = new MockPulsarSplitManager(pulsarConnectorId, this.pulsarConnectorConfig);
 
-        ManagedLedgerFactory managedLedgerFactory = mock(ManagedLedgerFactory.class);
-        when(managedLedgerFactory.openReadOnlyCursor(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).then(new Answer<ReadOnlyCursor>()
-        {
-            private Map<String, Integer> positions = new HashMap<>();
+        ManagedLedgerFactory managedLedgerFactory = new MockManagedLedgerFactory(topicsToNumEntries, fooFunctions, topicsToSchemas,
+                completedBytes);
 
-            private int count;
-
-            @Override
-            public ReadOnlyCursor answer(InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Object[] args = invocationOnMock.getArguments();
-                String topic = (String) args[0];
-                PositionImpl positionImpl = (PositionImpl) args[1];
-
-                int position = positionImpl.getEntryId() == -1 ? 0 : (int) positionImpl.getEntryId();
-
-                positions.put(topic, position);
-                String schemaName = TopicName.get(
-                        TopicName.get(
-                                topic.replaceAll("/persistent", ""))
-                                .getPartitionedTopicName()).getSchemaName();
-                long entries = topicsToNumEntries.get(schemaName);
-
-                ReadOnlyCursorImpl readOnlyCursor = mock(ReadOnlyCursorImpl.class);
-                doReturn(entries).when(readOnlyCursor).getNumberOfEntries();
-
-                doAnswer(new Answer<Void>()
-                {
-                    @Override
-                    public Void answer(InvocationOnMock invocation) throws Throwable
-                    {
-                        Object[] args = invocation.getArguments();
-                        Integer skipEntries = (Integer) args[0];
-                        positions.put(topic, positions.get(topic) + skipEntries);
-                        return null;
-                    }
-                }).when(readOnlyCursor).skipEntries(ArgumentMatchers.anyInt());
-
-                when(readOnlyCursor.getReadPosition()).thenAnswer(new Answer<PositionImpl>()
-                {
-                    @Override
-                    public PositionImpl answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        return PositionImpl.get(0, positions.get(topic));
-                    }
-                });
-
-                doAnswer(new Answer()
-                {
-                    @Override
-                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        Integer readEntries = (Integer) args[0];
-                        AsyncCallbacks.ReadEntriesCallback callback = (AsyncCallbacks.ReadEntriesCallback) args[2];
-                        Object ctx = args[3];
-
-                        new Thread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                List<Entry> entries = new LinkedList<>();
-                                for (int i = 0; i < readEntries; i++) {
-                                    Bar bar = new Bar();
-                                    bar.field1 = fooFunctions.get("bar.field1").apply(count) == null ? null : (int) fooFunctions.get("bar.field1").apply(count);
-                                    bar.field2 = fooFunctions.get("bar.field2").apply(count) == null ? null : (String) fooFunctions.get("bar.field2").apply(count);
-                                    bar.field3 = (float) fooFunctions.get("bar.field3").apply(count);
-
-                                    Foo foo = new Foo();
-                                    foo.field1 = (int) fooFunctions.get("field1").apply(count);
-                                    foo.field2 = (String) fooFunctions.get("field2").apply(count);
-                                    foo.field3 = (float) fooFunctions.get("field3").apply(count);
-                                    foo.field4 = (double) fooFunctions.get("field4").apply(count);
-                                    foo.field5 = (boolean) fooFunctions.get("field5").apply(count);
-                                    foo.field6 = (long) fooFunctions.get("field6").apply(count);
-                                    foo.timestamp = (long) fooFunctions.get("timestamp").apply(count);
-                                    foo.time = (int) fooFunctions.get("time").apply(count);
-                                    foo.date = (int) fooFunctions.get("date").apply(count);
-                                    foo.bar = bar;
-                                    foo.field7 = (Foo.TestEnum) fooFunctions.get("field7").apply(count);
-
-                                    MessageMetadata messageMetadata = MessageMetadata.newBuilder()
-                                            .setProducerName("test-producer").setSequenceId(positions.get(topic))
-                                            .setPublishTime(System.currentTimeMillis())
-                                            .build();
-
-                                    Schema schema = topicsToSchemas.get(schemaName).getType() == SchemaType.AVRO ? AvroSchema.of(Foo.class) : JSONSchema.of(Foo.class);
-
-                                    ByteBuf payload = io.netty.buffer.Unpooled
-                                            .copiedBuffer(schema.encode(foo));
-
-                                    ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
-                                            Commands.ChecksumType.Crc32c, messageMetadata, payload);
-
-                                    completedBytes += byteBuf.readableBytes();
-
-                                    entries.add(EntryImpl.create(0, positions.get(topic), byteBuf));
-                                    positions.put(topic, positions.get(topic) + 1);
-                                    count++;
-                                }
-
-                                callback.readEntriesComplete(entries, ctx);
-                            }
-                        }).start();
-
-                        return null;
-                    }
-                }).when(readOnlyCursor).asyncReadEntries(ArgumentMatchers.anyInt(), anyLong(), ArgumentMatchers.any(), ArgumentMatchers.any());
-
-                when(readOnlyCursor.hasMoreEntries()).thenAnswer(new Answer<Boolean>()
-                {
-                    @Override
-                    public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        return positions.get(topic) < entries;
-                    }
-                });
-
-                when(readOnlyCursor.findNewestMatching(ArgumentMatchers.any(), ArgumentMatchers.any())).then(new Answer<Position>()
-                {
-                    @Override
-                    public Position answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        com.google.common.base.Predicate<Entry> predicate
-                                = (com.google.common.base.Predicate<Entry>) args[1];
-
-                        String schemaName = TopicName.get(
-                                TopicName.get(
-                                        topic.replaceAll("/persistent", ""))
-                                        .getPartitionedTopicName()).getSchemaName();
-                        List<Entry> entries = getTopicEntries(schemaName);
-
-                        Integer target = null;
-                        for (int i = entries.size() - 1; i >= 0; i--) {
-                            Entry entry = entries.get(i);
-                            if (predicate.apply(entry)) {
-                                target = i;
-                                break;
-                            }
-                        }
-
-                        return target == null ? null : new PositionImpl(0, target);
-                    }
-                });
-
-                when(readOnlyCursor.getNumberOfEntries(ArgumentMatchers.any())).then(new Answer<Long>()
-                {
-                    @Override
-                    public Long answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        com.google.common.collect.Range<PositionImpl> range
-                                = (com.google.common.collect.Range<PositionImpl>) args[0];
-
-                        return (range.upperEndpoint().getEntryId() + 1) - range.lowerEndpoint().getEntryId();
-                    }
-                });
-
-                when(readOnlyCursor.getCurrentLedgerInfo()).thenReturn(MLDataFormats.ManagedLedgerInfo.LedgerInfo.newBuilder().setLedgerId(0).build());
-
-                return readOnlyCursor;
-            }
-        });
-
-        PulsarConnectorCache.instance = mock(PulsarConnectorCache.class);
-        when(PulsarConnectorCache.instance.getManagedLedgerFactory()).thenReturn(managedLedgerFactory);
+        PulsarConnectorCacheImpl.instance = new MockPulsarConnectorCache(managedLedgerFactory);
 
         for (Map.Entry<TopicName, PulsarSplit> split : splits.entrySet()) {
-            PulsarRecordCursor pulsarRecordCursor = spy(new PulsarRecordCursor(
+            PulsarRecordCursor pulsarRecordCursor = new PulsarRecordCursor(
                     topicsToColumnHandles.get(split.getKey()), split.getValue(),
                     pulsarConnectorConfig, managedLedgerFactory, new ManagedLedgerConfig(),
-                    new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory));
+                    new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory);
             this.pulsarRecordCursors.put(split.getKey(), pulsarRecordCursor);
         }
     }
@@ -727,7 +471,7 @@ public abstract class TestPulsarConnector
     @AfterMethod(alwaysRun = true)
     public void cleanup()
     {
-        completedBytes = 0L;
+        completedBytes.reset();
     }
 
     @DataProvider(name = "rewriteNamespaceDelimiter")
@@ -740,7 +484,7 @@ public abstract class TestPulsarConnector
 
     protected void updateRewriteNamespaceDelimiterIfNeeded(String delimiter)
     {
-        if (StringUtils.isNotBlank(delimiter)) {
+        if (!Strings.nullToEmpty(delimiter).trim().isEmpty()) {
             pulsarConnectorConfig.setNamespaceDelimiterRewriteEnable(true);
             pulsarConnectorConfig.setRewriteNamespaceDelimiter(delimiter);
         }

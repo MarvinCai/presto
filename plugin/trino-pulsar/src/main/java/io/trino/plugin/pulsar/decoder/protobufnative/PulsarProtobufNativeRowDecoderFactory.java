@@ -1,25 +1,20 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.protobuf.Descriptors;
 import io.airlift.log.Logger;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.plugin.pulsar.PulsarColumnHandle;
@@ -41,10 +36,10 @@ import io.trino.spi.type.TypeManager;
 import io.trino.spi.type.TypeSignature;
 import io.trino.spi.type.TypeSignatureParameter;
 import io.trino.spi.type.VarbinaryType;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeSchema;
-import org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.shade.com.google.protobuf.Descriptors;
+import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +51,7 @@ import static io.trino.spi.type.VarcharType.createUnboundedVarcharType;
 import static java.util.stream.Collectors.toList;
 
 /**
- * PulsarRowDecoderFactory for {@link org.apache.pulsar.common.schema.SchemaType#PROTOBUF_NATIVE}.
+ * PulsarRowDecoderFactory for {@link org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType#PROTOBUF_NATIVE}.
  */
 public class PulsarProtobufNativeRowDecoderFactory
         implements PulsarRowDecoderFactory
@@ -81,7 +76,7 @@ public class PulsarProtobufNativeRowDecoderFactory
     {
         List<ColumnMetadata> columnMetadata;
         String schemaJson = new String(schemaInfo.getSchema());
-        if (StringUtils.isBlank(schemaJson)) {
+        if (Strings.nullToEmpty(schemaJson).trim().isEmpty()) {
             throw new TrinoException(NOT_SUPPORTED, "Topic "
                     + topicName.toString() + " does not have a valid schema");
         }

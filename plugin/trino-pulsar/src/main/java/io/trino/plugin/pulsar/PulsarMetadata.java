@@ -39,10 +39,11 @@ import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.schema.KeyValueSchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.KeyValue;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.naming.TopicDomain;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.KeyValue;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 
 import javax.inject.Inject;
 
@@ -55,6 +56,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static io.trino.plugin.pulsar.PulsarConnectorUtils.restoreNamespaceDelimiterIfNeeded;
 import static io.trino.spi.StandardErrorCode.NOT_FOUND;
 import static io.trino.spi.StandardErrorCode.QUERY_REJECTED;
 import static java.util.Objects.requireNonNull;
@@ -90,17 +92,18 @@ public class PulsarMetadata
                     });
 
     @Inject
-    public PulsarMetadata(PulsarConnectorId connectorId, PulsarConnectorConfig pulsarConnectorConfig,
+    public PulsarMetadata(PulsarConnectorId connectorId,
+                          PulsarConnectorConfig pulsarConnectorConfig,
                           PulsarDispatchingRowDecoderFactory decoderFactory)
     {
         this.decoderFactory = decoderFactory;
         this.connectorId = requireNonNull(connectorId, "connectorId is null").toString();
         this.pulsarConnectorConfig = pulsarConnectorConfig;
         try {
-            pulsarAdmin = pulsarConnectorConfig.getPulsarAdmin();
+            pulsarAdmin = PulsarAdminClientProvider.getPulsarAdmin(pulsarConnectorConfig);
         }
         catch (PulsarClientException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Fail to create Pulsar admin client", e);
         }
     }
 
@@ -126,7 +129,8 @@ public class PulsarMetadata
     }
 
     @Override
-    public ConnectorTableHandle getTableHandle(ConnectorSession session, SchemaTableName tableName)
+    public ConnectorTableHandle getTableHandle(ConnectorSession session,
+                                               SchemaTableName tableName)
     {
         TopicName topicName = getMatchedTopicName(tableName);
         return new PulsarTableHandle(
@@ -137,7 +141,8 @@ public class PulsarMetadata
     }
 
     @Override
-    public List<ConnectorTableLayoutResult> getTableLayouts(ConnectorSession session, ConnectorTableHandle table,
+    public List<ConnectorTableLayoutResult> getTableLayouts(ConnectorSession session,
+                                                            ConnectorTableHandle table,
                                                             Constraint constraint,
                                                             Optional<Set<ColumnHandle>> desiredColumns)
     {
@@ -148,13 +153,15 @@ public class PulsarMetadata
     }
 
     @Override
-    public ConnectorTableLayout getTableLayout(ConnectorSession session, ConnectorTableLayoutHandle handle)
+    public ConnectorTableLayout getTableLayout(ConnectorSession session,
+                                               ConnectorTableLayoutHandle handle)
     {
         return new ConnectorTableLayout(handle);
     }
 
     @Override
-    public ConnectorTableMetadata getTableMetadata(ConnectorSession session, ConnectorTableHandle table)
+    public ConnectorTableMetadata getTableMetadata(ConnectorSession session,
+                                                   ConnectorTableHandle table)
     {
         ConnectorTableMetadata connectorTableMetadata;
         SchemaTableName schemaTableName = PulsarHandleResolver.convertTableHandle(table).toSchemaTableName();
@@ -167,7 +174,8 @@ public class PulsarMetadata
     }
 
     @Override
-    public List<SchemaTableName> listTables(ConnectorSession session, Optional<String> schemaName)
+    public List<SchemaTableName> listTables(ConnectorSession session,
+                                            Optional<String> schemaName)
     {
         ImmutableList.Builder<SchemaTableName> builder = ImmutableList.builder();
 
@@ -181,7 +189,8 @@ public class PulsarMetadata
                 List<String> pulsarTopicList = null;
                 try {
                     pulsarTopicList = pulsarAdmin.topics()
-                            .getList(PulsarConnectorUtils.restoreNamespaceDelimiterIfNeeded(schemaNameOrNull, pulsarConnectorConfig));
+                            .getList(restoreNamespaceDelimiterIfNeeded(schemaNameOrNull, pulsarConnectorConfig),
+                                    TopicDomain.persistent);
                 }
                 catch (PulsarAdminException e) {
                     if (e.getStatusCode() == 404) {
@@ -208,7 +217,8 @@ public class PulsarMetadata
     }
 
     @Override
-    public Map<String, ColumnHandle> getColumnHandles(ConnectorSession session, ConnectorTableHandle tableHandle)
+    public Map<String, ColumnHandle> getColumnHandles(ConnectorSession session,
+                                                      ConnectorTableHandle tableHandle)
     {
         PulsarTableHandle pulsarTableHandle = PulsarHandleResolver.convertTableHandle(tableHandle);
 
@@ -231,7 +241,7 @@ public class PulsarMetadata
                     pulsarColumnMetadata.getDecoderExtraInfo().getMapping(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getDataFormat(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getFormatHint(),
-                    pulsarColumnMetadata.getHandleKeyValueType());
+                    Optional.of(pulsarColumnMetadata.getHandleKeyValueType()));
 
             columnHandles.put(
                     columnMetadata.getName(),
@@ -247,16 +257,17 @@ public class PulsarMetadata
     }
 
     @Override
-    public ColumnMetadata getColumnMetadata(ConnectorSession session, ConnectorTableHandle tableHandle, ColumnHandle
-            columnHandle)
+    public ColumnMetadata getColumnMetadata(ConnectorSession session,
+                                            ConnectorTableHandle tableHandle,
+                                            ColumnHandle columnHandle)
     {
         PulsarHandleResolver.convertTableHandle(tableHandle);
         return PulsarHandleResolver.convertColumnHandle(columnHandle).getColumnMetadata();
     }
 
     @Override
-    public Map<SchemaTableName, List<ColumnMetadata>> listTableColumns(ConnectorSession session, SchemaTablePrefix
-            prefix)
+    public Map<SchemaTableName, List<ColumnMetadata>> listTableColumns(ConnectorSession session,
+                                                                       SchemaTablePrefix prefix)
     {
         requireNonNull(prefix, "prefix is null");
 
@@ -280,7 +291,8 @@ public class PulsarMetadata
         return columns.build();
     }
 
-    private ConnectorTableMetadata getTableMetadata(SchemaTableName schemaTableName, boolean withInternalColumns)
+    private ConnectorTableMetadata getTableMetadata(SchemaTableName schemaTableName,
+                                                    boolean withInternalColumns)
     {
         if (schemaTableName.getSchemaName().equals(INFORMATION_SCHEMA)) {
             return null;
@@ -295,7 +307,7 @@ public class PulsarMetadata
         catch (PulsarAdminException e) {
             if (e.getStatusCode() == 404) {
                 // use default schema because there is no schema
-                schemaInfo = PulsarSqlSchemaInfoProvider.defaultSchema();
+                schemaInfo = PulsarSchemaInfoProvider.defaultSchema();
             }
             else if (e.getStatusCode() == 401) {
                 throw new TrinoException(QUERY_REJECTED,
@@ -379,7 +391,6 @@ public class PulsarMetadata
             topicName = tableNameTopicNameCache.get(schemaTableName);
         }
         catch (Exception e) {
-            log.error(e, "Failed to get table handler for tableName " + schemaTableName);
             if (e.getCause() != null && e.getCause() instanceof RuntimeException) {
                 throw (RuntimeException) e.getCause();
             }
@@ -390,11 +401,11 @@ public class PulsarMetadata
 
     private TopicName getMatchedPulsarTopic(SchemaTableName schemaTableName)
     {
-        String namespace = PulsarConnectorUtils.restoreNamespaceDelimiterIfNeeded(schemaTableName.getSchemaName(), pulsarConnectorConfig);
+        String namespace = restoreNamespaceDelimiterIfNeeded(schemaTableName.getSchemaName(), pulsarConnectorConfig);
 
         Set<String> topicsSetWithoutPartition;
         try {
-            List<String> allTopics = pulsarAdmin.topics().getList(namespace);
+            List<String> allTopics = pulsarAdmin.topics().getList(namespace, TopicDomain.persistent);
             topicsSetWithoutPartition = allTopics.stream()
                     .map(t -> t.split(TopicName.PARTITIONED_TOPIC_SUFFIX)[0])
                     .collect(Collectors.toSet());
@@ -416,14 +427,12 @@ public class PulsarMetadata
                 .collect(Collectors.toList());
 
         if (matchedTopics.size() == 0) {
-            log.error("Table %s not found", String.format("%s/%s", namespace, schemaTableName.getTableName()));
             throw new TableNotFoundException(schemaTableName);
         }
         else if (matchedTopics.size() != 1) {
             String errMsg = String.format("There are multiple topics %s matched the table name %s",
                     matchedTopics.toString(),
                     String.format("%s/%s", namespace, schemaTableName.getTableName()));
-            log.error(errMsg);
             throw new TableNotFoundException(schemaTableName, errMsg);
         }
         if (log.isDebugEnabled()) {

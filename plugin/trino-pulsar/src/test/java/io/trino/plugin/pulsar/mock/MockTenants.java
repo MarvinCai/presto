@@ -15,7 +15,7 @@ package io.trino.plugin.pulsar.mock;
 
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Tenants;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.TenantInfo;
+import org.apache.pulsar.common.policies.data.TenantInfo;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -69,6 +69,16 @@ public class MockTenants
     { }
 
     @Override
+    public void deleteTenant(String tenant, boolean force) throws PulsarAdminException
+    { }
+
+    @Override
     public CompletableFuture<Void> deleteTenantAsync(String s)
     { return null; }
+
+    @Override
+    public CompletableFuture<Void> deleteTenantAsync(String tenant, boolean force)
+    {
+        return null;
+    }
 }

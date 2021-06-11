@@ -48,17 +48,19 @@ public class PulsarConnectorFactory
     }
 
     @Override
-    public Connector create(String connectorId, Map<String, String> config, ConnectorContext context)
+    public Connector create(String connectorId,
+                            Map<String, String> config,
+                            ConnectorContext context)
     {
         requireNonNull(config, "requiredConfig is null");
         if (log.isDebugEnabled()) {
             log.debug("Creating Pulsar connector with configs: %s", config);
         }
         try {
-            // A plugin is not required to use Guice; it is just very convenient
             Bootstrap app = new Bootstrap(
                     new JsonModule(),
-                    new PulsarConnectorModule(connectorId, context.getTypeManager()));
+                    new PulsarConnectorModule(connectorId, context.getTypeManager()),
+                    binder -> binder.bind(ClassLoader.class).toInstance(PulsarConnectorFactory.class.getClassLoader()));
 
             Injector injector = app
                     .strictConfig()
@@ -67,7 +69,6 @@ public class PulsarConnectorFactory
                     .initialize();
 
             PulsarConnector connector = injector.getInstance(PulsarConnector.class);
-            connector.initConnectorCache();
             return connector;
         }
         catch (Exception e) {

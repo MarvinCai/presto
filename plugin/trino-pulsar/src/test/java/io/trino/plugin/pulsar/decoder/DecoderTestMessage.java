@@ -31,11 +31,11 @@ public class DecoderTestMessage
     public double doubleField;
     public boolean booleanField;
     public long longField;
-    @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
+    @org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
     public long timestampField;
-    @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
+    @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
     public int timeField;
-    @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
+    @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
     public int dateField;
     public TestRow rowField;
     public TestEnum enumField;

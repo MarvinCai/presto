@@ -15,27 +15,29 @@ package io.trino.plugin.pulsar.mock;
 
 import org.apache.pulsar.client.admin.Namespaces;
 import org.apache.pulsar.client.admin.PulsarAdminException;
-import org.apache.pulsar.shade.javax.ws.rs.ClientErrorException;
-import org.apache.pulsar.shade.javax.ws.rs.core.Response;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.AuthAction;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.AutoSubscriptionCreationOverride;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.AutoTopicCreationOverride;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.BacklogQuota;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.BookieAffinityGroupData;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.BundlesData;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.DelayedDeliveryPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.DispatchRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.InactiveTopicPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PersistencePolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.Policies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PublishRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.RetentionPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.SchemaAutoUpdateCompatibilityStrategy;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.SchemaCompatibilityStrategy;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.SubscribeRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.SubscriptionAuthMode;
+import org.apache.pulsar.client.api.SubscriptionType;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.policies.data.AuthAction;
+import org.apache.pulsar.common.policies.data.AutoSubscriptionCreationOverride;
+import org.apache.pulsar.common.policies.data.AutoTopicCreationOverride;
+import org.apache.pulsar.common.policies.data.BacklogQuota;
+import org.apache.pulsar.common.policies.data.BookieAffinityGroupData;
+import org.apache.pulsar.common.policies.data.BundlesData;
+import org.apache.pulsar.common.policies.data.DelayedDeliveryPolicies;
+import org.apache.pulsar.common.policies.data.DispatchRate;
+import org.apache.pulsar.common.policies.data.InactiveTopicPolicies;
+import org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.common.policies.data.PersistencePolicies;
+import org.apache.pulsar.common.policies.data.Policies;
+import org.apache.pulsar.common.policies.data.PublishRate;
+import org.apache.pulsar.common.policies.data.RetentionPolicies;
+import org.apache.pulsar.common.policies.data.SchemaAutoUpdateCompatibilityStrategy;
+import org.apache.pulsar.common.policies.data.SchemaCompatibilityStrategy;
+import org.apache.pulsar.common.policies.data.SubscribeRate;
+import org.apache.pulsar.common.policies.data.SubscriptionAuthMode;
+
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +69,28 @@ public class MockNamespaces
             throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
         }
         return ns;
+    }
+
+    @Override
+    public void removeDeduplicationStatus(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeDeduplicationStatusAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public Boolean getDeduplicationStatus(String namespace) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getDeduplicationStatusAsync(String namespace)
+    {
+        return null;
     }
 
     @Override
@@ -282,7 +306,7 @@ public class MockNamespaces
     }
 
     @Override
-    public int getNamespaceMessageTTL(String s) throws PulsarAdminException
+    public Integer getNamespaceMessageTTL(String s) throws PulsarAdminException
     {
         return 0;
     }
@@ -420,6 +444,28 @@ public class MockNamespaces
     }
 
     @Override
+    public void setSubscriptionTypesEnabled(String namespace, Set<SubscriptionType> subscriptionTypesEnabled) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setSubscriptionTypesEnabledAsync(String namespace, Set<SubscriptionType> subscriptionTypesEnabled)
+    {
+        return null;
+    }
+
+    @Override
+    public Set<SubscriptionType> getSubscriptionTypesEnabled(String namespace) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Set<SubscriptionType>> getSubscriptionTypesEnabledAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
     public void removeAutoSubscriptionCreation(String s) throws PulsarAdminException
     { }
 
@@ -457,6 +503,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<Void> removeBacklogQuotaAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public void removePersistence(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removePersistenceAsync(String namespace)
     {
         return null;
     }
@@ -521,6 +577,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<Void> setRetentionAsync(String s, RetentionPolicies retentionPolicies)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeRetention(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeRetentionAsync(String namespace)
     {
         return null;
     }
@@ -612,6 +678,16 @@ public class MockNamespaces
     }
 
     @Override
+    public void removeDispatchRate(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeDispatchRateAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
     public void setDispatchRate(String s, DispatchRate dispatchRate) throws PulsarAdminException
     { }
 
@@ -644,6 +720,16 @@ public class MockNamespaces
     }
 
     @Override
+    public void removeSubscribeRate(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeSubscribeRateAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
     public SubscribeRate getSubscribeRate(String s) throws PulsarAdminException
     {
         return null;
@@ -651,6 +737,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<SubscribeRate> getSubscribeRateAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeSubscriptionDispatchRate(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeSubscriptionDispatchRateAsync(String namespace)
     {
         return null;
     }
@@ -683,6 +779,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<Void> setReplicatorDispatchRateAsync(String s, DispatchRate dispatchRate)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeReplicatorDispatchRate(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeReplicatorDispatchRateAsync(String namespace)
     {
         return null;
     }
@@ -787,6 +893,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<Void> setDelayedDeliveryMessagesAsync(String s, DelayedDeliveryPolicies delayedDeliveryPolicies)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeDelayedDeliveryMessages(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeDelayedDeliveryMessagesAsync(String namespace)
     {
         return null;
     }
@@ -930,7 +1046,7 @@ public class MockNamespaces
     }
 
     @Override
-    public int getMaxConsumersPerTopic(String s) throws PulsarAdminException
+    public Integer getMaxConsumersPerTopic(String s) throws PulsarAdminException
     {
         return 0;
     }
@@ -952,7 +1068,17 @@ public class MockNamespaces
     }
 
     @Override
-    public int getMaxConsumersPerSubscription(String s) throws PulsarAdminException
+    public void removeMaxConsumersPerTopic(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeMaxConsumersPerTopicAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public Integer getMaxConsumersPerSubscription(String s) throws PulsarAdminException
     {
         return 0;
     }
@@ -974,7 +1100,17 @@ public class MockNamespaces
     }
 
     @Override
-    public int getMaxUnackedMessagesPerConsumer(String s) throws PulsarAdminException
+    public void removeMaxConsumersPerSubscription(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeMaxConsumersPerSubscriptionAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public Integer getMaxUnackedMessagesPerConsumer(String s) throws PulsarAdminException
     {
         return 0;
     }
@@ -996,7 +1132,17 @@ public class MockNamespaces
     }
 
     @Override
-    public int getMaxUnackedMessagesPerSubscription(String s) throws PulsarAdminException
+    public void removeMaxUnackedMessagesPerConsumer(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeMaxUnackedMessagesPerConsumerAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public Integer getMaxUnackedMessagesPerSubscription(String s) throws PulsarAdminException
     {
         return 0;
     }
@@ -1018,9 +1164,19 @@ public class MockNamespaces
     }
 
     @Override
-    public long getCompactionThreshold(String s) throws PulsarAdminException
+    public void removeMaxUnackedMessagesPerSubscription(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeMaxUnackedMessagesPerSubscriptionAsync(String namespace)
     {
-        return 0;
+        return null;
+    }
+
+    @Override
+    public Long getCompactionThreshold(String s) throws PulsarAdminException
+    {
+        return 0L;
     }
 
     @Override
@@ -1035,6 +1191,16 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<Void> setCompactionThresholdAsync(String s, long l)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeCompactionThreshold(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeCompactionThresholdAsync(String namespace)
     {
         return null;
     }
@@ -1197,6 +1363,136 @@ public class MockNamespaces
 
     @Override
     public CompletableFuture<OffloadPolicies> getOffloadPoliciesAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public int getMaxTopicsPerNamespace(String namespace) throws PulsarAdminException
+    {
+        return 0;
+    }
+
+    @Override
+    public CompletableFuture<Integer> getMaxTopicsPerNamespaceAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public void setMaxTopicsPerNamespace(String namespace, int maxTopicsPerNamespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setMaxTopicsPerNamespaceAsync(String namespace, int maxTopicsPerNamespace)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeMaxTopicsPerNamespace(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeMaxTopicsPerNamespaceAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> setPropertyAsync(String namespace, String key, String value)
+    {
+        return null;
+    }
+
+    @Override
+    public void setProperty(String namespace, String key, String value) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setPropertiesAsync(String namespace, Map<String, String> properties)
+    {
+        return null;
+    }
+
+    @Override
+    public void setProperties(String namespace, Map<String, String> properties) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<String> getPropertyAsync(String namespace, String key)
+    {
+        return null;
+    }
+
+    @Override
+    public String getProperty(String namespace, String key) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Map<String, String>> getPropertiesAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getProperties(String namespace) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<String> removePropertyAsync(String namespace, String key)
+    {
+        return null;
+    }
+
+    @Override
+    public String removeProperty(String namespace, String key) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> clearPropertiesAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public void clearProperties(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public String getNamespaceResourceGroup(String namespace) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<String> getNamespaceResourceGroupAsync(String namespace)
+    {
+        return null;
+    }
+
+    @Override
+    public void setNamespaceResourceGroup(String namespace, String resourcegroupname) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setNamespaceResourceGroupAsync(String namespace, String resourcegroupname)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeNamespaceResourceGroup(String namespace) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeNamespaceResourceGroupAsync(String namespace)
     {
         return null;
     }

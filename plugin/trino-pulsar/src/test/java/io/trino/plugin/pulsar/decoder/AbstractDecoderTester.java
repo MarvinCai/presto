@@ -28,13 +28,14 @@ import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.connector.ConnectorContext;
 import io.trino.spi.type.Type;
 import io.trino.testing.TestingConnectorContext;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -129,7 +130,7 @@ public abstract class AbstractDecoderTester
                     pulsarColumnMetadata.isInternal(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getMapping(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getDataFormat(), pulsarColumnMetadata.getDecoderExtraInfo().getFormatHint(),
-                    pulsarColumnMetadata.getHandleKeyValueType()));
+                    Optional.of(pulsarColumnMetadata.getHandleKeyValueType())));
         });
         return columnHandles;
     }

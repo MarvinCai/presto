@@ -20,22 +20,22 @@ public final class TestMsg
     }
 
     public static void registerAllExtensions(
-            org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite registry)
+            com.google.protobuf.ExtensionRegistryLite registry)
     {
     }
 
     public static void registerAllExtensions(
-            org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistry registry)
+            com.google.protobuf.ExtensionRegistry registry)
     {
         registerAllExtensions(
-                (org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite) registry);
+                (com.google.protobuf.ExtensionRegistryLite) registry);
     }
 
     /**
      * Protobuf enum {@code proto.TestEnum}
      */
     public enum TestEnum
-            implements org.apache.pulsar.shade.com.google.protobuf.ProtocolMessageEnum
+            implements com.google.protobuf.ProtocolMessageEnum
     {
         /**
          * <code>SHARED = 0;</code>
@@ -87,15 +87,15 @@ public final class TestMsg
             }
         }
 
-        public static org.apache.pulsar.shade.com.google.protobuf.Internal.EnumLiteMap<TestEnum>
+        public static com.google.protobuf.Internal.EnumLiteMap<TestEnum>
                 internalGetValueMap()
         {
             return internalValueMap;
         }
 
-        private static final org.apache.pulsar.shade.com.google.protobuf.Internal.EnumLiteMap<
+        private static final com.google.protobuf.Internal.EnumLiteMap<
                 TestEnum> internalValueMap =
-                new org.apache.pulsar.shade.com.google.protobuf.Internal.EnumLiteMap<TestEnum>()
+                new com.google.protobuf.Internal.EnumLiteMap<TestEnum>()
                 {
                     @Override
                     public TestEnum findValueByNumber(int number)
@@ -105,20 +105,20 @@ public final class TestMsg
                 };
 
         @Override
-        public final org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumValueDescriptor
+        public final com.google.protobuf.Descriptors.EnumValueDescriptor
                 getValueDescriptor()
         {
             return getDescriptor().getValues().get(ordinal());
         }
 
         @Override
-        public final org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumDescriptor
+        public final com.google.protobuf.Descriptors.EnumDescriptor
                 getDescriptorForType()
         {
             return getDescriptor();
         }
 
-        public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumDescriptor
+        public static final com.google.protobuf.Descriptors.EnumDescriptor
                 getDescriptor()
         {
             return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.getDescriptor().getEnumTypes().get(0);
@@ -127,7 +127,7 @@ public final class TestMsg
         private static final TestEnum[] VALUES = values();
 
         public static TestEnum valueOf(
-                org.apache.pulsar.shade.com.google.protobuf.Descriptors.EnumValueDescriptor desc)
+                com.google.protobuf.Descriptors.EnumValueDescriptor desc)
         {
             if (desc.getType() != getDescriptor()) {
                 throw new IllegalArgumentException(
@@ -152,7 +152,7 @@ public final class TestMsg
     public interface SubMessageOrBuilder
             extends
             // @@protoc_insertion_point(interface_extends:proto.SubMessage)
-            org.apache.pulsar.shade.com.google.protobuf.MessageOrBuilder
+            com.google.protobuf.MessageOrBuilder
     {
         /**
          * <code>string foo = 1;</code>
@@ -162,7 +162,7 @@ public final class TestMsg
         /**
          * <code>string foo = 1;</code>
          */
-        org.apache.pulsar.shade.com.google.protobuf.ByteString
+        com.google.protobuf.ByteString
                 getFooBytes();
 
         /**
@@ -190,7 +190,7 @@ public final class TestMsg
      * Protobuf type {@code proto.SubMessage}
      */
     public static final class SubMessage
-            extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            extends com.google.protobuf.GeneratedMessageV3
             implements
             // @@protoc_insertion_point(message_implements:proto.SubMessage)
             SubMessageOrBuilder
@@ -198,7 +198,7 @@ public final class TestMsg
         private static final long serialVersionUID = 0L;
 
         // Use SubMessage.newBuilder() to construct.
-        private SubMessage(org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
+        private SubMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
         {
             super(builder);
         }
@@ -210,23 +210,23 @@ public final class TestMsg
         }
 
         @Override
-        public final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet
+        public final com.google.protobuf.UnknownFieldSet
                 getUnknownFields()
         {
             return unknownFields;
         }
 
         private SubMessage(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             this();
             if (extensionRegistry == null) {
                 throw new NullPointerException();
             }
-            org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-                    org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.newBuilder();
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
             try {
                 boolean done = false;
                 while (!done) {
@@ -268,11 +268,11 @@ public final class TestMsg
                     }
                 }
             }
-            catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+            catch (com.google.protobuf.InvalidProtocolBufferException e) {
                 throw e.setUnfinishedMessage(this);
             }
             catch (java.io.IOException e) {
-                throw new org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException(
+                throw new com.google.protobuf.InvalidProtocolBufferException(
                         e).setUnfinishedMessage(this);
             }
             finally {
@@ -281,7 +281,7 @@ public final class TestMsg
             }
         }
 
-        public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+        public static final com.google.protobuf.Descriptors.Descriptor
                 getDescriptor()
         {
             return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
@@ -299,7 +299,7 @@ public final class TestMsg
         public interface NestedMessageOrBuilder
                 extends
                 // @@protoc_insertion_point(interface_extends:proto.SubMessage.NestedMessage)
-                org.apache.pulsar.shade.com.google.protobuf.MessageOrBuilder
+                com.google.protobuf.MessageOrBuilder
         {
             /**
              * <code>string title = 1;</code>
@@ -309,7 +309,7 @@ public final class TestMsg
             /**
              * <code>string title = 1;</code>
              */
-            org.apache.pulsar.shade.com.google.protobuf.ByteString
+            com.google.protobuf.ByteString
                     getTitleBytes();
 
             /**
@@ -331,7 +331,7 @@ public final class TestMsg
             /**
              * <code>repeated string urls = 2;</code>
              */
-            org.apache.pulsar.shade.com.google.protobuf.ByteString
+            com.google.protobuf.ByteString
                     getUrlsBytes(int index);
         }
 
@@ -339,7 +339,7 @@ public final class TestMsg
          * Protobuf type {@code proto.SubMessage.NestedMessage}
          */
         public static final class NestedMessage
-                extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                extends com.google.protobuf.GeneratedMessageV3
                 implements
                 // @@protoc_insertion_point(message_implements:proto.SubMessage.NestedMessage)
                 NestedMessageOrBuilder
@@ -347,7 +347,7 @@ public final class TestMsg
             private static final long serialVersionUID = 0L;
 
             // Use NestedMessage.newBuilder() to construct.
-            private NestedMessage(org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
+            private NestedMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
             {
                 super(builder);
             }
@@ -355,28 +355,28 @@ public final class TestMsg
             private NestedMessage()
             {
                 title = "";
-                urls = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                urls = com.google.protobuf.LazyStringArrayList.EMPTY;
             }
 
             @Override
-            public final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet
+            public final com.google.protobuf.UnknownFieldSet
                     getUnknownFields()
             {
                 return unknownFields;
             }
 
             private NestedMessage(
-                    org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 this();
                 if (extensionRegistry == null) {
                     throw new NullPointerException();
                 }
                 int mutableBitField0 = 0;
-                org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-                        org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.newBuilder();
+                com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                        com.google.protobuf.UnknownFieldSet.newBuilder();
                 try {
                     boolean done = false;
                     while (!done) {
@@ -394,7 +394,7 @@ public final class TestMsg
                             case 18: {
                                 String s = input.readStringRequireUtf8();
                                 if (!((mutableBitField0 & 0x00000002) == 0x00000002)) {
-                                    urls = new org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList();
+                                    urls = new com.google.protobuf.LazyStringArrayList();
                                     mutableBitField0 |= 0x00000002;
                                 }
                                 urls.add(s);
@@ -410,11 +410,11 @@ public final class TestMsg
                         }
                     }
                 }
-                catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+                catch (com.google.protobuf.InvalidProtocolBufferException e) {
                     throw e.setUnfinishedMessage(this);
                 }
                 catch (java.io.IOException e) {
-                    throw new org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException(
+                    throw new com.google.protobuf.InvalidProtocolBufferException(
                             e).setUnfinishedMessage(this);
                 }
                 finally {
@@ -426,7 +426,7 @@ public final class TestMsg
                 }
             }
 
-            public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+            public static final com.google.protobuf.Descriptors.Descriptor
                     getDescriptor()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
@@ -455,8 +455,8 @@ public final class TestMsg
                     return (String) ref;
                 }
                 else {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                            (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
                     String s = bs.toStringUtf8();
                     title = s;
                     return s;
@@ -467,30 +467,30 @@ public final class TestMsg
              * <code>string title = 1;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString
+            public com.google.protobuf.ByteString
                     getTitleBytes()
             {
                 Object ref = title;
                 if (ref instanceof String) {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                            org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
                                     (String) ref);
                     title = b;
                     return b;
                 }
                 else {
-                    return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    return (com.google.protobuf.ByteString) ref;
                 }
             }
 
             public static final int URLS_FIELD_NUMBER = 2;
-            private org.apache.pulsar.shade.com.google.protobuf.LazyStringList urls;
+            private com.google.protobuf.LazyStringList urls;
 
             /**
              * <code>repeated string urls = 2;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList
+            public com.google.protobuf.ProtocolStringList
                     getUrlsList()
             {
                 return urls;
@@ -518,7 +518,7 @@ public final class TestMsg
              * <code>repeated string urls = 2;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString
+            public com.google.protobuf.ByteString
                     getUrlsBytes(int index)
             {
                 return urls.getByteString(index);
@@ -542,14 +542,14 @@ public final class TestMsg
             }
 
             @Override
-            public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
+            public void writeTo(com.google.protobuf.CodedOutputStream output)
                     throws java.io.IOException
             {
                 if (!getTitleBytes().isEmpty()) {
-                    org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.writeString(output, 1, title);
+                    com.google.protobuf.GeneratedMessageV3.writeString(output, 1, title);
                 }
                 for (int i = 0; i < urls.size(); i++) {
-                    org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.writeString(output, 2, urls.getRaw(i));
+                    com.google.protobuf.GeneratedMessageV3.writeString(output, 2, urls.getRaw(i));
                 }
                 unknownFields.writeTo(output);
             }
@@ -564,7 +564,7 @@ public final class TestMsg
 
                 size = 0;
                 if (!getTitleBytes().isEmpty()) {
-                    size += org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.computeStringSize(1, title);
+                    size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, title);
                 }
                 {
                     int dataSize = 0;
@@ -620,44 +620,44 @@ public final class TestMsg
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
                     java.nio.ByteBuffer data)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
                     java.nio.ByteBuffer data,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data, extensionRegistry);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString data)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    com.google.protobuf.ByteString data)
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString data,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    com.google.protobuf.ByteString data,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data, extensionRegistry);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(byte[] data)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
                     byte[] data,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                    throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException
             {
                 return PARSER.parseFrom(data, extensionRegistry);
             }
@@ -665,49 +665,49 @@ public final class TestMsg
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(java.io.InputStream input)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseWithIOException(PARSER, input);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
                     java.io.InputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseWithIOException(PARSER, input, extensionRegistry);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseDelimitedFrom(java.io.InputStream input)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseDelimitedWithIOException(PARSER, input);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseDelimitedFrom(
                     java.io.InputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input)
+                    com.google.protobuf.CodedInputStream input)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseWithIOException(PARSER, input);
             }
 
             public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parseFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException
             {
-                return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+                return com.google.protobuf.GeneratedMessageV3
                         .parseWithIOException(PARSER, input, extensionRegistry);
             }
 
@@ -746,12 +746,12 @@ public final class TestMsg
              * Protobuf type {@code proto.SubMessage.NestedMessage}
              */
             public static final class Builder
-                    extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+                    extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
                     implements
                     // @@protoc_insertion_point(builder_implements:proto.SubMessage.NestedMessage)
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder
             {
-                public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+                public static final com.google.protobuf.Descriptors.Descriptor
                         getDescriptor()
                 {
                     return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
@@ -780,11 +780,7 @@ public final class TestMsg
                 }
 
                 private void maybeForceBuilderInitialization()
-                {
-                    if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
-                            .alwaysUseFieldBuilders) {
-                    }
-                }
+                { }
 
                 @Override
                 public Builder clear()
@@ -792,13 +788,13 @@ public final class TestMsg
                     super.clear();
                     title = "";
 
-                    urls = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                    urls = com.google.protobuf.LazyStringArrayList.EMPTY;
                     bitField0 = (bitField0 & ~0x00000002);
                     return this;
                 }
 
                 @Override
-                public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
+                public com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
                 {
                     return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_NestedMessage_descriptor;
                 }
@@ -841,7 +837,7 @@ public final class TestMsg
 
                 @Override
                 public Builder setField(
-                        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                        com.google.protobuf.Descriptors.FieldDescriptor field,
                         Object value)
                 {
                     return (Builder) super.setField(field, value);
@@ -849,21 +845,21 @@ public final class TestMsg
 
                 @Override
                 public Builder clearField(
-                        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
+                        com.google.protobuf.Descriptors.FieldDescriptor field)
                 {
                     return (Builder) super.clearField(field);
                 }
 
                 @Override
                 public Builder clearOneof(
-                        org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
+                        com.google.protobuf.Descriptors.OneofDescriptor oneof)
                 {
                     return (Builder) super.clearOneof(oneof);
                 }
 
                 @Override
                 public Builder setRepeatedField(
-                        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                        com.google.protobuf.Descriptors.FieldDescriptor field,
                         int index, Object value)
                 {
                     return (Builder) super.setRepeatedField(field, index, value);
@@ -871,14 +867,14 @@ public final class TestMsg
 
                 @Override
                 public Builder addRepeatedField(
-                        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                        com.google.protobuf.Descriptors.FieldDescriptor field,
                         Object value)
                 {
                     return (Builder) super.addRepeatedField(field, value);
                 }
 
                 @Override
-                public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
+                public Builder mergeFrom(com.google.protobuf.Message other)
                 {
                     if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage) {
                         return mergeFrom((io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage) other);
@@ -922,15 +918,15 @@ public final class TestMsg
 
                 @Override
                 public Builder mergeFrom(
-                        org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                        org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                        com.google.protobuf.CodedInputStream input,
+                        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                         throws java.io.IOException
                 {
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage parsedMessage = null;
                     try {
                         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                     }
-                    catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+                    catch (com.google.protobuf.InvalidProtocolBufferException e) {
                         parsedMessage = (io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage) e.getUnfinishedMessage();
                         throw e.unwrapIOException();
                     }
@@ -954,8 +950,8 @@ public final class TestMsg
                 {
                     Object ref = title;
                     if (!(ref instanceof String)) {
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                                (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                        com.google.protobuf.ByteString bs =
+                                (com.google.protobuf.ByteString) ref;
                         String s = bs.toStringUtf8();
                         title = s;
                         return s;
@@ -969,18 +965,18 @@ public final class TestMsg
                  * <code>string title = 1;</code>
                  */
                 @Override
-                public org.apache.pulsar.shade.com.google.protobuf.ByteString getTitleBytes()
+                public com.google.protobuf.ByteString getTitleBytes()
                 {
                     Object ref = title;
                     if (ref instanceof String) {
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                                org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                        com.google.protobuf.ByteString b =
+                                com.google.protobuf.ByteString.copyFromUtf8(
                                         (String) ref);
                         title = b;
                         return b;
                     }
                     else {
-                        return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                        return (com.google.protobuf.ByteString) ref;
                     }
                 }
 
@@ -1013,7 +1009,7 @@ public final class TestMsg
                  * <code>string title = 1;</code>
                  */
                 public Builder setTitleBytes(
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+                        com.google.protobuf.ByteString value)
                 {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1025,12 +1021,12 @@ public final class TestMsg
                     return this;
                 }
 
-                private org.apache.pulsar.shade.com.google.protobuf.LazyStringList urls = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                private com.google.protobuf.LazyStringList urls = com.google.protobuf.LazyStringArrayList.EMPTY;
 
                 private void ensureUrlsIsMutable()
                 {
                     if (!((bitField0 & 0x00000002) == 0x00000002)) {
-                        urls = new org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList(urls);
+                        urls = new com.google.protobuf.LazyStringArrayList(urls);
                         bitField0 |= 0x00000002;
                     }
                 }
@@ -1039,7 +1035,7 @@ public final class TestMsg
                  * <code>repeated string urls = 2;</code>
                  */
                 @Override
-                public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getUrlsList()
+                public com.google.protobuf.ProtocolStringList getUrlsList()
                 {
                     return urls.getUnmodifiableView();
                 }
@@ -1066,7 +1062,7 @@ public final class TestMsg
                  * <code>repeated string urls = 2;</code>
                  */
                 @Override
-                public org.apache.pulsar.shade.com.google.protobuf.ByteString getUrlsBytes(int index)
+                public com.google.protobuf.ByteString getUrlsBytes(int index)
                 {
                     return urls.getByteString(index);
                 }
@@ -1108,7 +1104,7 @@ public final class TestMsg
                         Iterable<String> values)
                 {
                     ensureUrlsIsMutable();
-                    org.apache.pulsar.shade.com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                    com.google.protobuf.AbstractMessageLite.Builder.addAll(
                             values, urls);
                     onChanged();
                     return this;
@@ -1119,7 +1115,7 @@ public final class TestMsg
                  */
                 public Builder clearUrls()
                 {
-                    urls = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                    urls = com.google.protobuf.LazyStringArrayList.EMPTY;
                     bitField0 = (bitField0 & ~0x00000002);
                     onChanged();
                     return this;
@@ -1129,7 +1125,7 @@ public final class TestMsg
                  * <code>repeated string urls = 2;</code>
                  */
                 public Builder addUrlsBytes(
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+                        com.google.protobuf.ByteString value)
                 {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1143,14 +1139,14 @@ public final class TestMsg
 
                 @Override
                 public final Builder setUnknownFields(
-                        final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                        final com.google.protobuf.UnknownFieldSet unknownFields)
                 {
                     return super.setUnknownFieldsProto3(unknownFields);
                 }
 
                 @Override
                 public final Builder mergeUnknownFields(
-                        final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                        final com.google.protobuf.UnknownFieldSet unknownFields)
                 {
                     return super.mergeUnknownFields(unknownFields);
                 }
@@ -1170,26 +1166,26 @@ public final class TestMsg
                 return DEFAULT_INSTANCE;
             }
 
-            private static final org.apache.pulsar.shade.com.google.protobuf.Parser<NestedMessage>
-                    PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<NestedMessage>()
+            private static final com.google.protobuf.Parser<NestedMessage>
+                    PARSER = new com.google.protobuf.AbstractParser<NestedMessage>()
                     {
                         @Override
                         public NestedMessage parsePartialFrom(
-                                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                                com.google.protobuf.CodedInputStream input,
+                                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                                throws com.google.protobuf.InvalidProtocolBufferException
                         {
                             return new NestedMessage(input, extensionRegistry);
                         }
                     };
 
-            public static org.apache.pulsar.shade.com.google.protobuf.Parser<NestedMessage> parser()
+            public static com.google.protobuf.Parser<NestedMessage> parser()
             {
                 return PARSER;
             }
 
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.Parser<NestedMessage> getParserForType()
+            public com.google.protobuf.Parser<NestedMessage> getParserForType()
             {
                 return PARSER;
             }
@@ -1215,8 +1211,8 @@ public final class TestMsg
                 return (String) ref;
             }
             else {
-                org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                        (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
                 String s = bs.toStringUtf8();
                 foo = s;
                 return s;
@@ -1227,18 +1223,18 @@ public final class TestMsg
          * <code>string foo = 1;</code>
          */
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.ByteString getFooBytes()
+        public com.google.protobuf.ByteString getFooBytes()
         {
             Object ref = foo;
             if (ref instanceof String) {
-                org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
                                 (String) ref);
                 foo = b;
                 return b;
             }
             else {
-                return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                return (com.google.protobuf.ByteString) ref;
             }
         }
 
@@ -1302,11 +1298,11 @@ public final class TestMsg
         }
 
         @Override
-        public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
                 throws java.io.IOException
         {
             if (!getFooBytes().isEmpty()) {
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.writeString(output, 1, foo);
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 1, foo);
             }
             if (bar != 0D) {
                 output.writeDouble(2, bar);
@@ -1327,14 +1323,14 @@ public final class TestMsg
 
             size = 0;
             if (!getFooBytes().isEmpty()) {
-                size += org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.computeStringSize(1, foo);
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, foo);
             }
             if (bar != 0D) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeDoubleSize(2, bar);
             }
             if (nestedMessage != null) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeMessageSize(3, getNestedMessage());
             }
             size += unknownFields.getSerializedSize();
@@ -1380,7 +1376,7 @@ public final class TestMsg
             hash = (37 * hash) + FOO_FIELD_NUMBER;
             hash = (53 * hash) + getFoo().hashCode();
             hash = (37 * hash) + BAR_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     Double.doubleToLongBits(getBar()));
             if (hasNestedMessage()) {
                 hash = (37 * hash) + NESTEDMESSAGE_FIELD_NUMBER;
@@ -1393,44 +1389,44 @@ public final class TestMsg
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
                 java.nio.ByteBuffer data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
                 java.nio.ByteBuffer data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.ByteString data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.ByteString data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(byte[] data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
                 byte[] data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
@@ -1438,49 +1434,49 @@ public final class TestMsg
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(java.io.InputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
                 java.io.InputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseDelimitedFrom(java.io.InputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseDelimitedWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseDelimitedFrom(
                 java.io.InputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input)
+                com.google.protobuf.CodedInputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
@@ -1519,12 +1515,12 @@ public final class TestMsg
          * Protobuf type {@code proto.SubMessage}
          */
         public static final class Builder
-                extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+                extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
                 implements
                 // @@protoc_insertion_point(builder_implements:proto.SubMessage)
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder
         {
-            public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptor()
+            public static final com.google.protobuf.Descriptors.Descriptor getDescriptor()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
             }
@@ -1551,11 +1547,7 @@ public final class TestMsg
             }
 
             private void maybeForceBuilderInitialization()
-            {
-                if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
-                        .alwaysUseFieldBuilders) {
-                }
-            }
+            { }
 
             @Override
             public Builder clear()
@@ -1576,7 +1568,7 @@ public final class TestMsg
             }
 
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
+            public com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_SubMessage_descriptor;
             }
@@ -1621,7 +1613,7 @@ public final class TestMsg
 
             @Override
             public Builder setField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
             {
                 return (Builder) super.setField(field, value);
@@ -1629,21 +1621,21 @@ public final class TestMsg
 
             @Override
             public Builder clearField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
+                    com.google.protobuf.Descriptors.FieldDescriptor field)
             {
                 return (Builder) super.clearField(field);
             }
 
             @Override
             public Builder clearOneof(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof)
             {
                 return (Builder) super.clearOneof(oneof);
             }
 
             @Override
             public Builder setRepeatedField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     int index, Object value)
             {
                 return (Builder) super.setRepeatedField(field, index, value);
@@ -1651,14 +1643,14 @@ public final class TestMsg
 
             @Override
             public Builder addRepeatedField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
             {
                 return (Builder) super.addRepeatedField(field, value);
             }
 
             @Override
-            public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
+            public Builder mergeFrom(com.google.protobuf.Message other)
             {
                 if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage) {
                     return mergeFrom((io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage) other);
@@ -1697,15 +1689,15 @@ public final class TestMsg
 
             @Override
             public Builder mergeFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage parsedMessage = null;
                 try {
                     parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                 }
-                catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+                catch (com.google.protobuf.InvalidProtocolBufferException e) {
                     parsedMessage = (io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage) e.getUnfinishedMessage();
                     throw e.unwrapIOException();
                 }
@@ -1727,8 +1719,8 @@ public final class TestMsg
             {
                 Object ref = foo;
                 if (!(ref instanceof String)) {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                            (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
                     String s = bs.toStringUtf8();
                     foo = s;
                     return s;
@@ -1742,18 +1734,18 @@ public final class TestMsg
              * <code>string foo = 1;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString getFooBytes()
+            public com.google.protobuf.ByteString getFooBytes()
             {
                 Object ref = foo;
                 if (ref instanceof String) {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                            org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
                                     (String) ref);
                     foo = b;
                     return b;
                 }
                 else {
-                    return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    return (com.google.protobuf.ByteString) ref;
                 }
             }
 
@@ -1786,7 +1778,7 @@ public final class TestMsg
              * <code>string foo = 1;</code>
              */
             public Builder setFooBytes(
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+                    com.google.protobuf.ByteString value)
             {
                 if (value == null) {
                     throw new NullPointerException();
@@ -1830,7 +1822,7 @@ public final class TestMsg
             }
 
             private io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage nestedMessage;
-            private org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+            private com.google.protobuf.SingleFieldBuilderV3<
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder> nestedMessageBuilder;
 
             /**
@@ -1958,12 +1950,12 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage.NestedMessage nestedMessage = 3;</code>
              */
-            private org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+            private com.google.protobuf.SingleFieldBuilderV3<
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder>
                     getNestedMessageFieldBuilder()
             {
                 if (nestedMessageBuilder == null) {
-                    nestedMessageBuilder = new org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+                    nestedMessageBuilder = new com.google.protobuf.SingleFieldBuilderV3<
                             io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.NestedMessageOrBuilder>(
                             getNestedMessage(),
                             getParentForChildren(),
@@ -1975,14 +1967,14 @@ public final class TestMsg
 
             @Override
             public final Builder setUnknownFields(
-                    final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                    final com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.setUnknownFieldsProto3(unknownFields);
             }
 
             @Override
             public final Builder mergeUnknownFields(
-                    final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                    final com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.mergeUnknownFields(unknownFields);
             }
@@ -2002,26 +1994,26 @@ public final class TestMsg
             return DEFAULT_INSTANCE;
         }
 
-        private static final org.apache.pulsar.shade.com.google.protobuf.Parser<SubMessage>
-                PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<SubMessage>()
+        private static final com.google.protobuf.Parser<SubMessage>
+                PARSER = new com.google.protobuf.AbstractParser<SubMessage>()
                 {
                     @Override
                     public SubMessage parsePartialFrom(
-                            org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                            org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                            throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                            com.google.protobuf.CodedInputStream input,
+                            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                            throws com.google.protobuf.InvalidProtocolBufferException
                     {
                         return new SubMessage(input, extensionRegistry);
                     }
                 };
 
-        public static org.apache.pulsar.shade.com.google.protobuf.Parser<SubMessage> parser()
+        public static com.google.protobuf.Parser<SubMessage> parser()
         {
             return PARSER;
         }
 
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.Parser<SubMessage> getParserForType()
+        public com.google.protobuf.Parser<SubMessage> getParserForType()
         {
             return PARSER;
         }
@@ -2036,7 +2028,7 @@ public final class TestMsg
     public interface TestMessageOrBuilder
             extends
             // @@protoc_insertion_point(interface_extends:proto.TestMessage)
-            org.apache.pulsar.shade.com.google.protobuf.MessageOrBuilder
+            com.google.protobuf.MessageOrBuilder
     {
         /**
          * <code>string stringField = 1;</code>
@@ -2046,7 +2038,7 @@ public final class TestMsg
         /**
          * <code>string stringField = 1;</code>
          */
-        org.apache.pulsar.shade.com.google.protobuf.ByteString getStringFieldBytes();
+        com.google.protobuf.ByteString getStringFieldBytes();
 
         /**
          * <code>double doubleField = 2;</code>
@@ -2116,7 +2108,7 @@ public final class TestMsg
         /**
          * <code>bytes bytesField = 15;</code>
          */
-        org.apache.pulsar.shade.com.google.protobuf.ByteString getBytesField();
+        com.google.protobuf.ByteString getBytesField();
 
         /**
          * <code>.proto.TestEnum testEnum = 16;</code>
@@ -2161,7 +2153,7 @@ public final class TestMsg
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
-        org.apache.pulsar.shade.com.google.protobuf.ByteString getRepeatedFieldBytes(int index);
+        com.google.protobuf.ByteString getRepeatedFieldBytes(int index);
 
         /**
          * <code>map&lt;string, double&gt; mapField = 19;</code>
@@ -2205,7 +2197,7 @@ public final class TestMsg
      * Protobuf type {@code proto.TestMessage}
      */
     public static final class TestMessage
-            extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            extends com.google.protobuf.GeneratedMessageV3
             implements
             // @@protoc_insertion_point(message_implements:proto.TestMessage)
             TestMessageOrBuilder
@@ -2213,7 +2205,7 @@ public final class TestMsg
         private static final long serialVersionUID = 0L;
 
         // Use TestMessage.newBuilder() to construct.
-        private TestMessage(org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
+        private TestMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder)
         {
             super(builder);
         }
@@ -2234,29 +2226,29 @@ public final class TestMsg
             sfixed32Field = 0;
             sfixed64Field = 0L;
             boolField = false;
-            bytesField = org.apache.pulsar.shade.com.google.protobuf.ByteString.EMPTY;
+            bytesField = com.google.protobuf.ByteString.EMPTY;
             testEnum = 0;
-            repeatedField = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+            repeatedField = com.google.protobuf.LazyStringArrayList.EMPTY;
         }
 
         @Override
-        public final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet getUnknownFields()
+        public final com.google.protobuf.UnknownFieldSet getUnknownFields()
         {
             return this.unknownFields;
         }
 
         private TestMessage(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             this();
             if (extensionRegistry == null) {
                 throw new NullPointerException();
             }
             int mutableBitField0 = 0;
-            org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-                    org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet.newBuilder();
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
             try {
                 boolean done = false;
                 while (!done) {
@@ -2348,7 +2340,7 @@ public final class TestMsg
                         case 146: {
                             String s = input.readStringRequireUtf8();
                             if (!((mutableBitField0 & 0x00020000) == 0x00020000)) {
-                                repeatedField = new org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList();
+                                repeatedField = new com.google.protobuf.LazyStringArrayList();
                                 mutableBitField0 |= 0x00020000;
                             }
                             repeatedField.add(s);
@@ -2356,11 +2348,11 @@ public final class TestMsg
                         }
                         case 154: {
                             if (!((mutableBitField0 & 0x00040000) == 0x00040000)) {
-                                mapField = org.apache.pulsar.shade.com.google.protobuf.MapField.newMapField(
+                                mapField = com.google.protobuf.MapField.newMapField(
                                         MapFieldDefaultEntryHolder.defaultEntry);
                                 mutableBitField0 |= 0x00040000;
                             }
-                            org.apache.pulsar.shade.com.google.protobuf.MapEntry<String, Double>
+                            com.google.protobuf.MapEntry<String, Double>
                                     inputMapField = input.readMessage(
                                     MapFieldDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                             mapField.getMutableMap().put(
@@ -2377,11 +2369,11 @@ public final class TestMsg
                     }
                 }
             }
-            catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+            catch (com.google.protobuf.InvalidProtocolBufferException e) {
                 throw e.setUnfinishedMessage(this);
             }
             catch (java.io.IOException e) {
-                throw new org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException(
+                throw new com.google.protobuf.InvalidProtocolBufferException(
                         e).setUnfinishedMessage(this);
             }
             finally {
@@ -2393,14 +2385,14 @@ public final class TestMsg
             }
         }
 
-        public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptor()
+        public static final com.google.protobuf.Descriptors.Descriptor getDescriptor()
         {
             return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_descriptor;
         }
 
         @SuppressWarnings("rawtypes")
         @Override
-        protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMapField(
+        protected com.google.protobuf.MapField internalGetMapField(
                 int number)
         {
             switch (number) {
@@ -2434,8 +2426,8 @@ public final class TestMsg
                 return (String) ref;
             }
             else {
-                org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                        (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
                 String s = bs.toStringUtf8();
                 stringField = s;
                 return s;
@@ -2446,18 +2438,18 @@ public final class TestMsg
          * <code>string stringField = 1;</code>
          */
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.ByteString getStringFieldBytes()
+        public com.google.protobuf.ByteString getStringFieldBytes()
         {
             Object ref = stringField;
             if (ref instanceof String) {
-                org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                        org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
                                 (String) ref);
                 stringField = b;
                 return b;
             }
             else {
-                return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                return (com.google.protobuf.ByteString) ref;
             }
         }
 
@@ -2618,13 +2610,13 @@ public final class TestMsg
         }
 
         public static final int BYTESFIELD_FIELD_NUMBER = 15;
-        private org.apache.pulsar.shade.com.google.protobuf.ByteString bytesField;
+        private com.google.protobuf.ByteString bytesField;
 
         /**
          * <code>bytes bytesField = 15;</code>
          */
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.ByteString getBytesField()
+        public com.google.protobuf.ByteString getBytesField()
         {
             return bytesField;
         }
@@ -2682,13 +2674,13 @@ public final class TestMsg
         }
 
         public static final int REPEATEDFIELD_FIELD_NUMBER = 18;
-        private org.apache.pulsar.shade.com.google.protobuf.LazyStringList repeatedField;
+        private com.google.protobuf.LazyStringList repeatedField;
 
         /**
          * <code>repeated string repeatedField = 18;</code>
          */
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getRepeatedFieldList()
+        public com.google.protobuf.ProtocolStringList getRepeatedFieldList()
         {
             return repeatedField;
         }
@@ -2715,7 +2707,7 @@ public final class TestMsg
          * <code>repeated string repeatedField = 18;</code>
          */
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
+        public com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
         {
             return repeatedField.getByteString(index);
         }
@@ -2724,24 +2716,24 @@ public final class TestMsg
 
         private static final class MapFieldDefaultEntryHolder
         {
-            static final org.apache.pulsar.shade.com.google.protobuf.MapEntry<
+            static final com.google.protobuf.MapEntry<
                     String, Double> defaultEntry =
-                    org.apache.pulsar.shade.com.google.protobuf.MapEntry
+                    com.google.protobuf.MapEntry
                             .<String, Double>newDefaultInstance(
                                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_MapFieldEntry_descriptor,
-                                    org.apache.pulsar.shade.com.google.protobuf.WireFormat.FieldType.STRING,
+                                    com.google.protobuf.WireFormat.FieldType.STRING,
                                     "",
-                                    org.apache.pulsar.shade.com.google.protobuf.WireFormat.FieldType.DOUBLE,
+                                    com.google.protobuf.WireFormat.FieldType.DOUBLE,
                                     0D);
         }
 
-        private org.apache.pulsar.shade.com.google.protobuf.MapField<
+        private com.google.protobuf.MapField<
                 String, Double> mapField;
 
-        private org.apache.pulsar.shade.com.google.protobuf.MapField<String, Double> internalGetMapField()
+        private com.google.protobuf.MapField<String, Double> internalGetMapField()
         {
             if (mapField == null) {
-                return org.apache.pulsar.shade.com.google.protobuf.MapField.emptyMapField(
+                return com.google.protobuf.MapField.emptyMapField(
                         MapFieldDefaultEntryHolder.defaultEntry);
             }
             return mapField;
@@ -2838,11 +2830,11 @@ public final class TestMsg
         }
 
         @Override
-        public void writeTo(org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream output)
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
                 throws java.io.IOException
         {
             if (!getStringFieldBytes().isEmpty()) {
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.writeString(output, 1, stringField);
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 1, stringField);
             }
             if (doubleField != 0D) {
                 output.writeDouble(2, doubleField);
@@ -2893,9 +2885,9 @@ public final class TestMsg
                 output.writeMessage(17, getSubMessage());
             }
             for (int i = 0; i < repeatedField.size(); i++) {
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.writeString(output, 18, repeatedField.getRaw(i));
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 18, repeatedField.getRaw(i));
             }
-            org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            com.google.protobuf.GeneratedMessageV3
                     .serializeStringMapTo(
                             output,
                             internalGetMapField(),
@@ -2914,70 +2906,70 @@ public final class TestMsg
 
             size = 0;
             if (!getStringFieldBytes().isEmpty()) {
-                size += org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.computeStringSize(1, stringField);
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, stringField);
             }
             if (doubleField != 0D) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeDoubleSize(2, doubleField);
             }
             if (floatField != 0F) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeFloatSize(3, floatField);
             }
             if (int32Field != 0) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeInt32Size(4, int32Field);
             }
             if (int64Field != 0L) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeInt64Size(5, int64Field);
             }
             if (uint32Field != 0) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeUInt32Size(6, uint32Field);
             }
             if (uint64Field != 0L) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeUInt64Size(7, uint64Field);
             }
             if (sint32Field != 0) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeSInt32Size(8, sint32Field);
             }
             if (sint64Field != 0L) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeSInt64Size(9, sint64Field);
             }
             if (fixed32Field != 0) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeFixed32Size(10, fixed32Field);
             }
             if (fixed64Field != 0L) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeFixed64Size(11, fixed64Field);
             }
             if (sfixed32Field != 0) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeSFixed32Size(12, sfixed32Field);
             }
             if (sfixed64Field != 0L) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeSFixed64Size(13, sfixed64Field);
             }
             if (boolField != false) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeBoolSize(14, boolField);
             }
             if (!bytesField.isEmpty()) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeBytesSize(15, bytesField);
             }
             if (testEnum != io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestEnum.SHARED.getNumber()) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeEnumSize(16, testEnum);
             }
             if (subMessage != null) {
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeMessageSize(17, getSubMessage());
             }
             {
@@ -2990,12 +2982,12 @@ public final class TestMsg
             }
             for (java.util.Map.Entry<String, Double> entry
                     : internalGetMapField().getMap().entrySet()) {
-                org.apache.pulsar.shade.com.google.protobuf.MapEntry<String, Double>
+                com.google.protobuf.MapEntry<String, Double>
                         mapField = MapFieldDefaultEntryHolder.defaultEntry.newBuilderForType()
                         .setKey(entry.getKey())
                         .setValue(entry.getValue())
                         .build();
-                size += org.apache.pulsar.shade.com.google.protobuf.CodedOutputStream
+                size += com.google.protobuf.CodedOutputStream
                         .computeMessageSize(19, mapField);
             }
             size += unknownFields.getSerializedSize();
@@ -3074,7 +3066,7 @@ public final class TestMsg
             hash = (37 * hash) + STRINGFIELD_FIELD_NUMBER;
             hash = (53 * hash) + getStringField().hashCode();
             hash = (37 * hash) + DOUBLEFIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     Double.doubleToLongBits(getDoubleField()));
             hash = (37 * hash) + FLOATFIELD_FIELD_NUMBER;
             hash = (53 * hash) + Float.floatToIntBits(
@@ -3082,30 +3074,30 @@ public final class TestMsg
             hash = (37 * hash) + INT32FIELD_FIELD_NUMBER;
             hash = (53 * hash) + getInt32Field();
             hash = (37 * hash) + INT64FIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     getInt64Field());
             hash = (37 * hash) + UINT32FIELD_FIELD_NUMBER;
             hash = (53 * hash) + getUint32Field();
             hash = (37 * hash) + UINT64FIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     getUint64Field());
             hash = (37 * hash) + SINT32FIELD_FIELD_NUMBER;
             hash = (53 * hash) + getSint32Field();
             hash = (37 * hash) + SINT64FIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     getSint64Field());
             hash = (37 * hash) + FIXED32FIELD_FIELD_NUMBER;
             hash = (53 * hash) + getFixed32Field();
             hash = (37 * hash) + FIXED64FIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     getFixed64Field());
             hash = (37 * hash) + SFIXED32FIELD_FIELD_NUMBER;
             hash = (53 * hash) + getSfixed32Field();
             hash = (37 * hash) + SFIXED64FIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashLong(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
                     getSfixed64Field());
             hash = (37 * hash) + BOOLFIELD_FIELD_NUMBER;
-            hash = (53 * hash) + org.apache.pulsar.shade.com.google.protobuf.Internal.hashBoolean(
+            hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
                     getBoolField());
             hash = (37 * hash) + BYTESFIELD_FIELD_NUMBER;
             hash = (53 * hash) + getBytesField().hashCode();
@@ -3130,44 +3122,44 @@ public final class TestMsg
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
                 java.nio.ByteBuffer data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
                 java.nio.ByteBuffer data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.ByteString data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.ByteString data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(byte[] data)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
                 byte[] data,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException
         {
             return PARSER.parseFrom(data, extensionRegistry);
         }
@@ -3175,49 +3167,49 @@ public final class TestMsg
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(java.io.InputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
                 java.io.InputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseDelimitedFrom(java.io.InputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseDelimitedWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseDelimitedFrom(
                 java.io.InputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input)
+                com.google.protobuf.CodedInputStream input)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input);
         }
 
         public static io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parseFrom(
-                org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException
         {
-            return org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
+            return com.google.protobuf.GeneratedMessageV3
                     .parseWithIOException(PARSER, input, extensionRegistry);
         }
 
@@ -3256,19 +3248,19 @@ public final class TestMsg
          * Protobuf type {@code proto.TestMessage}
          */
         public static final class Builder
-                extends org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+                extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
                 implements
                 // @@protoc_insertion_point(builder_implements:proto.TestMessage)
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessageOrBuilder
         {
-            public static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptor()
+            public static final com.google.protobuf.Descriptors.Descriptor getDescriptor()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_descriptor;
             }
 
             @SuppressWarnings("rawtypes")
             @Override
-            protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMapField(
+            protected com.google.protobuf.MapField internalGetMapField(
                     int number)
             {
                 switch (number) {
@@ -3282,7 +3274,7 @@ public final class TestMsg
 
             @SuppressWarnings("rawtypes")
             @Override
-            protected org.apache.pulsar.shade.com.google.protobuf.MapField internalGetMutableMapField(
+            protected com.google.protobuf.MapField internalGetMutableMapField(
                     int number)
             {
                 switch (number) {
@@ -3316,11 +3308,7 @@ public final class TestMsg
             }
 
             private void maybeForceBuilderInitialization()
-            {
-                if (org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3
-                        .alwaysUseFieldBuilders) {
-                }
-            }
+            { }
 
             @Override
             public Builder clear()
@@ -3354,7 +3342,7 @@ public final class TestMsg
 
                 boolField = false;
 
-                bytesField = org.apache.pulsar.shade.com.google.protobuf.ByteString.EMPTY;
+                bytesField = com.google.protobuf.ByteString.EMPTY;
 
                 testEnum = 0;
 
@@ -3365,14 +3353,14 @@ public final class TestMsg
                     subMessage = null;
                     subMessageBuilder = null;
                 }
-                repeatedField = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                repeatedField = com.google.protobuf.LazyStringArrayList.EMPTY;
                 bitField0 = (bitField0 & ~0x00020000);
                 internalGetMutableMapField().clear();
                 return this;
             }
 
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
+            public com.google.protobuf.Descriptors.Descriptor getDescriptorForType()
             {
                 return io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.internal_static_proto_TestMessage_descriptor;
             }
@@ -3438,7 +3426,7 @@ public final class TestMsg
 
             @Override
             public Builder setField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
             {
                 return (Builder) super.setField(field, value);
@@ -3446,21 +3434,21 @@ public final class TestMsg
 
             @Override
             public Builder clearField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field)
+                    com.google.protobuf.Descriptors.FieldDescriptor field)
             {
                 return (Builder) super.clearField(field);
             }
 
             @Override
             public Builder clearOneof(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.OneofDescriptor oneof)
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof)
             {
                 return (Builder) super.clearOneof(oneof);
             }
 
             @Override
             public Builder setRepeatedField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     int index, Object value)
             {
                 return (Builder) super.setRepeatedField(field, index, value);
@@ -3468,14 +3456,14 @@ public final class TestMsg
 
             @Override
             public Builder addRepeatedField(
-                    org.apache.pulsar.shade.com.google.protobuf.Descriptors.FieldDescriptor field,
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
                     Object value)
             {
                 return (Builder) super.addRepeatedField(field, value);
             }
 
             @Override
-            public Builder mergeFrom(org.apache.pulsar.shade.com.google.protobuf.Message other)
+            public Builder mergeFrom(com.google.protobuf.Message other)
             {
                 if (other instanceof io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage) {
                     return mergeFrom((io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage) other);
@@ -3534,7 +3522,7 @@ public final class TestMsg
                 if (other.getBoolField() != false) {
                     setBoolField(other.getBoolField());
                 }
-                if (other.getBytesField() != org.apache.pulsar.shade.com.google.protobuf.ByteString.EMPTY) {
+                if (other.getBytesField() != com.google.protobuf.ByteString.EMPTY) {
                     setBytesField(other.getBytesField());
                 }
                 if (other.testEnum != 0) {
@@ -3569,15 +3557,15 @@ public final class TestMsg
 
             @Override
             public Builder mergeFrom(
-                    org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                    org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException
             {
                 io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage parsedMessage = null;
                 try {
                     parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                 }
-                catch (org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException e) {
+                catch (com.google.protobuf.InvalidProtocolBufferException e) {
                     parsedMessage = (io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.TestMessage) e.getUnfinishedMessage();
                     throw e.unwrapIOException();
                 }
@@ -3601,8 +3589,8 @@ public final class TestMsg
             {
                 Object ref = stringField;
                 if (!(ref instanceof String)) {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString bs =
-                            (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
                     String s = bs.toStringUtf8();
                     stringField = s;
                     return s;
@@ -3616,18 +3604,18 @@ public final class TestMsg
              * <code>string stringField = 1;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString getStringFieldBytes()
+            public com.google.protobuf.ByteString getStringFieldBytes()
             {
                 Object ref = stringField;
                 if (ref instanceof String) {
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString b =
-                            org.apache.pulsar.shade.com.google.protobuf.ByteString.copyFromUtf8(
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
                                     (String) ref);
                     stringField = b;
                     return b;
                 }
                 else {
-                    return (org.apache.pulsar.shade.com.google.protobuf.ByteString) ref;
+                    return (com.google.protobuf.ByteString) ref;
                 }
             }
 
@@ -3660,7 +3648,7 @@ public final class TestMsg
              * <code>string stringField = 1;</code>
              */
             public Builder setStringFieldBytes(
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+                    com.google.protobuf.ByteString value)
             {
                 if (value == null) {
                     throw new NullPointerException();
@@ -4075,13 +4063,13 @@ public final class TestMsg
                 return this;
             }
 
-            private org.apache.pulsar.shade.com.google.protobuf.ByteString bytesField = org.apache.pulsar.shade.com.google.protobuf.ByteString.EMPTY;
+            private com.google.protobuf.ByteString bytesField = com.google.protobuf.ByteString.EMPTY;
 
             /**
              * <code>bytes bytesField = 15;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString getBytesField()
+            public com.google.protobuf.ByteString getBytesField()
             {
                 return bytesField;
             }
@@ -4089,7 +4077,7 @@ public final class TestMsg
             /**
              * <code>bytes bytesField = 15;</code>
              */
-            public Builder setBytesField(org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+            public Builder setBytesField(com.google.protobuf.ByteString value)
             {
                 if (value == null) {
                     throw new NullPointerException();
@@ -4166,7 +4154,7 @@ public final class TestMsg
             }
 
             private io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage subMessage;
-            private org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+            private com.google.protobuf.SingleFieldBuilderV3<
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder> subMessageBuilder;
 
             /**
@@ -4294,12 +4282,12 @@ public final class TestMsg
             /**
              * <code>.proto.SubMessage subMessage = 17;</code>
              */
-            private org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+            private com.google.protobuf.SingleFieldBuilderV3<
                     io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder>
                     getSubMessageFieldBuilder()
             {
                 if (subMessageBuilder == null) {
-                    subMessageBuilder = new org.apache.pulsar.shade.com.google.protobuf.SingleFieldBuilderV3<
+                    subMessageBuilder = new com.google.protobuf.SingleFieldBuilderV3<
                             io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessage.Builder, io.trino.plugin.pulsar.decoder.protobufnative.TestMsg.SubMessageOrBuilder>(
                             getSubMessage(),
                             getParentForChildren(),
@@ -4309,12 +4297,12 @@ public final class TestMsg
                 return subMessageBuilder;
             }
 
-            private org.apache.pulsar.shade.com.google.protobuf.LazyStringList repeatedField = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+            private com.google.protobuf.LazyStringList repeatedField = com.google.protobuf.LazyStringArrayList.EMPTY;
 
             private void ensureRepeatedFieldIsMutable()
             {
                 if (!((bitField0 & 0x00020000) == 0x00020000)) {
-                    repeatedField = new org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList(repeatedField);
+                    repeatedField = new com.google.protobuf.LazyStringArrayList(repeatedField);
                     bitField0 |= 0x00020000;
                 }
             }
@@ -4323,7 +4311,7 @@ public final class TestMsg
              * <code>repeated string repeatedField = 18;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ProtocolStringList getRepeatedFieldList()
+            public com.google.protobuf.ProtocolStringList getRepeatedFieldList()
             {
                 return repeatedField.getUnmodifiableView();
             }
@@ -4350,7 +4338,7 @@ public final class TestMsg
              * <code>repeated string repeatedField = 18;</code>
              */
             @Override
-            public org.apache.pulsar.shade.com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
+            public com.google.protobuf.ByteString getRepeatedFieldBytes(int index)
             {
                 return repeatedField.getByteString(index);
             }
@@ -4392,7 +4380,7 @@ public final class TestMsg
                     Iterable<String> values)
             {
                 ensureRepeatedFieldIsMutable();
-                org.apache.pulsar.shade.com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                com.google.protobuf.AbstractMessageLite.Builder.addAll(
                         values, repeatedField);
                 onChanged();
                 return this;
@@ -4403,7 +4391,7 @@ public final class TestMsg
              */
             public Builder clearRepeatedField()
             {
-                repeatedField = org.apache.pulsar.shade.com.google.protobuf.LazyStringArrayList.EMPTY;
+                repeatedField = com.google.protobuf.LazyStringArrayList.EMPTY;
                 bitField0 = (bitField0 & ~0x00020000);
                 onChanged();
                 return this;
@@ -4413,7 +4401,7 @@ public final class TestMsg
              * <code>repeated string repeatedField = 18;</code>
              */
             public Builder addRepeatedFieldBytes(
-                    org.apache.pulsar.shade.com.google.protobuf.ByteString value)
+                    com.google.protobuf.ByteString value)
             {
                 if (value == null) {
                     throw new NullPointerException();
@@ -4425,23 +4413,23 @@ public final class TestMsg
                 return this;
             }
 
-            private org.apache.pulsar.shade.com.google.protobuf.MapField<
+            private com.google.protobuf.MapField<
                     String, Double> mapField;
 
-            private org.apache.pulsar.shade.com.google.protobuf.MapField<String, Double> internalGetMapField()
+            private com.google.protobuf.MapField<String, Double> internalGetMapField()
             {
                 if (mapField == null) {
-                    return org.apache.pulsar.shade.com.google.protobuf.MapField.emptyMapField(
+                    return com.google.protobuf.MapField.emptyMapField(
                             MapFieldDefaultEntryHolder.defaultEntry);
                 }
                 return mapField;
             }
 
-            private org.apache.pulsar.shade.com.google.protobuf.MapField<String, Double> internalGetMutableMapField()
+            private com.google.protobuf.MapField<String, Double> internalGetMutableMapField()
             {
                 onChanged();
                 if (mapField == null) {
-                    mapField = org.apache.pulsar.shade.com.google.protobuf.MapField.newMapField(
+                    mapField = com.google.protobuf.MapField.newMapField(
                             MapFieldDefaultEntryHolder.defaultEntry);
                 }
                 if (!mapField.isMutable()) {
@@ -4583,14 +4571,14 @@ public final class TestMsg
 
             @Override
             public final Builder setUnknownFields(
-                    final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                    final com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.setUnknownFieldsProto3(unknownFields);
             }
 
             @Override
             public final Builder mergeUnknownFields(
-                    final org.apache.pulsar.shade.com.google.protobuf.UnknownFieldSet unknownFields)
+                    final com.google.protobuf.UnknownFieldSet unknownFields)
             {
                 return super.mergeUnknownFields(unknownFields);
             }
@@ -4609,26 +4597,26 @@ public final class TestMsg
             return DEFAULT_INSTANCE;
         }
 
-        private static final org.apache.pulsar.shade.com.google.protobuf.Parser<TestMessage>
-                PARSER = new org.apache.pulsar.shade.com.google.protobuf.AbstractParser<TestMessage>()
+        private static final com.google.protobuf.Parser<TestMessage>
+                PARSER = new com.google.protobuf.AbstractParser<TestMessage>()
                 {
                     @Override
                     public TestMessage parsePartialFrom(
-                            org.apache.pulsar.shade.com.google.protobuf.CodedInputStream input,
-                            org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-                            throws org.apache.pulsar.shade.com.google.protobuf.InvalidProtocolBufferException
+                            com.google.protobuf.CodedInputStream input,
+                            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                            throws com.google.protobuf.InvalidProtocolBufferException
                     {
                         return new TestMessage(input, extensionRegistry);
                     }
                 };
 
-        public static org.apache.pulsar.shade.com.google.protobuf.Parser<TestMessage> parser()
+        public static com.google.protobuf.Parser<TestMessage> parser()
         {
             return PARSER;
         }
 
         @Override
-        public org.apache.pulsar.shade.com.google.protobuf.Parser<TestMessage> getParserForType()
+        public com.google.protobuf.Parser<TestMessage> getParserForType()
         {
             return PARSER;
         }
@@ -4640,30 +4628,30 @@ public final class TestMsg
         }
     }
 
-    private static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+    private static final com.google.protobuf.Descriptors.Descriptor
             internal_static_proto_SubMessage_descriptor;
     private static final
-            org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internal_static_proto_SubMessage_fieldAccessorTable;
-    private static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+    private static final com.google.protobuf.Descriptors.Descriptor
             internal_static_proto_SubMessage_NestedMessage_descriptor;
     private static final
-            org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internal_static_proto_SubMessage_NestedMessage_fieldAccessorTable;
-    private static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+    private static final com.google.protobuf.Descriptors.Descriptor
             internal_static_proto_TestMessage_descriptor;
     private static final
-            org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internal_static_proto_TestMessage_fieldAccessorTable;
-    private static final org.apache.pulsar.shade.com.google.protobuf.Descriptors.Descriptor
+    private static final com.google.protobuf.Descriptors.Descriptor
             internal_static_proto_TestMessage_MapFieldEntry_descriptor;
 
-    public static org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor getDescriptor()
+    public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor()
     {
         return descriptor;
     }
 
-    private static org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor
+    private static com.google.protobuf.Descriptors.FileDescriptor
             descriptor;
 
     static {
@@ -4690,37 +4678,37 @@ public final class TestMsg
                         "esto.decoder.protobufnativeB\007TestMsgb\006pr" +
                         "oto3"
         };
-        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-                new org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner()
+        com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
+                new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner()
                 {
                     @Override
-                    public org.apache.pulsar.shade.com.google.protobuf.ExtensionRegistry assignDescriptors(
-                            org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor root)
+                    public com.google.protobuf.ExtensionRegistry assignDescriptors(
+                            com.google.protobuf.Descriptors.FileDescriptor root)
                     {
                         descriptor = root;
                         return null;
                     }
                 };
-        org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor
+        com.google.protobuf.Descriptors.FileDescriptor
                 .internalBuildGeneratedFileFrom(descriptorData,
-                        new org.apache.pulsar.shade.com.google.protobuf.Descriptors.FileDescriptor[]{
+                        new com.google.protobuf.Descriptors.FileDescriptor[]{
                         }, assigner);
         internal_static_proto_SubMessage_descriptor =
                 getDescriptor().getMessageTypes().get(0);
         internal_static_proto_SubMessage_fieldAccessorTable = new
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
                 internal_static_proto_SubMessage_descriptor,
                 new String[]{"Foo", "Bar", "NestedMessage"});
         internal_static_proto_SubMessage_NestedMessage_descriptor =
                 internal_static_proto_SubMessage_descriptor.getNestedTypes().get(0);
         internal_static_proto_SubMessage_NestedMessage_fieldAccessorTable = new
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
                 internal_static_proto_SubMessage_NestedMessage_descriptor,
                 new String[]{"Title", "Urls"});
         internal_static_proto_TestMessage_descriptor =
                 getDescriptor().getMessageTypes().get(1);
         internal_static_proto_TestMessage_fieldAccessorTable = new
-                org.apache.pulsar.shade.com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
                 internal_static_proto_TestMessage_descriptor,
                 new String[]{"StringField", "DoubleField", "FloatField", "Int32Field", "Int64Field", "Uint32Field", "Uint64Field", "Sint32Field", "Sint64Field", "Fixed32Field", "Fixed64Field", "Sfixed32Field", "Sfixed64Field", "BoolField", "BytesField", "TestEnum", "SubMessage", "RepeatedField", "MapField"});
         internal_static_proto_TestMessage_MapFieldEntry_descriptor =

@@ -37,17 +37,23 @@ public class PulsarRecordSetProvider
 
     private final PulsarDispatchingRowDecoderFactory decoderFactory;
 
+    private final PulsarConnectorCache pulsarConnectorManagedLedgerFactory;
+
     @Inject
     public PulsarRecordSetProvider(PulsarConnectorConfig pulsarConnectorConfig,
-                                   PulsarDispatchingRowDecoderFactory decoderFactory)
+                                   PulsarDispatchingRowDecoderFactory decoderFactory,
+                                   PulsarConnectorCache pulsarConnectorManagedLedgerFactory)
     {
         this.decoderFactory = requireNonNull(decoderFactory, "decoderFactory is null");
         this.pulsarConnectorConfig = requireNonNull(pulsarConnectorConfig, "pulsarConnectorConfig is null");
+        this.pulsarConnectorManagedLedgerFactory = requireNonNull(pulsarConnectorManagedLedgerFactory, "pulsarConnectorManagedLedgerFactory is null");
     }
 
     @Override
-    public RecordSet getRecordSet(ConnectorTransactionHandle transactionHandle, ConnectorSession session,
-                                  ConnectorSplit split, List<? extends ColumnHandle> columns)
+    public RecordSet getRecordSet(ConnectorTransactionHandle transactionHandle,
+                                  ConnectorSession session,
+                                  ConnectorSplit split,
+                                  List<? extends ColumnHandle> columns)
     {
         requireNonNull(split, "Connector split is null");
         PulsarSplit pulsarSplit = (PulsarSplit) split;
@@ -57,6 +63,6 @@ public class PulsarRecordSetProvider
             handles.add((PulsarColumnHandle) handle);
         }
 
-        return new PulsarRecordSet(pulsarSplit, handles.build(), pulsarConnectorConfig, decoderFactory);
+        return new PulsarRecordSet(pulsarSplit, handles.build(), pulsarConnectorConfig, decoderFactory, pulsarConnectorManagedLedgerFactory);
     }
 }

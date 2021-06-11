@@ -13,17 +13,17 @@
  */
 package io.trino.plugin.pulsar;
 
-import org.apache.pulsar.shade.com.google.common.base.Predicate;
-import org.apache.pulsar.shade.com.google.common.collect.Range;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Position;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.ReadOnlyCursorImpl;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.proto.MLDataFormats;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Range;
+import org.apache.bookkeeper.mledger.AsyncCallbacks;
+import org.apache.bookkeeper.mledger.Entry;
+import org.apache.bookkeeper.mledger.ManagedCursor;
+import org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.bookkeeper.mledger.Position;
+import org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.bookkeeper.mledger.impl.ReadOnlyCursorImpl;
+import org.apache.bookkeeper.mledger.proto.MLDataFormats;
 
 import java.util.List;
 
@@ -57,15 +57,22 @@ public class PulsarReadOnlyCursorWrapper
     }
 
     @Override
-    public void asyncReadEntries(int i, AsyncCallbacks.ReadEntriesCallback readEntriesCallback, Object o)
+    public void asyncReadEntries(int i,
+                                 AsyncCallbacks.ReadEntriesCallback readEntriesCallback,
+                                 Object o,
+                                 PositionImpl maxPosition)
     {
-        delegate.asyncReadEntries(i, readEntriesCallback, o);
+        delegate.asyncReadEntries(i, readEntriesCallback, o, maxPosition);
     }
 
     @Override
-    public void asyncReadEntries(int i, long l, AsyncCallbacks.ReadEntriesCallback readEntriesCallback, Object o)
+    public void asyncReadEntries(int i,
+                                 long l,
+                                 AsyncCallbacks.ReadEntriesCallback readEntriesCallback,
+                                 Object o,
+                                 PositionImpl maxPosition)
     {
-        delegate.asyncReadEntries(i, l, readEntriesCallback, o);
+        delegate.asyncReadEntries(i, l, readEntriesCallback, o, maxPosition);
     }
 
     @Override
@@ -93,7 +100,8 @@ public class PulsarReadOnlyCursorWrapper
     }
 
     @Override
-    public Position findNewestMatching(ManagedCursor.FindPositionConstraint findPositionConstraint, Predicate<Entry> predicate) throws InterruptedException, ManagedLedgerException
+    public Position findNewestMatching(ManagedCursor.FindPositionConstraint findPositionConstraint,
+                                       Predicate<Entry> predicate) throws InterruptedException, ManagedLedgerException
     {
         return delegate.findNewestMatching(findPositionConstraint, predicate);
     }
@@ -111,7 +119,8 @@ public class PulsarReadOnlyCursorWrapper
     }
 
     @Override
-    public void asyncClose(AsyncCallbacks.CloseCallback closeCallback, Object o)
+    public void asyncClose(AsyncCallbacks.CloseCallback closeCallback,
+                           Object o)
     {
         delegate.asyncClose(closeCallback, o);
     }

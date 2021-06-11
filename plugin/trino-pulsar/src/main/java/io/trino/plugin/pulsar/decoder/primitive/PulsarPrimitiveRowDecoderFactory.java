@@ -27,21 +27,22 @@ import io.trino.spi.type.DoubleType;
 import io.trino.spi.type.IntegerType;
 import io.trino.spi.type.RealType;
 import io.trino.spi.type.SmallintType;
-import io.trino.spi.type.TimeType;
-import io.trino.spi.type.TimestampType;
 import io.trino.spi.type.TinyintType;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
 import org.apache.pulsar.client.impl.schema.AbstractSchema;
 import org.apache.pulsar.client.impl.schema.AutoConsumeSchema;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import static io.trino.spi.type.TimeType.TIME_MILLIS;
+import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
 
 /**
  * Primitive Schema PulsarRowDecoderFactory.
@@ -54,7 +55,8 @@ public class PulsarPrimitiveRowDecoderFactory
     public static final String PRIMITIVE_COLUMN_NAME = "__value__";
 
     @Override
-    public PulsarRowDecoder createRowDecoder(TopicName topicName, SchemaInfo schemaInfo,
+    public PulsarRowDecoder createRowDecoder(TopicName topicName,
+                                             SchemaInfo schemaInfo,
                                              Set<DecoderColumnHandle> columns)
     {
         if (columns.size() == 1) {
@@ -67,7 +69,8 @@ public class PulsarPrimitiveRowDecoderFactory
     }
 
     @Override
-    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName, SchemaInfo schemaInfo,
+    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName,
+                                                      SchemaInfo schemaInfo,
                                                       PulsarColumnHandle.HandleKeyValueType handleKeyValueType)
     {
         ColumnMetadata valueColumn = new PulsarColumnMetadata(
@@ -79,7 +82,8 @@ public class PulsarPrimitiveRowDecoderFactory
         return Arrays.asList(valueColumn);
     }
 
-    private Type parsePrimitiveTrinoType(String fieldName, SchemaType pulsarType)
+    private Type parsePrimitiveTrinoType(String fieldName,
+                                         SchemaType pulsarType)
     {
         switch (pulsarType) {
             case BOOLEAN:
@@ -104,9 +108,9 @@ public class PulsarPrimitiveRowDecoderFactory
             case DATE:
                 return DateType.DATE;
             case TIME:
-                return TimeType.TIME;
+                return TIME_MILLIS;
             case TIMESTAMP:
-                return TimestampType.TIMESTAMP;
+                return TIMESTAMP_MILLIS;
             default:
                 log.error("Can't convert type: %s for %s", pulsarType, fieldName);
                 return null;

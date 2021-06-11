@@ -13,6 +13,11 @@
  */
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.EnumValue;
 import io.airlift.slice.Slice;
 import io.airlift.slice.Slices;
 import io.trino.decoder.DecoderColumnHandle;
@@ -34,11 +39,6 @@ import io.trino.spi.type.TinyintType;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
-import org.apache.pulsar.shade.com.google.common.base.Splitter;
-import org.apache.pulsar.shade.com.google.common.collect.ImmutableSet;
-import org.apache.pulsar.shade.com.google.protobuf.ByteString;
-import org.apache.pulsar.shade.com.google.protobuf.DynamicMessage;
-import org.apache.pulsar.shade.com.google.protobuf.EnumValue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -136,7 +136,8 @@ public class PulsarProtobufNativeColumnDecoder
         return new ObjectValueProvider(columnValue, columnType, columnName);
     }
 
-    private static Object locateNode(DynamicMessage element, String columnMapping)
+    private static Object locateNode(DynamicMessage element,
+                                     String columnMapping)
     {
         Object value = element;
         for (String pathElement : Splitter.on('/').omitEmptyStrings().split(columnMapping)) {
@@ -155,7 +156,9 @@ public class PulsarProtobufNativeColumnDecoder
         private final Type columnType;
         private final String columnName;
 
-        public ObjectValueProvider(Object value, Type columnType, String columnName)
+        public ObjectValueProvider(Object value,
+                                   Type columnType,
+                                   String columnName)
         {
             this.value = value;
             this.columnType = columnType;
@@ -219,7 +222,9 @@ public class PulsarProtobufNativeColumnDecoder
         }
     }
 
-    private static Slice getSlice(Object value, Type type, String columnName)
+    private static Slice getSlice(Object value,
+                                  Type type,
+                                  String columnName)
     {
         if (value instanceof ByteString) {
             return Slices.wrappedBuffer(((ByteString) value).toByteArray());
@@ -240,7 +245,10 @@ public class PulsarProtobufNativeColumnDecoder
                         value.getClass(), type, columnName));
     }
 
-    private static Block serializeObject(BlockBuilder builder, Object value, Type type, String columnName)
+    private static Block serializeObject(BlockBuilder builder,
+                                         Object value,
+                                         Type type,
+                                         String columnName)
     {
         if (type instanceof ArrayType) {
             return serializeList(builder, value, type, columnName);
@@ -255,7 +263,10 @@ public class PulsarProtobufNativeColumnDecoder
         return null;
     }
 
-    private static Block serializeList(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeList(BlockBuilder parentBlockBuilder,
+                                       Object value,
+                                       Type type,
+                                       String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
@@ -277,7 +288,10 @@ public class PulsarProtobufNativeColumnDecoder
         return blockBuilder.build();
     }
 
-    private static void serializePrimitive(BlockBuilder blockBuilder, Object value, Type type, String columnName)
+    private static void serializePrimitive(BlockBuilder blockBuilder,
+                                           Object value,
+                                           Type type,
+                                           String columnName)
     {
         requireNonNull(blockBuilder, "parent blockBuilder is null");
 
@@ -318,7 +332,10 @@ public class PulsarProtobufNativeColumnDecoder
                         value.getClass(), type, columnName));
     }
 
-    private static Block serializeMap(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeMap(BlockBuilder parentBlockBuilder,
+                                      Object value,
+                                      Type type,
+                                      String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
@@ -364,7 +381,10 @@ public class PulsarProtobufNativeColumnDecoder
         return map;
     }
 
-    private static Block serializeRow(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeRow(BlockBuilder parentBlockBuilder,
+                                      Object value,
+                                      Type type,
+                                      String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parent block builder is null");

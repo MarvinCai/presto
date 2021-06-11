@@ -17,25 +17,22 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import io.airlift.log.Logger;
 import io.trino.spi.HostAddress;
 import io.trino.spi.connector.ColumnHandle;
 import io.trino.spi.connector.ConnectorSplit;
 import io.trino.spi.predicate.TupleDomain;
-import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * This class represents information for a Trion {@link ConnectorSplit} for Pulsar.
- */
 public class PulsarSplit
         implements ConnectorSplit
 {
@@ -59,7 +56,7 @@ public class PulsarSplit
     private final PositionImpl endPosition;
     private final String schemaInfoProperties;
 
-    private final OffloadPolicies offloadPolicies;
+    private final OffloadPoliciesImpl offloadPolicies;
 
     @JsonCreator
     public PulsarSplit(
@@ -77,7 +74,7 @@ public class PulsarSplit
             @JsonProperty("endPositionLedgerId") long endPositionLedgerId,
             @JsonProperty("tupleDomain") TupleDomain<ColumnHandle> tupleDomain,
             @JsonProperty("schemaInfoProperties") String schemaInfoProperties,
-            @JsonProperty("offloadPolicies") OffloadPolicies offloadPolicies) throws IOException
+            @JsonProperty("offloadPolicies") OffloadPoliciesImpl offloadPolicies) throws IOException
     {
         this.splitId = splitId;
         requireNonNull(schemaName, "schema name is null");
@@ -102,7 +99,7 @@ public class PulsarSplit
         this.schemaInfo = SchemaInfo.builder()
                 .name(originSchemaName)
                 .type(schemaType)
-                .schema(schema.getBytes("ISO8859-1"))
+                .schema(schema.getBytes(StandardCharsets.ISO_8859_1))
                 .properties(objectMapper.readValue(schemaInfoProperties, Map.class))
                 .build();
     }
@@ -202,7 +199,7 @@ public class PulsarSplit
     }
 
     @JsonProperty
-    public OffloadPolicies getOffloadPolicies()
+    public OffloadPoliciesImpl getOffloadPolicies()
     {
         return offloadPolicies;
     }

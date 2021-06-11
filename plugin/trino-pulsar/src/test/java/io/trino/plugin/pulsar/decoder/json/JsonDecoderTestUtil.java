@@ -13,6 +13,9 @@
  */
 package io.trino.plugin.pulsar.decoder.json;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
 import io.trino.plugin.pulsar.decoder.DecoderTestUtil;
 import io.trino.spi.block.Block;
@@ -22,9 +25,6 @@ import io.trino.spi.type.RowType;
 import io.trino.spi.type.SqlVarbinary;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarcharType;
-import org.apache.pulsar.shade.com.fasterxml.jackson.databind.JsonNode;
-import org.apache.pulsar.shade.com.fasterxml.jackson.databind.node.ArrayNode;
-import org.apache.pulsar.shade.com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -176,7 +176,6 @@ public class JsonDecoderTestUtil
         assertNotNull(block, "Block is null");
         assertNotNull(value, "Value is null");
 
-        System.out.println(value.getClass());
         assertTrue(value instanceof ArrayNode, "Array node isn't ArrayNode type");
         ArrayNode arrayNode = (ArrayNode) value;
 

@@ -22,6 +22,7 @@ import io.trino.spi.type.Type;
 import io.trino.spi.type.VarcharType;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -29,19 +30,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
-/**
- * This class represents Pulsar internal columns.
- */
 public class PulsarInternalColumn
 {
     public static final PulsarInternalColumn PARTITION = new PulsarInternalColumn("__partition__",
             IntegerType.INTEGER, "The partition number which the message belongs to");
 
     public static final PulsarInternalColumn EVENT_TIME = new PulsarInternalColumn("__event_time__",
-            TimestampType.TIMESTAMP, "Application defined timestamp in milliseconds of when the event occurred");
+            TimestampType.TIMESTAMP_MILLIS, "Application defined timestamp in milliseconds of when the event occurred");
 
     public static final PulsarInternalColumn PUBLISH_TIME = new PulsarInternalColumn("__publish_time__",
-            TimestampType.TIMESTAMP, "The timestamp in milliseconds of when event as published");
+            TimestampType.TIMESTAMP_MILLIS, "The timestamp in milliseconds of when event as published");
 
     public static final PulsarInternalColumn MESSAGE_ID = new PulsarInternalColumn("__message_id__",
             VarcharType.VARCHAR, "The message ID of the message used to generate this row");
@@ -58,7 +56,7 @@ public class PulsarInternalColumn
     public static final PulsarInternalColumn PROPERTIES = new PulsarInternalColumn("__properties__",
             VarcharType.VARCHAR, "User defined properties");
 
-    private static Set<PulsarInternalColumn> internalFields = ImmutableSet.of(PARTITION, EVENT_TIME, PUBLISH_TIME,
+    private static Set<PulsarInternalColumn> internalFields = ImmutableSet.of(PARTITION, //EVENT_TIME, PUBLISH_TIME,
             MESSAGE_ID, SEQUENCE_ID, PRODUCER_NAME, KEY, PROPERTIES);
 
     private final String name;
@@ -86,13 +84,14 @@ public class PulsarInternalColumn
         return type;
     }
 
-    PulsarColumnHandle getColumnHandle(String connectorId, boolean hidden)
+    PulsarColumnHandle getColumnHandle(String connectorId,
+                                       boolean hidden)
     {
         return new PulsarColumnHandle(connectorId,
                 getName(),
                 getType(),
                 hidden,
-                true, getName(), null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                true, getName(), null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
     }
 
     PulsarColumnMetadata getColumnMetadata(boolean hidden)

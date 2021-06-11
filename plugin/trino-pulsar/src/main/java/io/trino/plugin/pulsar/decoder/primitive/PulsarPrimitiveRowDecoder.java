@@ -13,6 +13,7 @@
  */
 package io.trino.plugin.pulsar.decoder.primitive;
 
+import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.decoder.FieldValueProviders;
@@ -31,8 +32,8 @@ import io.trino.spi.type.Type;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
 import org.apache.pulsar.client.impl.schema.AbstractSchema;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -54,7 +55,8 @@ public class PulsarPrimitiveRowDecoder
     private final DecoderColumnHandle columnHandle;
     private AbstractSchema schema;
 
-    public PulsarPrimitiveRowDecoder(AbstractSchema schema, DecoderColumnHandle columnHandle)
+    public PulsarPrimitiveRowDecoder(AbstractSchema schema,
+                                     DecoderColumnHandle columnHandle)
     {
         this.columnHandle = columnHandle;
         this.schema = schema;
@@ -88,7 +90,7 @@ public class PulsarPrimitiveRowDecoder
                 primitiveColumn.put(columnHandle, bytesValueProvider((byte[]) value));
             }
             else if (type instanceof VarcharType) {
-                primitiveColumn.put(columnHandle, bytesValueProvider(value.toString().getBytes()));
+                primitiveColumn.put(columnHandle, bytesValueProvider(value.toString().getBytes(StandardCharsets.UTF_8)));
             }
             else if (type instanceof DateType) {
                 primitiveColumn.put(columnHandle, longValueProvider(((Date) value).getTime()));
@@ -100,7 +102,7 @@ public class PulsarPrimitiveRowDecoder
                 primitiveColumn.put(columnHandle, longValueProvider(((Timestamp) value).getTime()));
             }
             else {
-                primitiveColumn.put(columnHandle, bytesValueProvider(value.toString().getBytes()));
+                primitiveColumn.put(columnHandle, bytesValueProvider(value.toString().getBytes(StandardCharsets.UTF_8)));
             }
         }
         return Optional.of(primitiveColumn);

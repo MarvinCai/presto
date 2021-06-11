@@ -13,9 +13,9 @@
  */
 package io.trino.plugin.pulsar;
 
+import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
 
 import java.util.Map;
 import java.util.Optional;

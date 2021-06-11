@@ -13,6 +13,9 @@
  */
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.EnumValue;
 import io.trino.plugin.pulsar.decoder.DecoderTestUtil;
 import io.trino.spi.block.Block;
 import io.trino.spi.type.ArrayType;
@@ -20,9 +23,6 @@ import io.trino.spi.type.MapType;
 import io.trino.spi.type.RowType;
 import io.trino.spi.type.SqlVarbinary;
 import io.trino.spi.type.Type;
-import org.apache.pulsar.shade.com.google.protobuf.ByteString;
-import org.apache.pulsar.shade.com.google.protobuf.DynamicMessage;
-import org.apache.pulsar.shade.com.google.protobuf.EnumValue;
 
 import java.util.List;
 import java.util.Map;

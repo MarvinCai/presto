@@ -39,9 +39,9 @@ import io.trino.spi.type.TinyintType;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericEnumSymbol;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericFixed;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericEnumSymbol;
+import org.apache.avro.generic.GenericFixed;
+import org.apache.avro.generic.GenericRecord;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -53,6 +53,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.airlift.slice.Slices.utf8Slice;
 import static io.trino.decoder.DecoderErrorCode.DECODER_CONVERSION_NOT_SUPPORTED;
 import static io.trino.spi.StandardErrorCode.GENERIC_USER_ERROR;
+import static io.trino.spi.type.TimeType.TIME_MILLIS;
+import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
 import static io.trino.spi.type.Varchars.truncateToLength;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.String.format;
@@ -74,9 +76,9 @@ public class PulsarAvroColumnDecoder
             BigintType.BIGINT,
             RealType.REAL,
             DoubleType.DOUBLE,
-            TimestampType.TIMESTAMP,
+            TIMESTAMP_MILLIS,
             DateType.DATE,
-            TimeType.TIME,
+            TIME_MILLIS,
             VarbinaryType.VARBINARY);
 
     private final Type columnType;
@@ -149,7 +151,8 @@ public class PulsarAvroColumnDecoder
         return new ObjectValueProvider(avroColumnValue, columnType, columnName);
     }
 
-    private static Object locateNode(GenericRecord element, String columnMapping)
+    private static Object locateNode(GenericRecord element,
+                                     String columnMapping)
     {
         Object value = element;
         for (String pathElement : Splitter.on('/').omitEmptyStrings().split(columnMapping)) {
@@ -168,7 +171,9 @@ public class PulsarAvroColumnDecoder
         private final Type columnType;
         private final String columnName;
 
-        public ObjectValueProvider(Object value, Type columnType, String columnName)
+        public ObjectValueProvider(Object value,
+                                   Type columnType,
+                                   String columnName)
         {
             this.value = value;
             this.columnType = columnType;
@@ -232,7 +237,9 @@ public class PulsarAvroColumnDecoder
         }
     }
 
-    private static Slice getSlice(Object value, Type type, String columnName)
+    private static Slice getSlice(Object value,
+                                  Type type,
+                                  String columnName)
     {
         if (type instanceof VarcharType && (value instanceof CharSequence || value instanceof GenericEnumSymbol)) {
             return truncateToLength(utf8Slice(value.toString()), type);
@@ -252,7 +259,10 @@ public class PulsarAvroColumnDecoder
                         value.getClass(), type, columnName));
     }
 
-    private static Block serializeObject(BlockBuilder builder, Object value, Type type, String columnName)
+    private static Block serializeObject(BlockBuilder builder,
+                                         Object value,
+                                         Type type,
+                                         String columnName)
     {
         if (type instanceof ArrayType) {
             return serializeList(builder, value, type, columnName);
@@ -267,7 +277,10 @@ public class PulsarAvroColumnDecoder
         return null;
     }
 
-    private static Block serializeList(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeList(BlockBuilder parentBlockBuilder,
+                                       Object value,
+                                       Type type,
+                                       String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
@@ -289,7 +302,10 @@ public class PulsarAvroColumnDecoder
         return blockBuilder.build();
     }
 
-    private static void serializePrimitive(BlockBuilder blockBuilder, Object value, Type type, String columnName)
+    private static void serializePrimitive(BlockBuilder blockBuilder,
+                                           Object value,
+                                           Type type,
+                                           String columnName)
     {
         requireNonNull(blockBuilder, "parent blockBuilder is null");
 
@@ -325,6 +341,11 @@ public class PulsarAvroColumnDecoder
             return;
         }
 
+        if (type instanceof TimeType) {
+            type.writeLong(blockBuilder, (Long) value);
+            return;
+        }
+
         if (type instanceof TimestampType) {
             type.writeLong(blockBuilder, (Long) value);
             return;
@@ -335,7 +356,10 @@ public class PulsarAvroColumnDecoder
                         value.getClass(), type, columnName));
     }
 
-    private static Block serializeMap(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeMap(BlockBuilder parentBlockBuilder,
+                                      Object value,
+                                      Type type,
+                                      String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
@@ -371,7 +395,10 @@ public class PulsarAvroColumnDecoder
         return null;
     }
 
-    private static Block serializeRow(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+    private static Block serializeRow(BlockBuilder parentBlockBuilder,
+                                      Object value,
+                                      Type type,
+                                      String columnName)
     {
         if (value == null) {
             checkState(parentBlockBuilder != null, "parent block builder is null");

@@ -21,9 +21,9 @@ import io.trino.spi.type.RowType;
 import io.trino.spi.type.SqlVarbinary;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.VarcharType;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericEnumSymbol;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericFixed;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericEnumSymbol;
+import org.apache.avro.generic.GenericFixed;
+import org.apache.avro.generic.GenericRecord;
 
 import java.nio.ByteBuffer;
 import java.util.List;

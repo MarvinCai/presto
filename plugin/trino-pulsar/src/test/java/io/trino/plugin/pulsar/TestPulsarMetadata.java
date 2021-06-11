@@ -24,11 +24,12 @@ import io.trino.spi.connector.SchemaTablePrefix;
 import io.trino.spi.connector.TableNotFoundException;
 import io.trino.testing.TestingConnectorSession;
 import org.apache.pulsar.client.admin.PulsarAdminException;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -227,7 +228,7 @@ public class TestPulsarMetadata
     {
         updateRewriteNamespaceDelimiterIfNeeded(delimiter);
         SchemaInfo badSchemaInfo = new SchemaInfo();
-        badSchemaInfo.setSchema("foo".getBytes());
+        badSchemaInfo.setSchema("foo".getBytes(StandardCharsets.ISO_8859_1));
         badSchemaInfo.setType(SchemaType.AVRO);
         SchemaInfo oldSchemaInfo = topicsToSchemas.remove(TOPIC_1.getSchemaName());
         topicsToSchemas.put(TOPIC_1.getSchemaName(), badSchemaInfo);

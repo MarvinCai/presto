@@ -21,12 +21,10 @@ import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.type.Type;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * This class represents the basic information about a trino column.
- */
 public class PulsarColumnHandle
         implements DecoderColumnHandle
 {
@@ -91,7 +89,7 @@ public class PulsarColumnHandle
             @JsonProperty("mapping") String mapping,
             @JsonProperty("dataFormat") String dataFormat,
             @JsonProperty("formatHint") String formatHint,
-            @JsonProperty("handleKeyValueType") HandleKeyValueType handleKeyValueType)
+            @JsonProperty("handleKeyValueType") Optional<HandleKeyValueType> handleKeyValueType)
     {
         this.connectorId = requireNonNull(connectorId, "connectorId is null");
         this.name = requireNonNull(name, "name is null");
@@ -101,12 +99,7 @@ public class PulsarColumnHandle
         this.mapping = mapping;
         this.dataFormat = dataFormat;
         this.formatHint = formatHint;
-        if (handleKeyValueType == null) {
-            this.handleKeyValueType = HandleKeyValueType.NONE;
-        }
-        else {
-            this.handleKeyValueType = handleKeyValueType;
-        }
+        this.handleKeyValueType = handleKeyValueType.isPresent() ? handleKeyValueType.get() : HandleKeyValueType.NONE;
     }
 
     @JsonProperty

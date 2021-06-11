@@ -25,10 +25,4 @@ public class MockPulsarConnectorConfig
     {
         this.pulsarAdmin = pulsarAdmin;
     }
-
-    @Override
-    public PulsarAdmin getPulsarAdmin()
-    {
-        return pulsarAdmin;
-    }
 }

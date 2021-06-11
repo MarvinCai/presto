@@ -30,21 +30,21 @@ import io.trino.spi.type.IntegerType;
 import io.trino.spi.type.RealType;
 import io.trino.spi.type.RowType;
 import io.trino.spi.type.StandardTypes;
-import io.trino.spi.type.TimestampType;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.TypeManager;
 import io.trino.spi.type.TypeSignature;
 import io.trino.spi.type.TypeSignatureParameter;
 import io.trino.spi.type.VarbinaryType;
 import io.trino.spi.type.VarcharType;
+import org.apache.avro.LogicalType;
+import org.apache.avro.LogicalTypes;
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaParseException;
 import org.apache.pulsar.client.impl.schema.generic.GenericJsonSchema;
-import org.apache.pulsar.shade.org.apache.avro.LogicalType;
-import org.apache.pulsar.shade.org.apache.avro.LogicalTypes;
-import org.apache.pulsar.shade.org.apache.avro.Schema;
-import org.apache.pulsar.shade.org.apache.avro.SchemaParseException;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,7 +52,8 @@ import java.util.Set;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static io.trino.spi.StandardErrorCode.NOT_SUPPORTED;
 import static io.trino.spi.type.DateType.DATE;
-import static io.trino.spi.type.TimeType.TIME;
+import static io.trino.spi.type.TimeType.TIME_MILLIS;
+import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
 import static io.trino.spi.type.VarcharType.createUnboundedVarcharType;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -71,18 +72,20 @@ public class PulsarJsonRowDecoderFactory
     }
 
     @Override
-    public PulsarJsonRowDecoder createRowDecoder(TopicName topicName, SchemaInfo schemaInfo,
+    public PulsarJsonRowDecoder createRowDecoder(TopicName topicName,
+                                                 SchemaInfo schemaInfo,
                                                  Set<DecoderColumnHandle> columns)
     {
         return new PulsarJsonRowDecoder((GenericJsonSchema) GenericJsonSchema.of(schemaInfo), columns);
     }
 
     @Override
-    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName, SchemaInfo schemaInfo,
+    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName,
+                                                      SchemaInfo schemaInfo,
                                                       PulsarColumnHandle.HandleKeyValueType handleKeyValueType)
     {
         List<ColumnMetadata> columnMetadata;
-        String schemaJson = new String(schemaInfo.getSchema());
+        String schemaJson = new String(schemaInfo.getSchema(), StandardCharsets.ISO_8859_1);
         if (Strings.nullToEmpty(schemaJson).trim().isEmpty()) {
             throw new TrinoException(NOT_SUPPORTED, "Topic "
                     + topicName.toString() + " does not have a valid schema");
@@ -116,7 +119,8 @@ public class PulsarJsonRowDecoderFactory
         return columnMetadata;
     }
 
-    private Type parseJsonTrinoType(String fieldname, Schema schema)
+    private Type parseJsonTrinoType(String fieldname,
+                                    Schema schema)
     {
         Schema.Type type = schema.getType();
         LogicalType logicalType = schema.getLogicalType();
@@ -132,16 +136,16 @@ public class PulsarJsonRowDecoderFactory
             case BYTES:
                 return VarbinaryType.VARBINARY;
             case INT:
-                if (logicalType == LogicalTypes.timeMillis()) {
-                    return TIME;
-                }
-                else if (logicalType == LogicalTypes.date()) {
+                if (logicalType == LogicalTypes.date()) {
                     return DATE;
                 }
                 return IntegerType.INTEGER;
             case LONG:
-                if (logicalType == LogicalTypes.timestampMillis()) {
-                    return TimestampType.TIMESTAMP;
+                if (logicalType == LogicalTypes.timeMillis()) {
+                    return TIME_MILLIS;
+                }
+                else if (logicalType == LogicalTypes.timestampMillis()) {
+                    return TIMESTAMP_MILLIS;
                 }
                 return BigintType.BIGINT;
             case FLOAT:

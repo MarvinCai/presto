@@ -20,9 +20,10 @@ import io.trino.plugin.pulsar.PulsarSplitManager;
 import io.trino.plugin.pulsar.PulsarTableHandle;
 import io.trino.spi.connector.ColumnHandle;
 import io.trino.spi.predicate.TupleDomain;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
 import java.util.Collection;
 
@@ -36,15 +37,16 @@ public class MockPulsarSplitManager
         this.splits = splits;
     }
 
-    public MockPulsarSplitManager(PulsarConnectorId connectorId, PulsarConnectorConfig pulsarConnectorConfig)
+    public MockPulsarSplitManager(PulsarConnectorId connectorId, PulsarConnectorConfig pulsarConnectorConfig,
+                                  ManagedLedgerFactory managedLedgerFactory) throws Exception
     {
-        super(connectorId, pulsarConnectorConfig);
+        super(connectorId, pulsarConnectorConfig, new MockPulsarConnectorManagedLedgerFactory(managedLedgerFactory));
     }
 
     @Override
     protected Collection<PulsarSplit> getSplitsNonPartitionedTopic(int numSplits, TopicName topicName,
                                                                    PulsarTableHandle tableHandle, SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
-                                                                   OffloadPolicies offloadPolicies) throws Exception
+                                                                   OffloadPoliciesImpl offloadPolicies) throws Exception
     {
         Collection<PulsarSplit> result = super.getSplitsNonPartitionedTopic(numSplits, topicName, tableHandle,
                 schemaInfo, tupleDomain, offloadPolicies);
@@ -55,7 +57,7 @@ public class MockPulsarSplitManager
     @Override
     protected Collection<PulsarSplit> getSplitsPartitionedTopic(int numSplits, TopicName topicName, PulsarTableHandle tableHandle,
                                                                 SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
-                                                                OffloadPolicies offloadPolicies) throws Exception
+                                                                OffloadPoliciesImpl offloadPolicies) throws Exception
     {
         Collection<PulsarSplit> result = super.getSplitsPartitionedTopic(numSplits, topicName, tableHandle,
                 schemaInfo, tupleDomain, offloadPolicies);

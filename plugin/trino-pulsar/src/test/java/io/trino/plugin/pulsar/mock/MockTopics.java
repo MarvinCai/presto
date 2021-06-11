@@ -19,25 +19,27 @@ import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Topics;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.shade.com.google.gson.JsonObject;
-import org.apache.pulsar.shade.javax.ws.rs.ClientErrorException;
-import org.apache.pulsar.shade.javax.ws.rs.core.Response;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.partition.PartitionedTopicMetadata;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.AuthAction;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.BacklogQuota;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.DelayedDeliveryPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.DispatchRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.InactiveTopicPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PartitionedTopicInternalStats;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PartitionedTopicStats;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PersistencePolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PersistentTopicInternalStats;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.PublishRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.RetentionPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.SubscribeRate;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.TopicStats;
+import org.apache.pulsar.client.api.SubscriptionType;
+import org.apache.pulsar.common.naming.TopicDomain;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
+import org.apache.pulsar.common.policies.data.AuthAction;
+import org.apache.pulsar.common.policies.data.BacklogQuota;
+import org.apache.pulsar.common.policies.data.DelayedDeliveryPolicies;
+import org.apache.pulsar.common.policies.data.DispatchRate;
+import org.apache.pulsar.common.policies.data.InactiveTopicPolicies;
+import org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.common.policies.data.PartitionedTopicInternalStats;
+import org.apache.pulsar.common.policies.data.PartitionedTopicStats;
+import org.apache.pulsar.common.policies.data.PersistencePolicies;
+import org.apache.pulsar.common.policies.data.PersistentTopicInternalStats;
+import org.apache.pulsar.common.policies.data.PublishRate;
+import org.apache.pulsar.common.policies.data.RetentionPolicies;
+import org.apache.pulsar.common.policies.data.SubscribeRate;
+import org.apache.pulsar.common.policies.data.TopicStats;
+
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,18 +64,36 @@ public class MockTopics
     }
 
     @Override
-    public List<String> getList(String ns) throws PulsarAdminException
+    public List<String> getList(String namespace) throws PulsarAdminException
     {
         List<String> topics = new ArrayList<>(topicNames.stream()
-                .filter(topicName -> topicName.getNamespace().equals(ns))
+                .filter(topicName -> topicName.getNamespace().equals(namespace))
                 .map(TopicName::toString).collect(Collectors.toList()));
-        partitionedTopicNames.stream().filter(topicName -> topicName.getNamespace().equals(ns)).forEach(topicName -> {
+        partitionedTopicNames.stream().filter(topicName -> topicName.getNamespace().equals(namespace)).forEach(topicName -> {
             for (Integer i = 0; i < partitionedTopicsToPartitions.get(topicName.toString()); i++) {
                 topics.add(TopicName.get(topicName + "-partition-" + i).toString());
             }
         });
         if (topics.isEmpty()) {
             throw new PulsarAdminException(new ClientErrorException(Response.status(404).build()));
+        }
+        return topics;
+    }
+
+    @Override
+    public List<String> getList(String namespace, TopicDomain topicDomain) throws PulsarAdminException
+    {
+        List<String> topics = new ArrayList<>(topicNames.stream()
+                .filter(topicName -> topicName.getNamespace().equals(namespace))
+                .map(TopicName::toString).collect(Collectors.toList()));
+        partitionedTopicNames.stream().filter(topicName -> topicName.getNamespace().equals(namespace)).forEach(topicName -> {
+            for (Integer i = 0; i < partitionedTopicsToPartitions.get(topicName.toString()); i++) {
+                topics.add(TopicName.get(topicName + "-partition-" + i).toString());
+            }
+        });
+        if (topics.isEmpty()) {
+            ClientErrorException cee = new ClientErrorException(Response.Status.NOT_FOUND);
+            throw new PulsarAdminException(cee, cee.getMessage(), cee.getResponse().getStatus());
         }
         return topics;
     }
@@ -101,6 +121,12 @@ public class MockTopics
 
     @Override
     public CompletableFuture<List<String>> getListAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getListAsync(String namespace, TopicDomain topicDomain)
     {
         return null;
     }
@@ -216,7 +242,17 @@ public class MockTopics
     { }
 
     @Override
+    public void deletePartitionedTopic(String topic, boolean force) throws PulsarAdminException
+    { }
+
+    @Override
     public CompletableFuture<Void> deletePartitionedTopicAsync(String s, boolean b, boolean b1)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> deletePartitionedTopicAsync(String topic, boolean force)
     {
         return null;
     }
@@ -236,7 +272,17 @@ public class MockTopics
     { }
 
     @Override
+    public void delete(String topic, boolean force) throws PulsarAdminException
+    { }
+
+    @Override
     public CompletableFuture<Void> deleteAsync(String s, boolean b, boolean b1)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteAsync(String topic, boolean force)
     {
         return null;
     }
@@ -292,7 +338,25 @@ public class MockTopics
     }
 
     @Override
+    public TopicStats getStats(String topic, boolean getPreciseBacklog) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public TopicStats getStats(String topic) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<TopicStats> getStatsAsync(String s, boolean b, boolean b1)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<TopicStats> getStatsAsync(String topic)
     {
         return null;
     }
@@ -322,13 +386,13 @@ public class MockTopics
     }
 
     @Override
-    public JsonObject getInternalInfo(String s) throws PulsarAdminException
+    public String getInternalInfo(String topic) throws PulsarAdminException
     {
         return null;
     }
 
     @Override
-    public CompletableFuture<JsonObject> getInternalInfoAsync(String s)
+    public CompletableFuture<String> getInternalInfoAsync(String topic)
     {
         return null;
     }
@@ -340,7 +404,19 @@ public class MockTopics
     }
 
     @Override
+    public PartitionedTopicStats getPartitionedStats(String topic, boolean perPartition) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<PartitionedTopicStats> getPartitionedStatsAsync(String s, boolean b, boolean b1, boolean b2)
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<PartitionedTopicStats> getPartitionedStatsAsync(String topic, boolean perPartition)
     {
         return null;
     }
@@ -554,12 +630,30 @@ public class MockTopics
     }
 
     @Override
+    public Map<BacklogQuota.BacklogQuotaType, BacklogQuota> getBacklogQuotaMap(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
     public void setBacklogQuota(String s, BacklogQuota backlogQuota) throws PulsarAdminException
     { }
 
     @Override
     public void removeBacklogQuota(String s) throws PulsarAdminException
     { }
+
+    @Override
+    public DelayedDeliveryPolicies getDelayedDeliveryPolicy(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<DelayedDeliveryPolicies> getDelayedDeliveryPolicyAsync(String topic, boolean applied)
+    {
+        return null;
+    }
 
     @Override
     public DelayedDeliveryPolicies getDelayedDeliveryPolicy(String s) throws PulsarAdminException
@@ -598,9 +692,15 @@ public class MockTopics
     { }
 
     @Override
-    public int getMessageTTL(String s) throws PulsarAdminException
+    public Integer getMessageTTL(String s) throws PulsarAdminException
     {
         return 0;
+    }
+
+    @Override
+    public Integer getMessageTTL(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
     }
 
     @Override
@@ -630,6 +730,18 @@ public class MockTopics
     }
 
     @Override
+    public RetentionPolicies getRetention(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<RetentionPolicies> getRetentionAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void removeRetention(String s) throws PulsarAdminException
     { }
 
@@ -652,6 +764,18 @@ public class MockTopics
     }
 
     @Override
+    public Integer getMaxUnackedMessagesOnConsumer(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Integer> getMaxUnackedMessagesOnConsumerAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void setMaxUnackedMessagesOnConsumer(String s, int i) throws PulsarAdminException
     { }
 
@@ -667,6 +791,18 @@ public class MockTopics
 
     @Override
     public CompletableFuture<Void> removeMaxUnackedMessagesOnConsumerAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public InactiveTopicPolicies getInactiveTopicPolicies(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<InactiveTopicPolicies> getInactiveTopicPoliciesAsync(String topic, boolean applied)
     {
         return null;
     }
@@ -716,6 +852,18 @@ public class MockTopics
     }
 
     @Override
+    public OffloadPolicies getOffloadPolicies(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<OffloadPolicies> getOffloadPoliciesAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void setOffloadPolicies(String s, OffloadPolicies offloadPolicies) throws PulsarAdminException
     { }
 
@@ -743,6 +891,18 @@ public class MockTopics
 
     @Override
     public CompletableFuture<Integer> getMaxUnackedMessagesOnSubscriptionAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public Integer getMaxUnackedMessagesOnSubscription(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Integer> getMaxUnackedMessagesOnSubscriptionAsync(String topic, boolean applied)
     {
         return null;
     }
@@ -790,6 +950,18 @@ public class MockTopics
     }
 
     @Override
+    public PersistencePolicies getPersistence(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<PersistencePolicies> getPersistenceAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void removePersistence(String s) throws PulsarAdminException
     { }
 
@@ -812,6 +984,30 @@ public class MockTopics
     }
 
     @Override
+    public Boolean getDeduplicationStatus(String topic) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getDeduplicationStatusAsync(String topic)
+    {
+        return null;
+    }
+
+    @Override
+    public Boolean getDeduplicationStatus(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getDeduplicationStatusAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void enableDeduplication(String s, boolean b) throws PulsarAdminException
     { }
 
@@ -822,11 +1018,31 @@ public class MockTopics
     }
 
     @Override
+    public void setDeduplicationStatus(String topic, boolean enabled) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setDeduplicationStatusAsync(String topic, boolean enabled)
+    {
+        return null;
+    }
+
+    @Override
     public void disableDeduplication(String s) throws PulsarAdminException
     { }
 
     @Override
     public CompletableFuture<Void> disableDeduplicationAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeDeduplicationStatus(String topic) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeDeduplicationStatusAsync(String topic)
     {
         return null;
     }
@@ -854,6 +1070,18 @@ public class MockTopics
     }
 
     @Override
+    public DispatchRate getDispatchRate(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<DispatchRate> getDispatchRateAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void removeDispatchRate(String s) throws PulsarAdminException
     { }
 
@@ -869,6 +1097,18 @@ public class MockTopics
 
     @Override
     public CompletableFuture<Void> setSubscriptionDispatchRateAsync(String s, DispatchRate dispatchRate)
+    {
+        return null;
+    }
+
+    @Override
+    public DispatchRate getSubscriptionDispatchRate(String namespace, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<DispatchRate> getSubscriptionDispatchRateAsync(String namespace, boolean applied)
     {
         return null;
     }
@@ -896,6 +1136,50 @@ public class MockTopics
     }
 
     @Override
+    public void setReplicatorDispatchRate(String topic, DispatchRate dispatchRate) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setReplicatorDispatchRateAsync(String topic, DispatchRate dispatchRate)
+    {
+        return null;
+    }
+
+    @Override
+    public DispatchRate getReplicatorDispatchRate(String topic) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<DispatchRate> getReplicatorDispatchRateAsync(String topic)
+    {
+        return null;
+    }
+
+    @Override
+    public DispatchRate getReplicatorDispatchRate(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<DispatchRate> getReplicatorDispatchRateAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
+    public void removeReplicatorDispatchRate(String topic) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> removeReplicatorDispatchRateAsync(String topic)
+    {
+        return null;
+    }
+
+    @Override
     public Long getCompactionThreshold(String s) throws PulsarAdminException
     {
         return null;
@@ -903,6 +1187,18 @@ public class MockTopics
 
     @Override
     public CompletableFuture<Long> getCompactionThresholdAsync(String s)
+    {
+        return null;
+    }
+
+    @Override
+    public Long getCompactionThreshold(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Long> getCompactionThresholdAsync(String topic, boolean applied)
     {
         return null;
     }
@@ -1004,6 +1300,18 @@ public class MockTopics
     }
 
     @Override
+    public Integer getMaxProducers(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Integer> getMaxProducersAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void setMaxProducers(String s, int i) throws PulsarAdminException
     { }
 
@@ -1100,6 +1408,18 @@ public class MockTopics
     }
 
     @Override
+    public Integer getMaxConsumers(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Integer> getMaxConsumersAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void setMaxConsumers(String s, int i) throws PulsarAdminException
     { }
 
@@ -1152,6 +1472,28 @@ public class MockTopics
     }
 
     @Override
+    public void setSubscriptionTypesEnabled(String topic, Set<SubscriptionType> subscriptionTypesEnabled) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> setSubscriptionTypesEnabledAsync(String topic, Set<SubscriptionType> subscriptionTypesEnabled)
+    {
+        return null;
+    }
+
+    @Override
+    public Set<SubscriptionType> getSubscriptionTypesEnabled(String topic) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Set<SubscriptionType>> getSubscriptionTypesEnabledAsync(String topic)
+    {
+        return null;
+    }
+
+    @Override
     public void setSubscribeRate(String s, SubscribeRate subscribeRate) throws PulsarAdminException
     { }
 
@@ -1174,6 +1516,18 @@ public class MockTopics
     }
 
     @Override
+    public SubscribeRate getSubscribeRate(String topic, boolean applied) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<SubscribeRate> getSubscribeRateAsync(String topic, boolean applied)
+    {
+        return null;
+    }
+
+    @Override
     public void removeSubscribeRate(String s) throws PulsarAdminException
     { }
 
@@ -1191,6 +1545,16 @@ public class MockTopics
 
     @Override
     public CompletableFuture<Message<byte[]>> examineMessageAsync(String s, String s1, long l) throws PulsarAdminException
+    {
+        return null;
+    }
+
+    @Override
+    public void truncate(String topic) throws PulsarAdminException
+    { }
+
+    @Override
+    public CompletableFuture<Void> truncateAsync(String topic)
     {
         return null;
     }

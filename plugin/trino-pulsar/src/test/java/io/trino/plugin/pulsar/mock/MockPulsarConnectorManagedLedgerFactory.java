@@ -15,18 +15,18 @@ package io.trino.plugin.pulsar.mock;
 
 import io.trino.plugin.pulsar.PulsarConnectorCache;
 import io.trino.plugin.pulsar.PulsarConnectorConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.StatsProvider;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.bookkeeper.stats.StatsProvider;
+import org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
 
-public class MockPulsarConnectorCache
+public class MockPulsarConnectorManagedLedgerFactory
         implements PulsarConnectorCache
 {
     private ManagedLedgerFactory managedLedgerFactory;
 
-    public MockPulsarConnectorCache(ManagedLedgerFactory managedLedgerFactory)
+    public MockPulsarConnectorManagedLedgerFactory(ManagedLedgerFactory managedLedgerFactory) throws Exception
     {
         this.managedLedgerFactory = managedLedgerFactory;
     }
@@ -38,7 +38,7 @@ public class MockPulsarConnectorCache
     }
 
     @Override
-    public ManagedLedgerConfig getManagedLedgerConfig(NamespaceName namespaceName, OffloadPolicies offloadPolicies, PulsarConnectorConfig pulsarConnectorConfig)
+    public ManagedLedgerConfig getManagedLedgerConfig(NamespaceName namespaceName, OffloadPoliciesImpl offloadPolicies, PulsarConnectorConfig pulsarConnectorConfig)
     {
         return null;
     }

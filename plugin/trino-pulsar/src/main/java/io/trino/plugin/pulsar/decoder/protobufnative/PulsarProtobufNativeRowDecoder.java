@@ -13,15 +13,15 @@
  */
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
+import com.google.protobuf.DynamicMessage;
 import io.airlift.log.Logger;
+import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarRowDecoder;
 import io.trino.spi.TrinoException;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeSchema;
-import org.apache.pulsar.shade.com.google.protobuf.DynamicMessage;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
 
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +41,8 @@ public class PulsarProtobufNativeRowDecoder
     private final GenericProtobufNativeSchema genericProtobufNativeSchema;
     private final Map<DecoderColumnHandle, PulsarProtobufNativeColumnDecoder> columnDecoders;
 
-    public PulsarProtobufNativeRowDecoder(GenericProtobufNativeSchema genericProtobufNativeSchema, Set<DecoderColumnHandle> columns)
+    public PulsarProtobufNativeRowDecoder(GenericProtobufNativeSchema genericProtobufNativeSchema,
+                                          Set<DecoderColumnHandle> columns)
     {
         this.genericProtobufNativeSchema = requireNonNull(genericProtobufNativeSchema, "genericProtobufNativeSchema is null");
         columnDecoders = columns.stream()
@@ -68,7 +69,6 @@ public class PulsarProtobufNativeRowDecoder
             dynamicMessage = record.getProtobufRecord();
         }
         catch (Exception e) {
-            log.error(e);
             throw new TrinoException(GENERIC_INTERNAL_ERROR, "Decoding protobuf record failed.", e);
         }
         return Optional.of(columnDecoders.entrySet().stream()

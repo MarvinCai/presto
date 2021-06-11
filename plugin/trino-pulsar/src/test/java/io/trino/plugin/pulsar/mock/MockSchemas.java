@@ -15,12 +15,13 @@ package io.trino.plugin.pulsar.mock;
 
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Schemas;
-import org.apache.pulsar.shade.javax.ws.rs.ClientErrorException;
-import org.apache.pulsar.shade.javax.ws.rs.core.Response;
-import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.schema.IsCompatibilityResponse;
-import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.schema.PostSchemaPayload;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfoWithVersion;
+import org.apache.pulsar.common.protocol.schema.IsCompatibilityResponse;
+import org.apache.pulsar.common.protocol.schema.PostSchemaPayload;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaInfoWithVersion;
+
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class MockSchemas
             return topicsToSchemas.get(topic);
         }
         else {
-            throw new PulsarAdminException(new ClientErrorException(Response.Status.NOT_FOUND));
+            ClientErrorException cee = new ClientErrorException(Response.Status.NOT_FOUND);
+            throw new PulsarAdminException(cee, cee.getMessage(), cee.getResponse().getStatus());
         }
     }
 

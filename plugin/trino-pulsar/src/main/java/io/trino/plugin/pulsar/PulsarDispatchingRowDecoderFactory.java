@@ -21,9 +21,9 @@ import io.trino.plugin.pulsar.decoder.primitive.PulsarPrimitiveRowDecoderFactory
 import io.trino.plugin.pulsar.decoder.protobufnative.PulsarProtobufNativeRowDecoderFactory;
 import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.type.TypeManager;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 
 import java.util.List;
 import java.util.Set;
@@ -43,14 +43,16 @@ public class PulsarDispatchingRowDecoderFactory
         this.typeManager = typeManager;
     }
 
-    public PulsarRowDecoder createRowDecoder(TopicName topicName, SchemaInfo schemaInfo,
+    public PulsarRowDecoder createRowDecoder(TopicName topicName,
+                                             SchemaInfo schemaInfo,
                                              Set<DecoderColumnHandle> columns)
     {
         PulsarRowDecoderFactory rowDecoderFactory = createDecoderFactory(schemaInfo);
         return rowDecoderFactory.createRowDecoder(topicName, schemaInfo, columns);
     }
 
-    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName, SchemaInfo schemaInfo,
+    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName,
+                                                      SchemaInfo schemaInfo,
                                                       PulsarColumnHandle.HandleKeyValueType handleKeyValueType)
     {
         PulsarRowDecoderFactory rowDecoderFactory = createDecoderFactory(schemaInfo);

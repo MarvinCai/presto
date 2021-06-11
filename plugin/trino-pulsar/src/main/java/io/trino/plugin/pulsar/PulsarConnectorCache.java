@@ -13,16 +13,17 @@
  */
 package io.trino.plugin.pulsar;
 
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.StatsProvider;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.bookkeeper.stats.StatsProvider;
+import org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
 
 public interface PulsarConnectorCache
 {
-    ManagedLedgerConfig getManagedLedgerConfig(NamespaceName namespaceName, OffloadPolicies offloadPolicies,
-                                                      PulsarConnectorConfig pulsarConnectorConfig);
+    ManagedLedgerConfig getManagedLedgerConfig(NamespaceName namespaceName,
+                                               OffloadPoliciesImpl offloadPolicies,
+                                               PulsarConnectorConfig pulsarConnectorConfig);
 
     ManagedLedgerFactory getManagedLedgerFactory();
 

@@ -13,11 +13,11 @@
  */
 package io.trino.plugin.pulsar;
 
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.Counter;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.NullStatsProvider;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.OpStatsLogger;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.StatsLogger;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.StatsProvider;
+import org.apache.bookkeeper.stats.Counter;
+import org.apache.bookkeeper.stats.NullStatsProvider;
+import org.apache.bookkeeper.stats.OpStatsLogger;
+import org.apache.bookkeeper.stats.StatsLogger;
+import org.apache.bookkeeper.stats.StatsProvider;
 
 import java.util.concurrent.TimeUnit;
 

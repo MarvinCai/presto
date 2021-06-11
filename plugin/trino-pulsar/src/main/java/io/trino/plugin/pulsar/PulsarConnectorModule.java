@@ -19,6 +19,11 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import io.trino.decoder.DecoderModule;
+import io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata;
+import io.trino.plugin.base.classloader.ForClassLoaderSafe;
+import io.trino.spi.connector.ConnectorMetadata;
+import io.trino.spi.connector.ConnectorRecordSetProvider;
+import io.trino.spi.connector.ConnectorSplitManager;
 import io.trino.spi.type.Type;
 import io.trino.spi.type.TypeId;
 import io.trino.spi.type.TypeManager;
@@ -38,7 +43,8 @@ public class PulsarConnectorModule
     private final String connectorId;
     private final TypeManager typeManager;
 
-    public PulsarConnectorModule(String connectorId, TypeManager typeManager)
+    public PulsarConnectorModule(String connectorId,
+                                 TypeManager typeManager)
     {
         this.connectorId = requireNonNull(connectorId, "connector id is null");
         this.typeManager = requireNonNull(typeManager, "typeManager is null");
@@ -51,10 +57,12 @@ public class PulsarConnectorModule
 
         binder.bind(PulsarConnector.class).in(Scopes.SINGLETON);
         binder.bind(PulsarConnectorId.class).toInstance(new PulsarConnectorId(connectorId));
+        binder.bind(PulsarConnectorCache.class).to(PulsarConnectorManagedLedgerFactory.class).in(Scopes.SINGLETON);
+        binder.bind(ConnectorMetadata.class).annotatedWith(ForClassLoaderSafe.class).to(PulsarMetadata.class).in(Scopes.SINGLETON);
+        binder.bind(ConnectorMetadata.class).to(ClassLoaderSafeConnectorMetadata.class).in(Scopes.SINGLETON);
 
-        binder.bind(PulsarMetadata.class).in(Scopes.SINGLETON);
-        binder.bind(PulsarSplitManager.class).in(Scopes.SINGLETON);
-        binder.bind(PulsarRecordSetProvider.class).in(Scopes.SINGLETON);
+        binder.bind(ConnectorSplitManager.class).to(PulsarSplitManager.class).in(Scopes.SINGLETON);
+        binder.bind(ConnectorRecordSetProvider.class).to(PulsarRecordSetProvider.class).in(Scopes.SINGLETON);
 
         binder.bind(PulsarDispatchingRowDecoderFactory.class).in(Scopes.SINGLETON);
 
@@ -83,7 +91,8 @@ public class PulsarConnectorModule
         }
 
         @Override
-        protected Type _deserialize(String value, DeserializationContext context)
+        protected Type _deserialize(String value,
+                                    DeserializationContext context)
         {
             return typeManager.getType(TypeId.of(value));
         }

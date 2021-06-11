@@ -13,17 +13,17 @@
  */
 package io.trino.plugin.pulsar.mock;
 
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedger;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerInfo;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Position;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.bookkeeper.mledger.AsyncCallbacks;
+import org.apache.bookkeeper.mledger.ManagedLedger;
+import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.bookkeeper.mledger.ManagedLedgerInfo;
+import org.apache.bookkeeper.mledger.Position;
+import org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
 import java.util.HashMap;
 import java.util.Map;

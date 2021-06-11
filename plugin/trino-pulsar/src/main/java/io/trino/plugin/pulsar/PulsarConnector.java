@@ -14,9 +14,6 @@
 package io.trino.plugin.pulsar;
 
 import io.airlift.bootstrap.LifeCycleManager;
-import io.airlift.bootstrap.LifeCycleStopException;
-import io.airlift.log.Logger;
-import io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata;
 import io.trino.spi.connector.Connector;
 import io.trino.spi.connector.ConnectorMetadata;
 import io.trino.spi.connector.ConnectorRecordSetProvider;
@@ -37,18 +34,17 @@ public class PulsarConnector
         implements Connector
 {
     private final LifeCycleManager lifeCycleManager;
-    private final PulsarMetadata metadata;
-    private final PulsarSplitManager splitManager;
-    private final PulsarRecordSetProvider recordSetProvider;
+    private final ConnectorMetadata metadata;
+    private final ConnectorSplitManager splitManager;
+    private final ConnectorRecordSetProvider recordSetProvider;
     private final PulsarConnectorConfig pulsarConnectorConfig;
 
     @Inject
-    public PulsarConnector(
-            LifeCycleManager lifeCycleManager,
-            PulsarMetadata metadata,
-            PulsarSplitManager splitManager,
-            PulsarRecordSetProvider recordSetProvider,
-            PulsarConnectorConfig pulsarConnectorConfig)
+    public PulsarConnector(LifeCycleManager lifeCycleManager,
+                           ConnectorMetadata metadata,
+                           ConnectorSplitManager splitManager,
+                           ConnectorRecordSetProvider recordSetProvider,
+                           PulsarConnectorConfig pulsarConnectorConfig)
     {
         this.lifeCycleManager = requireNonNull(lifeCycleManager, "lifeCycleManager is null");
         this.metadata = requireNonNull(metadata, "metadata is null");
@@ -58,7 +54,8 @@ public class PulsarConnector
     }
 
     @Override
-    public ConnectorTransactionHandle beginTransaction(IsolationLevel isolationLevel, boolean readOnly)
+    public ConnectorTransactionHandle beginTransaction(IsolationLevel isolationLevel,
+                                                       boolean readOnly)
     {
         checkConnectorSupports(READ_COMMITTED, isolationLevel);
         return PulsarTransactionHandle.INSTANCE;
@@ -67,7 +64,7 @@ public class PulsarConnector
     @Override
     public ConnectorMetadata getMetadata(ConnectorTransactionHandle transactionHandle)
     {
-        return new ClassLoaderSafeConnectorMetadata(metadata, getClass().getClassLoader());
+        return metadata;
     }
 
     @Override
@@ -82,15 +79,10 @@ public class PulsarConnector
         return recordSetProvider;
     }
 
-    public void initConnectorCache() throws Exception
-    {
-        PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
-    }
-
     @Override
     public final void shutdown()
     {
-        pulsarConnectorConfig.close();
+        PulsarAdminClientProvider.close();
         lifeCycleManager.stop();
     }
 }

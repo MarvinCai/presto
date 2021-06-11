@@ -13,17 +13,14 @@
  */
 package io.trino.plugin.pulsar.decoder.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Splitter;
+import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.decoder.json.JsonFieldDecoder;
 import io.trino.plugin.pulsar.PulsarRowDecoder;
-import io.trino.plugin.pulsar.util.ObjectMapperFactory;
-import io.trino.spi.TrinoException;
 import org.apache.pulsar.client.impl.schema.generic.GenericJsonRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericJsonSchema;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +29,6 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
-import static io.trino.spi.StandardErrorCode.GENERIC_INTERNAL_ERROR;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 
@@ -46,13 +42,15 @@ public class PulsarJsonRowDecoder
 
     private final GenericJsonSchema genericJsonSchema;
 
-    public PulsarJsonRowDecoder(GenericJsonSchema genericJsonSchema, Set<DecoderColumnHandle> columns)
+    public PulsarJsonRowDecoder(GenericJsonSchema genericJsonSchema,
+                                Set<DecoderColumnHandle> columns)
     {
         this.genericJsonSchema = requireNonNull(genericJsonSchema, "genericJsonSchema is null");
         this.fieldDecoders = columns.stream().collect(toImmutableMap(identity(), PulsarJsonFieldDecoder::new));
     }
 
-    private static com.fasterxml.jackson.databind.JsonNode locateNode(com.fasterxml.jackson.databind.JsonNode tree, DecoderColumnHandle columnHandle)
+    private static com.fasterxml.jackson.databind.JsonNode locateNode(com.fasterxml.jackson.databind.JsonNode tree,
+                                                                      DecoderColumnHandle columnHandle)
     {
         String mapping = columnHandle.getMapping();
         checkState(mapping != null, "No mapping for %s", columnHandle.getName());
@@ -81,14 +79,7 @@ public class PulsarJsonRowDecoder
             DecoderColumnHandle columnHandle = entry.getKey();
             JsonFieldDecoder decoder = entry.getValue();
             com.fasterxml.jackson.databind.JsonNode node = null;
-            try {
-                node = locateNode(
-                        ObjectMapperFactory.getThreadLocal().readTree(record.getJsonNode().toString()), columnHandle);
-            }
-            catch (JsonProcessingException e) {
-                e.printStackTrace();
-                throw new TrinoException(GENERIC_INTERNAL_ERROR, "Decoding json record failed.", e);
-            }
+            node = locateNode(record.getJsonNode(), columnHandle);
             decodedRow.put(columnHandle, decoder.decode(node));
         }
         return Optional.of(decodedRow);

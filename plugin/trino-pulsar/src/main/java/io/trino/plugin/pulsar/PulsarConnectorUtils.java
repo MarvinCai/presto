@@ -13,10 +13,10 @@
  */
 package io.trino.plugin.pulsar;
 
+import org.apache.avro.Schema;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
-import org.apache.pulsar.shade.org.apache.avro.Schema;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.naming.TopicName;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +37,8 @@ public class PulsarConnectorUtils
         return parser.parse(schemaJson);
     }
 
-    public static boolean isPartitionedTopic(TopicName topicName, PulsarAdmin pulsarAdmin) throws PulsarAdminException
+    public static boolean isPartitionedTopic(TopicName topicName,
+                                             PulsarAdmin pulsarAdmin) throws PulsarAdminException
     {
         return pulsarAdmin.topics().getPartitionedTopicMetadata(topicName.toString()).partitions > 0;
     }
@@ -93,14 +94,16 @@ public class PulsarConnectorUtils
         return properties;
     }
 
-    public static String rewriteNamespaceDelimiterIfNeeded(String namespace, PulsarConnectorConfig config)
+    public static String rewriteNamespaceDelimiterIfNeeded(String namespace,
+                                                           PulsarConnectorConfig config)
     {
         return config.getNamespaceDelimiterRewriteEnable()
                 ? namespace.replace("/", config.getRewriteNamespaceDelimiter())
                 : namespace;
     }
 
-    public static String restoreNamespaceDelimiterIfNeeded(String namespace, PulsarConnectorConfig config)
+    public static String restoreNamespaceDelimiterIfNeeded(String namespace,
+                                                           PulsarConnectorConfig config)
     {
         return config.getNamespaceDelimiterRewriteEnable()
                 ? namespace.replace(config.getRewriteNamespaceDelimiter(), "/")

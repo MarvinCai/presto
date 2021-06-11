@@ -46,7 +46,8 @@ public class PulsarFieldValueProviders
      * @param isNull
      * @return
      */
-    public static FieldValueProvider timeValueProvider(long value, boolean isNull)
+    public static FieldValueProvider timeValueProvider(long value,
+                                                       boolean isNull)
     {
         return new FieldValueProvider()
         {

@@ -15,6 +15,7 @@ package io.trino.plugin.pulsar.decoder.protobufnative;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.protobuf.Descriptors;
 import io.airlift.log.Logger;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.plugin.pulsar.PulsarColumnHandle;
@@ -37,10 +38,10 @@ import io.trino.spi.type.TypeSignature;
 import io.trino.spi.type.TypeSignatureParameter;
 import io.trino.spi.type.VarbinaryType;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeSchema;
-import org.apache.pulsar.shade.com.google.protobuf.Descriptors;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -64,18 +65,20 @@ public class PulsarProtobufNativeRowDecoderFactory
     }
 
     @Override
-    public PulsarRowDecoder createRowDecoder(TopicName topicName, SchemaInfo schemaInfo,
+    public PulsarRowDecoder createRowDecoder(TopicName topicName,
+                                             SchemaInfo schemaInfo,
                                              Set<DecoderColumnHandle> columns)
     {
         return new PulsarProtobufNativeRowDecoder((GenericProtobufNativeSchema) GenericProtobufNativeSchema.of(schemaInfo), columns);
     }
 
     @Override
-    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName, SchemaInfo schemaInfo,
+    public List<ColumnMetadata> extractColumnMetadata(TopicName topicName,
+                                                      SchemaInfo schemaInfo,
                                                       PulsarColumnHandle.HandleKeyValueType handleKeyValueType)
     {
         List<ColumnMetadata> columnMetadata;
-        String schemaJson = new String(schemaInfo.getSchema());
+        String schemaJson = new String(schemaInfo.getSchema(), StandardCharsets.ISO_8859_1);
         if (Strings.nullToEmpty(schemaJson).trim().isEmpty()) {
             throw new TrinoException(NOT_SUPPORTED, "Topic "
                     + topicName.toString() + " does not have a valid schema");
@@ -86,7 +89,6 @@ public class PulsarProtobufNativeRowDecoderFactory
                     ((GenericProtobufNativeSchema) GenericProtobufNativeSchema.of(schemaInfo)).getProtobufNativeSchema();
         }
         catch (Exception ex) {
-            log.error(ex);
             throw new TrinoException(NOT_SUPPORTED, "Topic "
                     + topicName.toString() + " does not have a valid schema");
         }

@@ -29,24 +29,24 @@ import io.trino.spi.predicate.Domain;
 import io.trino.spi.predicate.Range;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.spi.type.IntegerType;
+import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.MessageImpl;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
+import org.apache.pulsar.common.schema.SchemaInfo;
 
 import javax.inject.Inject;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +58,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.trino.spi.StandardErrorCode.QUERY_REJECTED;
 import static java.lang.Math.toIntExact;
 import static java.util.Objects.requireNonNull;
-import static org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedCursor.FindPositionConstraint.SearchAllAvailableEntries;
+import static org.apache.bookkeeper.mledger.ManagedCursor.FindPositionConstraint.SearchAllAvailableEntries;
 
 /**
  * The class helping to manage Trino Pulsar splits.
@@ -72,26 +72,31 @@ public class PulsarSplitManager
 
     private final PulsarAdmin pulsarAdmin;
 
+    private final PulsarConnectorCache pulsarConnectorManagedLedgerFactory;
+
     private static final Logger log = Logger.get(PulsarSplitManager.class);
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Inject
-    public PulsarSplitManager(PulsarConnectorId connectorId, PulsarConnectorConfig pulsarConnectorConfig)
+    public PulsarSplitManager(PulsarConnectorId connectorId,
+                              PulsarConnectorConfig pulsarConnectorConfig,
+                              PulsarConnectorCache pulsarConnectorManagedLedgerFactory)
     {
         this.connectorId = requireNonNull(connectorId, "connectorId is null").toString();
         this.pulsarConnectorConfig = requireNonNull(pulsarConnectorConfig, "pulsarConnectorConfig is null");
+        this.pulsarConnectorManagedLedgerFactory = requireNonNull(pulsarConnectorManagedLedgerFactory, "pulsarConnectorManagedLedgerFactory is null");
         try {
-            this.pulsarAdmin = pulsarConnectorConfig.getPulsarAdmin();
+            this.pulsarAdmin = PulsarAdminClientProvider.getPulsarAdmin(pulsarConnectorConfig);
         }
         catch (PulsarClientException e) {
-            log.error(e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Fail to create Pulsar admin client", e);
         }
     }
 
     @Override
-    public ConnectorSplitSource getSplits(ConnectorTransactionHandle transactionHandle, ConnectorSession session,
+    public ConnectorSplitSource getSplits(ConnectorTransactionHandle transactionHandle,
+                                          ConnectorSession session,
                                           ConnectorTableLayoutHandle layout,
                                           SplitSchedulingStrategy splitSchedulingStrategy)
     {
@@ -117,7 +122,7 @@ public class PulsarSplitManager
                                 namespace, tableHandle.getTopicName()));
             }
             else if (e.getStatusCode() == 404) {
-                schemaInfo = PulsarSqlSchemaInfoProvider.defaultSchema();
+                schemaInfo = PulsarSchemaInfoProvider.defaultSchema();
             }
             else {
                 throw new RuntimeException("Failed to get pulsar topic schema for topic "
@@ -128,8 +133,8 @@ public class PulsarSplitManager
 
         Collection<PulsarSplit> splits;
         try {
-            OffloadPolicies offloadPolicies = this.pulsarAdmin.namespaces()
-                    .getOffloadPolicies(topicName.getNamespace());
+            OffloadPoliciesImpl offloadPolicies = (OffloadPoliciesImpl) this.pulsarAdmin.namespaces()
+                                    .getOffloadPolicies(topicName.getNamespace());
             if (offloadPolicies != null) {
                 offloadPolicies.setOffloadersDirectory(pulsarConnectorConfig.getOffloadersDirectory());
                 offloadPolicies.setManagedLedgerOffloadMaxThreads(
@@ -151,16 +156,18 @@ public class PulsarSplitManager
             }
         }
         catch (Exception e) {
-            log.error(e, "Failed to get splits");
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to get splits", e);
         }
         return new FixedSplitSource(splits);
     }
 
     @VisibleForTesting
-    protected Collection<PulsarSplit> getSplitsPartitionedTopic(int numSplits, TopicName topicName, PulsarTableHandle
-            tableHandle, SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
-                                                      OffloadPolicies offloadPolicies) throws Exception
+    protected Collection<PulsarSplit> getSplitsPartitionedTopic(int numSplits,
+                                                                TopicName topicName,
+                                                                PulsarTableHandle tableHandle,
+                                                                SchemaInfo schemaInfo,
+                                                                TupleDomain<ColumnHandle> tupleDomain,
+                                                                OffloadPoliciesImpl offloadPolicies) throws Exception
     {
         List<Integer> predicatedPartitions = getPredicatedPartitions(topicName, tupleDomain);
         if (log.isDebugEnabled()) {
@@ -173,9 +180,8 @@ public class PulsarSplitManager
 
         int splitRemainder = actualNumSplits % predicatedPartitions.size();
 
-        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
-        ManagedLedgerFactory managedLedgerFactory = pulsarConnectorCache.getManagedLedgerFactory();
-        ManagedLedgerConfig managedLedgerConfig = pulsarConnectorCache.getManagedLedgerConfig(
+        ManagedLedgerFactory managedLedgerFactory = pulsarConnectorManagedLedgerFactory.getManagedLedgerFactory();
+        ManagedLedgerConfig managedLedgerConfig = pulsarConnectorManagedLedgerFactory.getManagedLedgerConfig(
                 topicName.getNamespaceObject(), offloadPolicies, pulsarConnectorConfig);
 
         List<PulsarSplit> splits = new LinkedList<>();
@@ -196,7 +202,8 @@ public class PulsarSplitManager
         return splits;
     }
 
-    private List<Integer> getPredicatedPartitions(TopicName topicName, TupleDomain<ColumnHandle> tupleDomain)
+    private List<Integer> getPredicatedPartitions(TopicName topicName,
+                                                  TupleDomain<ColumnHandle> tupleDomain)
     {
         int numPartitions;
         try {
@@ -248,13 +255,15 @@ public class PulsarSplitManager
     }
 
     @VisibleForTesting
-    protected Collection<PulsarSplit> getSplitsNonPartitionedTopic(int numSplits, TopicName topicName,
-                                                         PulsarTableHandle tableHandle, SchemaInfo schemaInfo, TupleDomain<ColumnHandle> tupleDomain,
-                                                         OffloadPolicies offloadPolicies) throws Exception
+    protected Collection<PulsarSplit> getSplitsNonPartitionedTopic(int numSplits,
+                                                                   TopicName topicName,
+                                                                   PulsarTableHandle tableHandle,
+                                                                   SchemaInfo schemaInfo,
+                                                                   TupleDomain<ColumnHandle> tupleDomain,
+                                                                   OffloadPoliciesImpl offloadPolicies) throws Exception
     {
-        PulsarConnectorCache pulsarConnectorCache = PulsarConnectorCacheImpl.getConnectorCache(pulsarConnectorConfig);
-        ManagedLedgerFactory managedLedgerFactory = pulsarConnectorCache.getManagedLedgerFactory();
-        ManagedLedgerConfig managedLedgerConfig = pulsarConnectorCache.getManagedLedgerConfig(
+        ManagedLedgerFactory managedLedgerFactory = pulsarConnectorManagedLedgerFactory.getManagedLedgerFactory();
+        ManagedLedgerConfig managedLedgerConfig = pulsarConnectorManagedLedgerFactory.getManagedLedgerConfig(
                 topicName.getNamespaceObject(), offloadPolicies, pulsarConnectorConfig);
 
         return getSplitsForTopic(
@@ -271,14 +280,14 @@ public class PulsarSplitManager
 
     @VisibleForTesting
     protected Collection<PulsarSplit> getSplitsForTopic(String topicNamePersistenceEncoding,
-                                              ManagedLedgerFactory managedLedgerFactory,
-                                              ManagedLedgerConfig managedLedgerConfig,
-                                              int numSplits,
-                                              PulsarTableHandle tableHandle,
-                                              SchemaInfo schemaInfo, String tableName,
-                                              TupleDomain<ColumnHandle> tupleDomain,
-                                              OffloadPolicies offloadPolicies)
-            throws ManagedLedgerException, InterruptedException, IOException
+                                                        ManagedLedgerFactory managedLedgerFactory,
+                                                        ManagedLedgerConfig managedLedgerConfig,
+                                                        int numSplits,
+                                                        PulsarTableHandle tableHandle,
+                                                        SchemaInfo schemaInfo,
+                                                        String tableName,
+                                                        TupleDomain<ColumnHandle> tupleDomain,
+                                                        OffloadPoliciesImpl offloadPolicies) throws ManagedLedgerException, InterruptedException, IOException
     {
         ReadOnlyCursor readOnlyCursor = null;
         try {
@@ -288,7 +297,7 @@ public class PulsarSplitManager
 
             long numEntries = readOnlyCursor.getNumberOfEntries();
             if (numEntries <= 0) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
 
             PredicatePushdownInfo predicatePushdownInfo = PredicatePushdownInfo.getPredicatePushdownInfo(
@@ -329,7 +338,7 @@ public class PulsarSplitManager
                         schemaInfo.getName(),
                         tableName,
                         entriesForSplit,
-                        new String(schemaInfo.getSchema(), "ISO8859-1"),
+                        new String(schemaInfo.getSchema(), StandardCharsets.ISO_8859_1),
                         schemaInfo.getType(),
                         startPosition.getEntryId(),
                         endPosition.getEntryId(),
@@ -337,7 +346,7 @@ public class PulsarSplitManager
                         endPosition.getLedgerId(),
                         tupleDomain,
                         objectMapper.writeValueAsString(schemaInfo.getProperties()),
-                        offloadPolicies == null ? null : org.apache.pulsar.common.policies.data.OffloadPolicies.create(offloadPolicies.toProperties()));
+                        offloadPolicies);
                 splits.add(pulsarSplit);
             }
             return splits;
@@ -359,7 +368,8 @@ public class PulsarSplitManager
         private PositionImpl startPosition;
         private long numOfEntries;
 
-        private PredicatePushdownInfo(PositionImpl startPosition, long numOfEntries)
+        private PredicatePushdownInfo(PositionImpl startPosition,
+                                      long numOfEntries)
         {
             this.startPosition = startPosition;
             this.numOfEntries = numOfEntries;
@@ -424,13 +434,12 @@ public class PulsarSplitManager
                                 }
                             }
 
-                            // Just use a close bound since trino can always filter out the extra entries even if
-                            // the bound
-                            // should be open or a mixture of open and closed
-                            org.apache.pulsar.shade.com.google.common.collect.Range<PositionImpl> posRange =
-                                    org.apache.pulsar.shade.com.google.common.collect.Range.range(overallStartPos,
-                                            org.apache.pulsar.shade.com.google.common.collect.BoundType.CLOSED,
-                                            overallEndPos, org.apache.pulsar.shade.com.google.common.collect.BoundType.CLOSED);
+                            // Just use a close bound since Trino can always filter out the extra entries even if
+                            // the bound should be open or a mixture of open and closed
+                            com.google.common.collect.Range<PositionImpl> posRange =
+                                    com.google.common.collect.Range.range(overallStartPos,
+                                            com.google.common.collect.BoundType.CLOSED,
+                                            overallEndPos, com.google.common.collect.BoundType.CLOSED);
 
                             long numOfEntries = readOnlyCursor.getNumberOfEntries(posRange) - 1;
 
@@ -463,26 +472,25 @@ public class PulsarSplitManager
         }
     }
 
-    private static PositionImpl findPosition(ReadOnlyCursor readOnlyCursor, long timestamp) throws
+    private static PositionImpl findPosition(ReadOnlyCursor readOnlyCursor,
+                                             long timestamp) throws
             ManagedLedgerException,
             InterruptedException
     {
         return (PositionImpl) readOnlyCursor.findNewestMatching(SearchAllAvailableEntries,
             entry -> {
-                MessageImpl msg = null;
-                ByteBuf copiedByteBuf = null;
+                MessageImpl<byte[]> msg = null;
                 try {
-                    copiedByteBuf = entry.getDataBuffer();
-                    msg = MessageImpl.deserialize(copiedByteBuf);
-
-                    return msg.getPublishTime() <= timestamp;
+                    msg = MessageImpl.deserializeBrokerEntryMetaDataFirst(entry.getDataBuffer());
+                    return msg.getBrokerEntryMetadata() != null
+                            ? msg.getBrokerEntryMetadata().getBrokerTimestamp() <= timestamp
+                            : msg.getPublishTime() <= timestamp;
                 }
                 catch (Exception e) {
                     log.error(e, "Failed To deserialize message when finding position with error: %s", e);
                 }
                 finally {
                     entry.release();
-                    copiedByteBuf.release();
                     if (msg != null) {
                         msg.recycle();
                     }

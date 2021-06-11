@@ -32,14 +32,19 @@ public class PulsarRecordSet
     private final List<Type> columnTypes;
     private final PulsarSplit pulsarSplit;
     private final PulsarConnectorConfig pulsarConnectorConfig;
+    private final PulsarConnectorCache pulsarConnectorManagedLedgerFactory;
 
     private PulsarDispatchingRowDecoderFactory decoderFactory;
 
-    public PulsarRecordSet(PulsarSplit split, List<PulsarColumnHandle> columnHandles, PulsarConnectorConfig
-            pulsarConnectorConfig, PulsarDispatchingRowDecoderFactory decoderFactory)
+    public PulsarRecordSet(PulsarSplit split,
+                           List<PulsarColumnHandle> columnHandles,
+                           PulsarConnectorConfig pulsarConnectorConfig,
+                           PulsarDispatchingRowDecoderFactory decoderFactory,
+                           PulsarConnectorCache pulsarConnectorManagedLedgerFactory)
     {
         requireNonNull(split, "split is null");
         this.columnHandles = requireNonNull(columnHandles, "column handles is null");
+        this.pulsarConnectorManagedLedgerFactory = requireNonNull(pulsarConnectorManagedLedgerFactory, "pulsarConnectorManagedLedgerFactory is null");
         ImmutableList.Builder<Type> types = ImmutableList.builder();
         for (PulsarColumnHandle column : columnHandles) {
             types.add(column.getType());
@@ -56,13 +61,13 @@ public class PulsarRecordSet
     @Override
     public List<Type> getColumnTypes()
     {
-        return this.columnTypes;
+        return columnTypes;
     }
 
     @Override
     public RecordCursor cursor()
     {
-        return new PulsarRecordCursor(this.columnHandles, this.pulsarSplit,
-                this.pulsarConnectorConfig, this.decoderFactory);
+        return new PulsarRecordCursor(columnHandles, pulsarSplit,
+                pulsarConnectorConfig, decoderFactory, pulsarConnectorManagedLedgerFactory);
     }
 }

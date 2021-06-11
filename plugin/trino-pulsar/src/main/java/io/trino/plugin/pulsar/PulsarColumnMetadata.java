@@ -33,8 +33,12 @@ public class PulsarColumnMetadata
 
     private DecoderExtraInfo decoderExtraInfo;
 
-    public PulsarColumnMetadata(String name, Type type, String comment, String extraInfo,
-                                boolean hidden, boolean isInternal,
+    public PulsarColumnMetadata(String name,
+                                Type type,
+                                String comment,
+                                String extraInfo,
+                                boolean hidden,
+                                boolean isInternal,
                                 PulsarColumnHandle.HandleKeyValueType handleKeyValueType,
                                 DecoderExtraInfo decoderExtraInfo)
     {
@@ -75,7 +79,8 @@ public class PulsarColumnMetadata
         return Objects.equals(handleKeyValueType, PulsarColumnHandle.HandleKeyValueType.VALUE);
     }
 
-    public static String getColumnName(PulsarColumnHandle.HandleKeyValueType handleKeyValueType, String name)
+    public static String getColumnName(PulsarColumnHandle.HandleKeyValueType handleKeyValueType,
+                                       String name)
     {
         if (Objects.equals(PulsarColumnHandle.HandleKeyValueType.KEY, handleKeyValueType)) {
             return KEY_SCHEMA_COLUMN_PREFIX + name;
@@ -138,7 +143,9 @@ public class PulsarColumnMetadata
      */
     public static class DecoderExtraInfo
     {
-        public DecoderExtraInfo(String mapping, String dataFormat, String formatHint)
+        public DecoderExtraInfo(String mapping,
+                                String dataFormat,
+                                String formatHint)
         {
             this.mapping = mapping;
             this.dataFormat = dataFormat;
@@ -146,8 +153,7 @@ public class PulsarColumnMetadata
         }
 
         public DecoderExtraInfo()
-        {
-        }
+        { }
 
         //equals ColumnName in general, may used as alias or embedded field in future.
         private String mapping;

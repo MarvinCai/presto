@@ -14,15 +14,15 @@
 package io.trino.plugin.pulsar.mock;
 
 import org.apache.pulsar.client.admin.Namespaces;
-import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.Schemas;
 import org.apache.pulsar.client.admin.Tenants;
 import org.apache.pulsar.client.admin.Topics;
+import org.apache.pulsar.client.admin.internal.PulsarAdminImpl;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.conf.ClientConfigurationData;
 
 public class MockPulsarAdmin
-        extends PulsarAdmin
+        extends PulsarAdminImpl
 {
     private Tenants tenants;
 

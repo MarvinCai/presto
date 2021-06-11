@@ -25,15 +25,17 @@ import io.trino.spi.predicate.Range;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.spi.predicate.ValueSet;
 import io.trino.testing.TestingConnectorSession;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
 import org.apache.pulsar.client.impl.schema.JSONSchema;
-import org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
+import org.apache.pulsar.common.policies.data.OffloadedReadPriority;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,7 +85,7 @@ public class TestPulsarSplitManager
                 assertEquals(pulsarSplit.getSchemaName(), topicName.getNamespace());
                 assertEquals(pulsarSplit.getTableName(), topicName.getLocalName());
                 assertEquals(pulsarSplit.getSchema(),
-                        new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema()));
+                        new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema(), StandardCharsets.ISO_8859_1));
                 assertEquals(pulsarSplit.getSchemaType(), topicsToSchemas.get(topicName.getSchemaName()).getType());
                 assertEquals(pulsarSplit.getStartPositionEntryId(), totalSize);
                 assertEquals(pulsarSplit.getStartPositionLedgerId(), 0);
@@ -129,7 +131,7 @@ public class TestPulsarSplitManager
                     assertEquals(pulsarSplit.getSchemaName(), topicName.getNamespace());
                     assertEquals(pulsarSplit.getTableName(), topicName.getPartition(i).getLocalName());
                     assertEquals(pulsarSplit.getSchema(),
-                            new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema()));
+                            new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema(), StandardCharsets.ISO_8859_1));
                     assertEquals(pulsarSplit.getSchemaType(), topicsToSchemas.get(topicName.getSchemaName()).getType());
                     assertEquals(pulsarSplit.getStartPositionEntryId(), totalSize);
                     assertEquals(pulsarSplit.getStartPositionLedgerId(), 0);
@@ -191,7 +193,7 @@ public class TestPulsarSplitManager
             assertEquals(pulsarSplit.getSchemaName(), topicName.getNamespace());
             assertEquals(pulsarSplit.getTableName(), topicName.getLocalName());
             assertEquals(pulsarSplit.getSchema(),
-                    new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema()));
+                    new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema(), StandardCharsets.ISO_8859_1));
             assertEquals(pulsarSplit.getSchemaType(), topicsToSchemas.get(topicName.getSchemaName()).getType());
             assertEquals(pulsarSplit.getStartPositionEntryId(), initalStart);
             assertEquals(pulsarSplit.getStartPositionLedgerId(), 0);
@@ -245,7 +247,7 @@ public class TestPulsarSplitManager
                 assertEquals(pulsarSplit.getSchemaName(), topicName.getNamespace());
                 assertEquals(pulsarSplit.getTableName(), topicName.getPartition(i).getLocalName());
                 assertEquals(pulsarSplit.getSchema(),
-                        new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema()));
+                        new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema(), StandardCharsets.ISO_8859_1));
                 assertEquals(pulsarSplit.getSchemaType(), topicsToSchemas.get(topicName.getSchemaName()).getType());
                 assertEquals(pulsarSplit.getStartPositionEntryId(), initialStart);
                 assertEquals(pulsarSplit.getStartPositionLedgerId(), 0);
@@ -371,23 +373,25 @@ public class TestPulsarSplitManager
     }
 
     @Test
-    public void pulsarSplitJsonCodecTest() throws JsonProcessingException, UnsupportedEncodingException
+    public void pulsarSplitJsonCodecTest() throws JsonProcessingException, UnsupportedEncodingException, JsonProcessingException
     {
-        OffloadPolicies offloadPolicies = OffloadPolicies.create(
+        OffloadPoliciesImpl offloadPolicies = OffloadPoliciesImpl.create(
                 "aws-s3",
                 "test-region",
                 "test-bucket",
                 "test-endpoint",
+                "role-",
+                "role-session-name",
                 "test-credential-id",
                 "test-credential-secret",
                 5000,
                 2000,
                 1000L,
                 5000L,
-                OffloadPolicies.OffloadedReadPriority.BOOKKEEPER_FIRST);
+                OffloadedReadPriority.TIERED_STORAGE_FIRST);
 
         SchemaInfo schemaInfo = JSONSchema.of(Foo.class).getSchemaInfo();
-        final String schema = new String(schemaInfo.getSchema(), "ISO8859-1");
+        final String schema = new String(schemaInfo.getSchema(), StandardCharsets.ISO_8859_1);
         final String originSchemaName = schemaInfo.getName();
         final String schemaName = schemaInfo.getName();
         final String schemaInfoProperties = new ObjectMapper().writeValueAsString(schemaInfo.getProperties());

@@ -13,26 +13,28 @@
  */
 package io.trino.plugin.pulsar.mock;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Range;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.trino.plugin.pulsar.PulsarReadOnlyCursor;
 import io.trino.plugin.pulsar.TestPulsarConnector;
+import org.apache.bookkeeper.mledger.AsyncCallbacks;
+import org.apache.bookkeeper.mledger.Entry;
+import org.apache.bookkeeper.mledger.ManagedCursor;
+import org.apache.bookkeeper.mledger.ManagedLedgerException;
+import org.apache.bookkeeper.mledger.Position;
+import org.apache.bookkeeper.mledger.impl.EntryImpl;
+import org.apache.bookkeeper.mledger.impl.PositionImpl;
+import org.apache.bookkeeper.mledger.proto.MLDataFormats;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.api.schema.SchemaDefinition;
 import org.apache.pulsar.client.impl.schema.AvroSchema;
 import org.apache.pulsar.client.impl.schema.JSONSchema;
-import org.apache.pulsar.shade.com.google.common.base.Predicate;
-import org.apache.pulsar.shade.com.google.common.collect.Range;
-import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.AsyncCallbacks;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerException;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Position;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.EntryImpl;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.PositionImpl;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.proto.MLDataFormats;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.api.proto.MessageMetadata;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -124,11 +126,11 @@ public class MockCursor
     }
 
     @Override
-    public void asyncReadEntries(int i, AsyncCallbacks.ReadEntriesCallback readEntriesCallback, Object o)
+    public void asyncReadEntries(int i, AsyncCallbacks.ReadEntriesCallback readEntriesCallback, Object o, PositionImpl maxPosition)
     { }
 
     @Override
-    public void asyncReadEntries(int numberOfEntriesToRead, long maxSizeBytes, AsyncCallbacks.ReadEntriesCallback callback, Object ctx)
+    public void asyncReadEntries(int numberOfEntriesToRead, long maxSizeBytes, AsyncCallbacks.ReadEntriesCallback callback, Object ctx, PositionImpl maxPosition)
     {
         new Thread(new Runnable()
         {
@@ -155,23 +157,21 @@ public class MockCursor
                     foo.bar = bar;
                     foo.field7 = (TestPulsarConnector.Foo.TestEnum) fooFunctions.get("field7").apply(count);
 
-                    org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata messageMetadata =
-                            org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata.newBuilder()
+                    MessageMetadata messageMetadata =
+                            new MessageMetadata()
                             .setProducerName("test-producer").setSequenceId(positions.get(topic))
-                            .setPublishTime(System.currentTimeMillis())
-                            .build();
+                            .setPublishTime(System.currentTimeMillis());
 
                     Schema schema = topicsToSchemas.get(schemaName).getType() == SchemaType.AVRO ? AvroSchema.of(TestPulsarConnector.Foo.class) : JSONSchema.of(TestPulsarConnector.Foo.class);
 
-                    io.netty.buffer.ByteBuf payload = io.netty.buffer.Unpooled
-                            .copiedBuffer(schema.encode(foo));
+                    ByteBuf payload = Unpooled.copiedBuffer(schema.encode(foo));
 
-                    io.netty.buffer.ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
+                    ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
                             org.apache.pulsar.common.protocol.Commands.ChecksumType.Crc32c, messageMetadata, payload);
 
                     completedBytes.add(byteBuf.readableBytes());
 
-                    entries.add(EntryImpl.create(0, positions.get(topic), Unpooled.wrappedBuffer(byteBuf.nioBuffer())));
+                    entries.add(EntryImpl.create(0, positions.get(topic), byteBuf));
                     positions.put(topic, positions.get(topic) + 1);
                     count++;
                 }
@@ -206,7 +206,7 @@ public class MockCursor
     @Override
     public void asyncClose(AsyncCallbacks.CloseCallback closeCallback, Object o)
     { }
-    
+
     @Override
     public MLDataFormats.ManagedLedgerInfo.LedgerInfo getCurrentLedgerInfo()
     {
@@ -235,20 +235,19 @@ public class MockCursor
             LocalDate epoch = LocalDate.ofEpochDay(0);
             foo.date = toIntExact(ChronoUnit.DAYS.between(epoch, localDate));
 
-            org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata messageMetadata = org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata.newBuilder()
+            MessageMetadata messageMetadata = new MessageMetadata()
                     .setProducerName("test-producer").setSequenceId(i)
-                    .setPublishTime(currentTimeMs + i)
-                    .build();
+                    .setPublishTime(currentTimeMs + i);
 
             Schema schema = topicsToSchemas.get(topicSchemaName).getType() == SchemaType.AVRO ? AvroSchema.of(SchemaDefinition.<TestPulsarConnector.Foo>builder().withPojo(TestPulsarConnector.Foo.class).build()) : JSONSchema.of(SchemaDefinition.<TestPulsarConnector.Foo>builder().withPojo(TestPulsarConnector.Foo.class).build());
 
-            io.netty.buffer.ByteBuf dataPayload = io.netty.buffer.Unpooled
+            ByteBuf dataPayload = Unpooled
                     .wrappedBuffer(schema.encode(foo));
 
-            io.netty.buffer.ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
+            ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
                     org.apache.pulsar.common.protocol.Commands.ChecksumType.Crc32c, messageMetadata, dataPayload);
 
-            Entry entry = EntryImpl.create(0, i, Unpooled.wrappedBuffer(byteBuf.nioBuffer()));
+            Entry entry = EntryImpl.create(0, i, byteBuf);
             entries.add(entry);
         }
         return entries;

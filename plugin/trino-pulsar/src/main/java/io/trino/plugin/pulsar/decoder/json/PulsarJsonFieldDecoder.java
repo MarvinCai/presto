@@ -58,8 +58,8 @@ import static io.trino.spi.type.DoubleType.DOUBLE;
 import static io.trino.spi.type.IntegerType.INTEGER;
 import static io.trino.spi.type.RealType.REAL;
 import static io.trino.spi.type.SmallintType.SMALLINT;
-import static io.trino.spi.type.TimeType.TIME;
-import static io.trino.spi.type.TimestampType.TIMESTAMP;
+import static io.trino.spi.type.TimeType.TIME_MILLIS;
+import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
 import static io.trino.spi.type.TinyintType.TINYINT;
 import static io.trino.spi.type.Varchars.truncateToLength;
 import static java.lang.Double.parseDouble;
@@ -128,9 +128,9 @@ public class PulsarJsonFieldDecoder
                 TINYINT,
                 BOOLEAN,
                 DOUBLE,
-                TIMESTAMP,
+                TIME_MILLIS,
                 DATE,
-                TIME,
+                TIMESTAMP_MILLIS,
                 REAL
         ).contains(type)) {
             return true;
@@ -175,7 +175,10 @@ public class PulsarJsonFieldDecoder
         private final long minValue;
         private final long maxValue;
 
-        public JsonValueProvider(JsonNode value, DecoderColumnHandle columnHandle, long minValue, long maxValue)
+        public JsonValueProvider(JsonNode value,
+                                 DecoderColumnHandle columnHandle,
+                                 long minValue,
+                                 long maxValue)
         {
             this.value = value;
             this.columnHandle = columnHandle;
@@ -219,7 +222,9 @@ public class PulsarJsonFieldDecoder
             return serializeObject(null, value, columnHandle.getType(), columnHandle.getName());
         }
 
-        public static boolean getBoolean(JsonNode value, Type type, String columnName)
+        public static boolean getBoolean(JsonNode value,
+                                         Type type,
+                                         String columnName)
         {
             if (value.isValueNode()) {
                 return value.asBoolean();
@@ -229,7 +234,11 @@ public class PulsarJsonFieldDecoder
                     format("could not parse non-value node as '%s' for column '%s'", type, columnName));
         }
 
-        public static long getLong(JsonNode value, Type type, String columnName, long minValue, long maxValue)
+        public static long getLong(JsonNode value,
+                                   Type type,
+                                   String columnName,
+                                   long minValue,
+                                   long maxValue)
         {
             try {
                 if (type instanceof RealType) {
@@ -258,7 +267,9 @@ public class PulsarJsonFieldDecoder
                     format("could not parse value '%s' as '%s' for column '%s'", value.asText(), type, columnName));
         }
 
-        public static double getDouble(JsonNode value, Type type, String columnName)
+        public static double getDouble(JsonNode value,
+                                       Type type,
+                                       String columnName)
         {
             try {
                 if (value.isNumber()) {
@@ -276,7 +287,8 @@ public class PulsarJsonFieldDecoder
                     format("could not parse value '%s' as '%s' for column '%s'", value.asText(), type, columnName));
         }
 
-        private static Slice getSlice(JsonNode value, Type type)
+        private static Slice getSlice(JsonNode value,
+                                      Type type)
         {
             String textValue = value.isValueNode() ? value.asText() : value.toString();
             Slice slice = utf8Slice(textValue);
@@ -286,7 +298,10 @@ public class PulsarJsonFieldDecoder
             return slice;
         }
 
-        private Block serializeObject(BlockBuilder builder, Object value, Type type, String columnName)
+        private Block serializeObject(BlockBuilder builder,
+                                      Object value,
+                                      Type type,
+                                      String columnName)
         {
             if (type instanceof ArrayType) {
                 return serializeList(builder, value, type, columnName);
@@ -301,7 +316,10 @@ public class PulsarJsonFieldDecoder
             return null;
         }
 
-        private Block serializeList(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+        private Block serializeList(BlockBuilder parentBlockBuilder,
+                                    Object value,
+                                    Type type,
+                                    String columnName)
         {
             if (value == null) {
                 checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
@@ -330,7 +348,10 @@ public class PulsarJsonFieldDecoder
             return blockBuilder.build();
         }
 
-        private void serializePrimitive(BlockBuilder blockBuilder, Object node, Type type, String columnName)
+        private void serializePrimitive(BlockBuilder blockBuilder,
+                                        Object node,
+                                        Type type,
+                                        String columnName)
         {
             requireNonNull(blockBuilder, "parent blockBuilder is null");
 
@@ -377,14 +398,17 @@ public class PulsarJsonFieldDecoder
                     format("cannot decode object of '%s' as '%s' for column '%s'", value.getClass(), type, columnName));
         }
 
-        private Block serializeMap(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+        private Block serializeMap(BlockBuilder parentBlockBuilder,
+                                   Object value,
+                                   Type type,
+                                   String columnName)
         {
             if (value == null) {
                 checkState(parentBlockBuilder != null, "parentBlockBuilder is null");
                 parentBlockBuilder.appendNull();
                 return null;
             }
-            checkState(value instanceof ObjectNode, "Json map node must  is ObjectNode type");
+            checkState(value instanceof ObjectNode, "Json map node must be ObjectNode type");
 
             List<Type> typeParameters = type.getTypeParameters();
             Type keyType = typeParameters.get(0);
@@ -417,7 +441,10 @@ public class PulsarJsonFieldDecoder
             return null;
         }
 
-        private Block serializeRow(BlockBuilder parentBlockBuilder, Object value, Type type, String columnName)
+        private Block serializeRow(BlockBuilder parentBlockBuilder,
+                                   Object value,
+                                   Type type,
+                                   String columnName)
         {
             if (value == null) {
                 checkState(parentBlockBuilder != null, "parent block builder is null");

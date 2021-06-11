@@ -73,13 +73,14 @@ Property Name                                         Description
 ``pulsar.max-split-entry-queue-size``                 Size of entry buffer for a split
 ``pulsar.max-split-queue-cache-size``                 Limit of buffered message and entry size in byte
 ``pulsar.stats-provider``                             StatsProvider to collect Pulsar Trino connector stats
-``pulsar.stats-provider-configs``                     Configuration for StatsProvider in key-value format.
+``pulsar.stats-provider-configs``                     Configuration for StatsProvider in key-value format
 ``pulsar.namespace-delimiter-rewrite-enable``         If enable rewrite Pulsar namespace delimiter
 ``pulsar.rewrite-namespace-delimiter``                Delimiter used to rewrite Pulsar's default delimiter '/'
 ``pulsar.managed-ledger-offload-max-threads``         Maximum number of thread pool size for ledger offloading
 ``pulsar.managed-ledger-offload-driver``              Driver to use to offload/read old data to/from long term storage
 ``pulsar.offloaders-directory``                       The directory to locate offloaders nar file
 ``pulsar.offloader-properties``                       Properties and configurations related to specific offloader implementation
+``pulsar.nar-extraction-directory``                   Directory to use for extraction Nar file
 ``pulsar.auth-plugin``                                Authentication plugin used to authenticate to Pulsar cluster
 ``pulsar.auth-params``                                Authentication parameter to be used to authenticate to Pulsar cluster
 ``pulsar.tls-allow-insecure-connection``              Whether the Pulsar client accept untrusted TLS certificate from broker
@@ -93,7 +94,6 @@ Property Name                                         Description
 ``pulsar.managed-ledger-cache-size-MB``               Size for managed ledger entry cache in MB
 ``pulsar.managed-ledger-num-worker-threads``          Number of threads to be used for managed ledger tasks dispatching
 ``pulsar.managed-ledger-num-scheduler-threads``       Number of threads to be used for managed ledger scheduled tasks
-``pulsar.nar-extraction-directory``                   Directory to use for extraction Nar file
 ================================================      =======================================================================
 
 ``pulsar.broker-service-url``
@@ -122,7 +122,7 @@ Max number of entries read in a single read request to Bookkeeper. Default is 10
 Desired number of split to use at each query, it might not be the actual split number used.
 Actual split number used in query also depends on number of the partition a topic has.
 Number of partition a topic has will be used when issuing query against table backing by this topic if no value is specified.
-Default is max of between 2 and number of partition of a topic.
+Default is max of 2 and number of partition of a topic.
 
 ``pulsar.max-split-message-queue-size``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -172,7 +172,7 @@ Warn: avoid using symbols allowed by Namespace (a-zA-Z_0-9 -=:%) to prevent erro
 ``pulsar.managed-ledger-offload-max-threads``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Maximum number of thread pool threads for ledger offloading. Default is 2.
+Maximum number of thread pool threads for ledger offloader. Default is 2.
 
 ``pulsar.managed-ledger-offload-driver``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -189,6 +189,11 @@ The directory to locate offloaders nar file
 
 Properties and configurations related to specific offloader implementation. e.g.
     {"s3ManagedLedgerOffloadBucket": "offload-bucket", "s3ManagedLedgerOffloadRegion": "us-west-2", "s3ManagedLedgerOffloadServiceEndpoint": "http://s3.amazonaws.com"}
+
+``pulsar.nar-extraction-directory``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Directory to use for extraction offloader Nar file.
 
 ``pulsar.auth-plugin``
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -262,9 +267,3 @@ Number of threads to be used for managed ledger tasks dispatching. Default is Ru
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Number of threads to be used for managed ledger scheduled tasks. Default is Runtime.getRuntime().availableProcessors().
-
-``pulsar.nar-extraction-directory``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Directory to use for extraction offloader Nar file.
-

@@ -14,15 +14,15 @@
 package io.trino.plugin.pulsar.decoder.primitive;
 
 import io.airlift.slice.Slices;
+import io.netty.buffer.Unpooled;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarColumnHandle;
 import io.trino.plugin.pulsar.PulsarRowDecoder;
 import io.trino.plugin.pulsar.decoder.AbstractDecoderTester;
 import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.trino.plugin.pulsar.TestPulsarConnector.getPulsarConnectorId;
 import static io.trino.spi.type.BigintType.BIGINT;
@@ -74,7 +75,7 @@ public class TestPrimitiveDecoder
                 pulsarRowDecoderInt8.decodeRow(Unpooled
                         .copiedBuffer(schemaInt8.encode(int8Value))).get();
         checkValue(decodedRowInt8, new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                PRIMITIVE_COLUMN_NAME, TINYINT, false, false, PRIMITIVE_COLUMN_NAME, null, null, PulsarColumnHandle.HandleKeyValueType.NONE), int8Value);
+                PRIMITIVE_COLUMN_NAME, TINYINT, false, false, PRIMITIVE_COLUMN_NAME, null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), int8Value);
 
         short int16Value = 2;
         SchemaInfo schemaInfoInt16 = SchemaInfo.builder().type(SchemaType.INT16).build();
@@ -86,7 +87,7 @@ public class TestPrimitiveDecoder
                 pulsarRowDecoderInt16.decodeRow(Unpooled
                         .copiedBuffer(schemaInt16.encode(int16Value))).get();
         checkValue(decodedRowInt16, new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                PRIMITIVE_COLUMN_NAME, SMALLINT, false, false, PRIMITIVE_COLUMN_NAME, null, null, PulsarColumnHandle.HandleKeyValueType.NONE), int16Value);
+                PRIMITIVE_COLUMN_NAME, SMALLINT, false, false, PRIMITIVE_COLUMN_NAME, null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), int16Value);
 
         int int32Value = 2;
         SchemaInfo schemaInfoInt32 = SchemaInfo.builder().type(SchemaType.INT32).build();
@@ -99,7 +100,7 @@ public class TestPrimitiveDecoder
                 pulsarRowDecoderInt32.decodeRow(Unpooled
                         .copiedBuffer(schemaInt32.encode(int32Value))).get();
         checkValue(decodedRowInt32, new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                PRIMITIVE_COLUMN_NAME, INTEGER, false, false, PRIMITIVE_COLUMN_NAME, null, null, PulsarColumnHandle.HandleKeyValueType.NONE), int32Value);
+                PRIMITIVE_COLUMN_NAME, INTEGER, false, false, PRIMITIVE_COLUMN_NAME, null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), int32Value);
 
         long int64Value = 2;
         SchemaInfo schemaInfoInt64 = SchemaInfo.builder().type(SchemaType.INT64).build();
@@ -113,7 +114,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaInt64.encode(int64Value))).get();
         checkValue(decodedRowInt64, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, BIGINT, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), int64Value);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), int64Value);
 
         String stringValue = "test";
         SchemaInfo schemaInfoString = SchemaInfo.builder().type(SchemaType.STRING).build();
@@ -127,7 +128,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaString.encode(stringValue))).get();
         checkValue(decodedRowString, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, VARCHAR, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), stringValue);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), stringValue);
 
         float floatValue = 0.2f;
         SchemaInfo schemaInfoFloat = SchemaInfo.builder().type(SchemaType.FLOAT).build();
@@ -141,7 +142,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaFloat.encode(floatValue))).get();
         checkValue(decodedRowFloat, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, REAL, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), Long.valueOf(Float.floatToIntBits(floatValue)));
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), Long.valueOf(Float.floatToIntBits(floatValue)));
 
         double doubleValue = 0.22d;
         SchemaInfo schemaInfoDouble = SchemaInfo.builder().type(SchemaType.DOUBLE).build();
@@ -155,7 +156,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaDouble.encode(doubleValue))).get();
         checkValue(decodedRowDouble, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, DOUBLE, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), doubleValue);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), doubleValue);
 
         boolean booleanValue = true;
         SchemaInfo schemaInfoBoolean = SchemaInfo.builder().type(SchemaType.BOOLEAN).build();
@@ -169,7 +170,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaBoolean.encode(booleanValue))).get();
         checkValue(decodedRowBoolean, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, BOOLEAN, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), booleanValue);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), booleanValue);
 
         byte[] bytesValue = new byte[1];
         bytesValue[0] = 1;
@@ -184,7 +185,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaBytes.encode(bytesValue))).get();
         checkValue(decodedRowBytes, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, VARBINARY, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), Slices.wrappedBuffer(bytesValue));
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), Slices.wrappedBuffer(bytesValue));
 
         Date dateValue = new Date(System.currentTimeMillis());
         SchemaInfo schemaInfoDate = SchemaInfo.builder().type(SchemaType.DATE).build();
@@ -198,7 +199,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaDate.encode(dateValue))).get();
         checkValue(decodedRowDate, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, DATE, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), dateValue.getTime());
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), dateValue.getTime());
 
         Time timeValue = new Time(System.currentTimeMillis());
         SchemaInfo schemaInfoTime = SchemaInfo.builder().type(SchemaType.TIME).build();
@@ -212,7 +213,7 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaTime.encode(timeValue))).get();
         checkValue(decodedRowTime, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, TIME, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), timeValue.getTime());
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), timeValue.getTime());
 
         Timestamp timestampValue = new Timestamp(System.currentTimeMillis());
         SchemaInfo schemaInfoTimestamp = SchemaInfo.builder().type(SchemaType.TIMESTAMP).build();
@@ -226,6 +227,6 @@ public class TestPrimitiveDecoder
                         .copiedBuffer(schemaTimestamp.encode(timestampValue))).get();
         checkValue(decodedRowTimestamp, new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 PRIMITIVE_COLUMN_NAME, TIMESTAMP, false, false, PRIMITIVE_COLUMN_NAME, null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE), timestampValue.getTime());
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE)), timestampValue.getTime());
     }
 }

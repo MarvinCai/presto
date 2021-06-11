@@ -14,6 +14,8 @@
 package io.trino.plugin.pulsar.decoder.json;
 
 import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarColumnHandle;
@@ -30,8 +32,6 @@ import io.trino.spi.type.VarcharType;
 import org.apache.pulsar.client.impl.schema.JSONSchema;
 import org.apache.pulsar.client.impl.schema.generic.GenericJsonRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericJsonSchema;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
-import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.trino.plugin.pulsar.TestPulsarConnector.getPulsarConnectorId;
 import static io.trino.spi.type.BigintType.BIGINT;
@@ -102,31 +103,31 @@ public class TestJsonDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         PulsarColumnHandle stringFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "stringField", VARCHAR, false, false, "stringField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "stringField", VARCHAR, false, false, "stringField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, stringFieldColumnHandle, message.stringField);
 
         PulsarColumnHandle intFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "intField", INTEGER, false, false, "intField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "intField", INTEGER, false, false, "intField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, intFieldColumnHandle, message.intField);
 
         PulsarColumnHandle floatFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "floatField", REAL, false, false, "floatField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "floatField", REAL, false, false, "floatField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, floatFieldColumnHandle, floatToIntBits(message.floatField));
 
         PulsarColumnHandle doubleFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "doubleField", DOUBLE, false, false, "doubleField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "doubleField", DOUBLE, false, false, "doubleField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, doubleFieldColumnHandle, message.doubleField);
 
         PulsarColumnHandle booleanFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "booleanField", BOOLEAN, false, false, "booleanField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "booleanField", BOOLEAN, false, false, "booleanField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, booleanFieldColumnHandle, message.booleanField);
 
         PulsarColumnHandle longFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "longField", BIGINT, false, false, "longField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "longField", BIGINT, false, false, "longField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, longFieldColumnHandle, message.longField);
 
         PulsarColumnHandle enumFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "enumField", VARCHAR, false, false, "enumField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "enumField", VARCHAR, false, false, "enumField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, enumFieldColumnHandle, message.enumField.toString());
     }
 
@@ -144,7 +145,7 @@ public class TestJsonDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         ArrayType columnType = new ArrayType(VARCHAR);
-        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "arrayField", columnType, false, false, "arrayField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "arrayField", columnType, false, false, "arrayField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkArrayValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
@@ -171,15 +172,15 @@ public class TestJsonDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         RowType columnType = RowType.from(ImmutableList.<RowType.Field>builder()
-                .add(RowType.field("stringField", VARCHAR))
                 .add(RowType.field("intField", INTEGER))
                 .add(RowType.field("nestedRow", RowType.from(ImmutableList.<RowType.Field>builder()
-                        .add(RowType.field("stringField", VARCHAR))
                         .add(RowType.field("longField", BIGINT))
+                        .add(RowType.field("stringField", VARCHAR))
                         .build())))
+                .add(RowType.field("stringField", VARCHAR))
                 .build());
 
-        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "rowField", columnType, false, false, "rowField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "rowField", columnType, false, false, "rowField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkRowValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
@@ -202,7 +203,7 @@ public class TestJsonDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         Type columnType = decoderFactory.getTypeManager().getParameterizedType(StandardTypes.MAP, ImmutableList.of(TypeSignatureParameter.typeParameter(VarcharType.VARCHAR.getTypeSignature()), TypeSignatureParameter.typeParameter(BigintType.BIGINT.getTypeSignature())));
-        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "mapField", columnType, false, false, "mapField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "mapField", columnType, false, false, "mapField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkMapValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
@@ -252,29 +253,29 @@ public class TestJsonDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         RowType columnType = RowType.from(ImmutableList.<RowType.Field>builder()
-                .add(RowType.field("stringField", VARCHAR))
                 .add(RowType.field("arrayField", new ArrayType(
                         RowType.from(ImmutableList.<RowType.Field>builder()
-                                .add(RowType.field("stringField", VARCHAR))
                                 .add(RowType.field("longField", BIGINT))
+                                .add(RowType.field("stringField", VARCHAR))
                                 .build()))))
                 .add(RowType.field("mapField", decoderFactory.getTypeManager().getParameterizedType(StandardTypes.MAP,
                         ImmutableList.of(TypeSignatureParameter.typeParameter(VarcharType.VARCHAR.getTypeSignature()),
                                 TypeSignatureParameter.typeParameter(RowType.from(ImmutableList.<RowType.Field>builder()
-                                        .add(RowType.field("stringField", VARCHAR))
                                         .add(RowType.field("longField", BIGINT))
+                                        .add(RowType.field("stringField", VARCHAR))
                                         .build()).getTypeSignature())))))
                 .add(RowType.field("nestedRow", RowType.from(ImmutableList.<RowType.Field>builder()
-                        .add(RowType.field("stringField", VARCHAR))
                         .add(RowType.field("longField", BIGINT))
+                        .add(RowType.field("stringField", VARCHAR))
                         .build())))
+                .add(RowType.field("stringField", VARCHAR))
                 .add(RowType.field("structedField",
                         decoderFactory.getTypeManager().getParameterizedType(StandardTypes.MAP,
                                 ImmutableList.of(TypeSignatureParameter.typeParameter(VarcharType.VARCHAR.getTypeSignature()),
                                         TypeSignatureParameter.typeParameter(new ArrayType(BIGINT).getTypeSignature())))))
                 .build());
 
-        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "compositeRow", columnType, false, false, "compositeRow", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+        PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "compositeRow", columnType, false, false, "compositeRow", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkRowValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }

@@ -14,6 +14,9 @@
 package io.trino.plugin.pulsar.decoder.protobufnative;
 
 import com.google.common.collect.ImmutableList;
+import com.google.protobuf.ByteString;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarColumnHandle;
@@ -26,15 +29,14 @@ import io.trino.spi.type.TypeSignatureParameter;
 import org.apache.pulsar.client.impl.schema.ProtobufNativeSchema;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeSchema;
-import org.apache.pulsar.shade.com.google.protobuf.ByteString;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
-import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.trino.plugin.pulsar.TestPulsarConnector.getPulsarConnectorId;
 import static io.trino.spi.type.BigintType.BIGINT;
@@ -82,7 +84,7 @@ public class TestProtobufNativeDecoder
                 .setSfixed32Field(31)
                 .setSfixed64Field(32L)
                 .setBoolField(true)
-                .setBytesField(ByteString.copyFrom("abc".getBytes()))
+                .setBytesField(ByteString.copyFrom("abc".getBytes(StandardCharsets.UTF_8)))
                 .setTestEnum(TestMsg.TestEnum.FAILOVER)
                 .build();
 
@@ -91,77 +93,78 @@ public class TestProtobufNativeDecoder
         Map<DecoderColumnHandle, FieldValueProvider> decodedRow = pulsarRowDecoder.decodeRow(payload).get();
 
         PulsarColumnHandle stringFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "stringField", VARCHAR, false, false, "stringField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "stringField", VARCHAR, false, false, "stringField", null, null,
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, stringFieldColumnHandle, testMessage.getStringField());
 
         PulsarColumnHandle doubleFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "doubleField", DOUBLE, false, false, "doubleField", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, doubleFieldColumnHandle, testMessage.getDoubleField());
 
         PulsarColumnHandle int32FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "int32Field", INTEGER, false, false, "int32Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, int32FieldColumnHandle, testMessage.getInt32Field());
 
         PulsarColumnHandle int64FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "int64Field", BIGINT, false, false, "int64Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, int64FieldColumnHandle, testMessage.getInt64Field());
 
         PulsarColumnHandle uint32FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "uint32Field", INTEGER, false, false, "uint32Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, uint32FieldColumnHandle, testMessage.getUint32Field());
 
         PulsarColumnHandle uint64FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "uint64Field", BIGINT, false, false, "uint64Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, uint64FieldColumnHandle, testMessage.getUint64Field());
 
         PulsarColumnHandle sint32FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "sint32Field", INTEGER, false, false, "sint32Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, sint32FieldColumnHandle, testMessage.getSint32Field());
 
         PulsarColumnHandle sint64FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "sint64Field", BIGINT, false, false, "sint64Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, sint64FieldColumnHandle, testMessage.getSint64Field());
 
         PulsarColumnHandle fixed32FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "fixed32Field", INTEGER, false, false, "fixed32Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, fixed32FieldColumnHandle, testMessage.getFixed32Field());
 
         PulsarColumnHandle fixed64FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "fixed64Field", BIGINT, false, false, "fixed64Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, fixed64FieldColumnHandle, testMessage.getFixed64Field());
 
         PulsarColumnHandle sfixed32FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "sfixed32Field", INTEGER, false, false, "sfixed32Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, sfixed32FieldColumnHandle, testMessage.getSfixed32Field());
 
         PulsarColumnHandle sfixed64FieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "sfixed64Field", BIGINT, false, false, "sfixed64Field", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, sfixed64FieldColumnHandle, testMessage.getSfixed64Field());
 
         PulsarColumnHandle boolFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "boolField", BOOLEAN, false, false, "boolField", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, boolFieldColumnHandle, testMessage.getBoolField());
 
         PulsarColumnHandle bytesFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "bytesField", VARBINARY, false, false, "bytesField", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, bytesFieldColumnHandle, testMessage.getBytesField().toStringUtf8());
 
         PulsarColumnHandle enumFieldColumnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "testEnum", VARCHAR, false, false, "testEnum", null, null,
-                PulsarColumnHandle.HandleKeyValueType.NONE);
+                Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkValue(decodedRow, enumFieldColumnHandle, testMessage.getTestEnum().name());
     }
 
@@ -202,7 +205,7 @@ public class TestProtobufNativeDecoder
                 .build());
 
         PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
-                "subMessage", columnType, false, false, "subMessage", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "subMessage", columnType, false, false, "subMessage", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkRowValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
@@ -228,7 +231,7 @@ public class TestProtobufNativeDecoder
         ArrayType columnType = new ArrayType(VARCHAR);
         PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(),
                 "repeatedField", columnType, false, false, "repeatedField",
-                null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
 
         checkArrayValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
@@ -257,7 +260,7 @@ public class TestProtobufNativeDecoder
                         TypeSignatureParameter.typeParameter(DOUBLE.getTypeSignature())));
 
         PulsarColumnHandle columnHandle = new PulsarColumnHandle(getPulsarConnectorId().toString(), "mapField", columnType, false, false,
-                "mapField", null, null, PulsarColumnHandle.HandleKeyValueType.NONE);
+                "mapField", null, null, Optional.of(PulsarColumnHandle.HandleKeyValueType.NONE));
         checkMapValues(getBlock(decodedRow, columnHandle), columnHandle.getType(), fieldValue);
     }
 }

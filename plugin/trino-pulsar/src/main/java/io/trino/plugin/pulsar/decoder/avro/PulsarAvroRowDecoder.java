@@ -13,14 +13,14 @@
  */
 package io.trino.plugin.pulsar.decoder.avro;
 
+import io.netty.buffer.ByteBuf;
 import io.trino.decoder.DecoderColumnHandle;
 import io.trino.decoder.FieldValueProvider;
 import io.trino.plugin.pulsar.PulsarRowDecoder;
 import io.trino.spi.TrinoException;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericAvroRecord;
 import org.apache.pulsar.client.impl.schema.generic.GenericAvroSchema;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
-import org.apache.pulsar.shade.org.apache.avro.generic.GenericRecord;
 
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +40,8 @@ public class PulsarAvroRowDecoder
     private final GenericAvroSchema genericAvroSchema;
     private final Map<DecoderColumnHandle, PulsarAvroColumnDecoder> columnDecoders;
 
-    public PulsarAvroRowDecoder(GenericAvroSchema genericAvroSchema, Set<DecoderColumnHandle> columns)
+    public PulsarAvroRowDecoder(GenericAvroSchema genericAvroSchema,
+                                Set<DecoderColumnHandle> columns)
     {
         this.genericAvroSchema = requireNonNull(genericAvroSchema, "genericAvroSchema is null");
         columnDecoders = columns.stream()

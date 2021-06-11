@@ -17,15 +17,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.airlift.configuration.Config;
 import org.apache.bookkeeper.stats.NullStatsProvider;
 import org.apache.pulsar.client.admin.PulsarAdmin;
-import org.apache.pulsar.client.admin.PulsarAdminBuilder;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamedEntity;
-import org.apache.pulsar.shade.org.apache.pulsar.common.nar.NarClassLoader;
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
-import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands;
+import org.apache.pulsar.common.naming.NamedEntity;
+import org.apache.pulsar.common.nar.NarClassLoader;
+import org.apache.pulsar.common.policies.data.OffloadPoliciesImpl;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.client.ClientBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,16 +33,15 @@ import java.util.regex.Matcher;
  * Configuration of the Pulsar connector for Trino.
  */
 public class PulsarConnectorConfig
-        implements AutoCloseable
 {
-    private String brokerServiceUrl = "http://localhost:8080";
+    private String webServiceUrl = "http://localhost:8080";
     private String zookeeperUri = "localhost:2181";
     private int entryReadBatchSize = 100;
     private int targetNumSplits = 2;
     private int maxSplitMessageQueueSize = 10000;
     private int maxSplitEntryQueueSize = 1000;
     private long maxSplitQueueSizeBytes = -1;
-    private int maxMessageSize = Commands.DEFAULT_MAX_MESSAGE_SIZE;
+    private int maxMessageSize = 5242880;
     private String statsProvider = NullStatsProvider.class.getName();
 
     private Map<String, String> statsProviderConfigs = new HashMap<>();
@@ -82,17 +77,16 @@ public class PulsarConnectorConfig
     // --- Nar extraction
     private String narExtractionDirectory = NarClassLoader.DEFAULT_NAR_EXTRACTION_DIR;
 
-    @NotNull
-    public String getBrokerServiceUrl()
+    @Config("pulsar.web-service-url")
+    public PulsarConnectorConfig setWebServiceUrl(String webServiceUrl)
     {
-        return brokerServiceUrl;
+        this.webServiceUrl = webServiceUrl;
+        return this;
     }
 
-    @Config("pulsar.broker-service-url")
-    public PulsarConnectorConfig setBrokerServiceUrl(String brokerServiceUrl)
+    public String getWebServiceUrl()
     {
-        this.brokerServiceUrl = brokerServiceUrl;
-        return this;
+        return webServiceUrl;
     }
 
     @Config("pulsar.max-message-size")
@@ -466,39 +460,11 @@ public class PulsarConnectorConfig
         return this;
     }
 
-    @NotNull
-    public PulsarAdmin getPulsarAdmin() throws PulsarClientException
-    {
-        if (this.pulsarAdmin == null) {
-            PulsarAdminBuilder builder = PulsarAdmin.builder();
-
-            if (getAuthPlugin() != null) {
-                builder.authentication(getAuthPlugin(), getAuthParams());
-            }
-
-            if (isTlsAllowInsecureConnection() != null) {
-                builder.allowTlsInsecureConnection(isTlsAllowInsecureConnection());
-            }
-
-            if (isTlsHostnameVerificationEnable() != null) {
-                builder.enableTlsHostnameVerification(isTlsHostnameVerificationEnable());
-            }
-
-            if (getTlsTrustCertsFilePath() != null) {
-                builder.tlsTrustCertsFilePath(getTlsTrustCertsFilePath());
-            }
-
-            builder.setContextClassLoader(ClientBuilder.class.getClassLoader());
-            this.pulsarAdmin = builder.serviceHttpUrl(getBrokerServiceUrl()).build();
-        }
-        return this.pulsarAdmin;
-    }
-
-    public OffloadPolicies getOffloadPolices()
+    public OffloadPoliciesImpl getOffloadPolices()
     {
         Properties offloadProperties = new Properties();
         offloadProperties.putAll(getOffloaderProperties());
-        OffloadPolicies offloadPolicies = OffloadPolicies.create(offloadProperties);
+        OffloadPoliciesImpl offloadPolicies = OffloadPoliciesImpl.create(offloadProperties);
         offloadPolicies.setManagedLedgerOffloadDriver(getManagedLedgerOffloadDriver());
         offloadPolicies.setManagedLedgerOffloadMaxThreads(getManagedLedgerOffloadMaxThreads());
         offloadPolicies.setOffloadersDirectory(getOffloadersDirectory());
@@ -506,16 +472,40 @@ public class PulsarConnectorConfig
     }
 
     @Override
-    public void close()
-    {
-        this.pulsarAdmin.close();
-    }
-
-    @Override
     public String toString()
     {
-        return "PulsarConnectorConfig{"
-                + "brokerServiceUrl='" + brokerServiceUrl + '\''
-                + '}';
+        return "PulsarConnectorConfig{" +
+                "webServiceUrl='" + webServiceUrl + '\'' +
+                ", zookeeperUri='" + zookeeperUri + '\'' +
+                ", entryReadBatchSize=" + entryReadBatchSize +
+                ", targetNumSplits=" + targetNumSplits +
+                ", maxSplitMessageQueueSize=" + maxSplitMessageQueueSize +
+                ", maxSplitEntryQueueSize=" + maxSplitEntryQueueSize +
+                ", maxSplitQueueSizeBytes=" + maxSplitQueueSizeBytes +
+                ", maxMessageSize=" + maxMessageSize +
+                ", statsProvider='" + statsProvider + '\'' +
+                ", statsProviderConfigs=" + statsProviderConfigs +
+                ", authPluginClassName='" + authPluginClassName + '\'' +
+                ", authParams='" + authParams + '\'' +
+                ", tlsTrustCertsFilePath='" + tlsTrustCertsFilePath + '\'' +
+                ", tlsAllowInsecureConnection=" + tlsAllowInsecureConnection +
+                ", tlsHostnameVerificationEnable=" + tlsHostnameVerificationEnable +
+                ", namespaceDelimiterRewriteEnable=" + namespaceDelimiterRewriteEnable +
+                ", rewriteNamespaceDelimiter='" + rewriteNamespaceDelimiter + '\'' +
+                ", managedLedgerOffloadDriver='" + managedLedgerOffloadDriver + '\'' +
+                ", managedLedgerOffloadMaxThreads=" + managedLedgerOffloadMaxThreads +
+                ", offloadersDirectory='" + offloadersDirectory + '\'' +
+                ", offloaderProperties=" + offloaderProperties +
+                ", pulsarAdmin=" + pulsarAdmin +
+                ", bookkeeperThrottleValue=" + bookkeeperThrottleValue +
+                ", bookkeeperNumIOThreads=" + bookkeeperNumIOThreads +
+                ", bookkeeperNumWorkerThreads=" + bookkeeperNumWorkerThreads +
+                ", bookkeeperUseV2Protocol=" + bookkeeperUseV2Protocol +
+                ", bookkeeperExplicitInterval=" + bookkeeperExplicitInterval +
+                ", managedLedgerCacheSizeMB=" + managedLedgerCacheSizeMB +
+                ", managedLedgerNumWorkerThreads=" + managedLedgerNumWorkerThreads +
+                ", managedLedgerNumSchedulerThreads=" + managedLedgerNumSchedulerThreads +
+                ", narExtractionDirectory='" + narExtractionDirectory + '\'' +
+                '}';
     }
 }

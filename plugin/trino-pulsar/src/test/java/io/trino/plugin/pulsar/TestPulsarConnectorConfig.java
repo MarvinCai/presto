@@ -13,7 +13,7 @@
  */
 package io.trino.plugin.pulsar;
 
-import org.apache.pulsar.shade.org.apache.pulsar.common.policies.data.OffloadPolicies;
+import org.apache.pulsar.common.policies.data.OffloadPolicies;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

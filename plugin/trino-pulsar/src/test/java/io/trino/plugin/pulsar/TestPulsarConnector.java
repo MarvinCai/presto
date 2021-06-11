@@ -16,11 +16,13 @@ package io.trino.plugin.pulsar;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import io.airlift.log.Logger;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.trino.plugin.pulsar.mock.MockManagedLedgerFactory;
 import io.trino.plugin.pulsar.mock.MockNamespaces;
 import io.trino.plugin.pulsar.mock.MockPulsarAdmin;
-import io.trino.plugin.pulsar.mock.MockPulsarConnectorCache;
 import io.trino.plugin.pulsar.mock.MockPulsarConnectorConfig;
+import io.trino.plugin.pulsar.mock.MockPulsarConnectorManagedLedgerFactory;
 import io.trino.plugin.pulsar.mock.MockPulsarSplitManager;
 import io.trino.plugin.pulsar.mock.MockSchemas;
 import io.trino.plugin.pulsar.mock.MockTenants;
@@ -29,6 +31,11 @@ import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.connector.ConnectorContext;
 import io.trino.spi.predicate.TupleDomain;
 import io.trino.testing.TestingConnectorContext;
+import org.apache.bookkeeper.mledger.Entry;
+import org.apache.bookkeeper.mledger.ManagedLedgerConfig;
+import org.apache.bookkeeper.mledger.ManagedLedgerFactory;
+import org.apache.bookkeeper.mledger.impl.EntryImpl;
+import org.apache.bookkeeper.stats.NullStatsProvider;
 import org.apache.pulsar.client.admin.Namespaces;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.Schemas;
@@ -39,24 +46,18 @@ import org.apache.pulsar.client.api.schema.SchemaDefinition;
 import org.apache.pulsar.client.impl.conf.ClientConfigurationData;
 import org.apache.pulsar.client.impl.schema.AvroSchema;
 import org.apache.pulsar.client.impl.schema.JSONSchema;
-import org.apache.pulsar.shade.io.netty.buffer.ByteBuf;
-import org.apache.pulsar.shade.io.netty.buffer.Unpooled;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.Entry;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerConfig;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ManagedLedgerFactory;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.impl.EntryImpl;
-import org.apache.pulsar.shade.org.apache.bookkeeper.stats.NullStatsProvider;
-import org.apache.pulsar.shade.org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.NamespaceName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.naming.TopicName;
-import org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaInfo;
-import org.apache.pulsar.shade.org.apache.pulsar.common.schema.SchemaType;
+import org.apache.pulsar.common.api.proto.MessageMetadata;
+import org.apache.pulsar.common.naming.NamespaceName;
+import org.apache.pulsar.common.naming.TopicName;
+import org.apache.pulsar.common.protocol.Commands;
+import org.apache.pulsar.common.schema.SchemaInfo;
+import org.apache.pulsar.common.schema.SchemaType;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -67,6 +68,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -147,11 +149,11 @@ public abstract class TestPulsarConnector
         public double field4;
         public boolean field5;
         public long field6;
-        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
+        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"long\", \"logicalType\": \"timestamp-millis\" }")
         public long timestamp;
-        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
+        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"time-millis\" }")
         public int time;
-        @org.apache.pulsar.shade.org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
+        @org.apache.avro.reflect.AvroSchema("{ \"type\": \"int\", \"logicalType\": \"date\" }")
         public int date;
         public Bar bar;
         public TestEnum field7;
@@ -267,7 +269,8 @@ public abstract class TestPulsarConnector
                     splits.put(topicName, new PulsarSplit(0, pulsarConnectorId.toString(),
                             topicName.getNamespace(), topicName.getLocalName(), topicName.getLocalName(),
                             topicsToNumEntries.get(topicName.getSchemaName()),
-                            new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema()),
+                            new String(topicsToSchemas.get(topicName.getSchemaName()).getSchema(),
+                                    StandardCharsets.ISO_8859_1),
                             topicsToSchemas.get(topicName.getSchemaName()).getType(),
                             0, topicsToNumEntries.get(topicName.getSchemaName()),
                             0, 0, TupleDomain.all(),
@@ -330,7 +333,7 @@ public abstract class TestPulsarConnector
                     pulsarColumnMetadata.isInternal(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getMapping(),
                     pulsarColumnMetadata.getDecoderExtraInfo().getDataFormat(), pulsarColumnMetadata.getDecoderExtraInfo().getFormatHint(),
-                    pulsarColumnMetadata.getHandleKeyValueType()));
+                    Optional.of(pulsarColumnMetadata.getHandleKeyValueType())));
         });
         return columnHandles;
     }
@@ -376,17 +379,16 @@ public abstract class TestPulsarConnector
             LocalDate epoch = LocalDate.ofEpochDay(0);
             foo.date = toIntExact(ChronoUnit.DAYS.between(epoch, localDate));
 
-            MessageMetadata messageMetadata = MessageMetadata.newBuilder()
+            MessageMetadata messageMetadata = new MessageMetadata()
                     .setProducerName("test-producer").setSequenceId(i)
-                    .setPublishTime(currentTimeMs + i)
-                    .build();
+                    .setPublishTime(currentTimeMs + i);
 
             Schema schema = topicsToSchemas.get(topicSchemaName).getType() == SchemaType.AVRO ? AvroSchema.of(SchemaDefinition.<Foo>builder().withPojo(Foo.class).build()) : JSONSchema.of(SchemaDefinition.<Foo>builder().withPojo(Foo.class).build());
 
             ByteBuf payload = Unpooled
                     .copiedBuffer(schema.encode(foo));
 
-            ByteBuf byteBuf = org.apache.pulsar.shade.org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
+            ByteBuf byteBuf = org.apache.pulsar.common.protocol.Commands.serializeMetadataAndPayload(
                     Commands.ChecksumType.Crc32c, messageMetadata, payload);
 
             Entry entry = EntryImpl.create(0, i, byteBuf);
@@ -440,6 +442,8 @@ public abstract class TestPulsarConnector
         Namespaces namespaces = new MockNamespaces(topicNames);
 
         Topics topics = new MockTopics(topicNames, partitionedTopicNames, partitionedTopicsToPartitions);
+        ManagedLedgerFactory managedLedgerFactory = new MockManagedLedgerFactory(topicsToNumEntries, fooFunctions, topicsToSchemas,
+                completedBytes);
 
         schemas = new MockSchemas(topicsToSchemas);
 
@@ -451,19 +455,18 @@ public abstract class TestPulsarConnector
         this.pulsarConnectorConfig.setMaxSplitEntryQueueSize(10);
         this.pulsarConnectorConfig.setMaxSplitMessageQueueSize(100);
 
+        PulsarAdminClientProvider.setPulsarAdmin(pulsarAdmin);
+
         this.pulsarMetadata = new PulsarMetadata(pulsarConnectorId, this.pulsarConnectorConfig, dispatchingRowDecoderFactory);
-        this.pulsarSplitManager = new MockPulsarSplitManager(pulsarConnectorId, this.pulsarConnectorConfig);
 
-        ManagedLedgerFactory managedLedgerFactory = new MockManagedLedgerFactory(topicsToNumEntries, fooFunctions, topicsToSchemas,
-                completedBytes);
-
-        PulsarConnectorCacheImpl.instance = new MockPulsarConnectorCache(managedLedgerFactory);
+        this.pulsarSplitManager = new MockPulsarSplitManager(pulsarConnectorId, pulsarConnectorConfig, managedLedgerFactory);
 
         for (Map.Entry<TopicName, PulsarSplit> split : splits.entrySet()) {
             PulsarRecordCursor pulsarRecordCursor = new PulsarRecordCursor(
                     topicsToColumnHandles.get(split.getKey()), split.getValue(),
                     pulsarConnectorConfig, managedLedgerFactory, new ManagedLedgerConfig(),
-                    new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory);
+                    new PulsarConnectorMetricsTracker(new NullStatsProvider()), dispatchingRowDecoderFactory,
+                    new MockPulsarConnectorManagedLedgerFactory(managedLedgerFactory));
             this.pulsarRecordCursors.put(split.getKey(), pulsarRecordCursor);
         }
     }

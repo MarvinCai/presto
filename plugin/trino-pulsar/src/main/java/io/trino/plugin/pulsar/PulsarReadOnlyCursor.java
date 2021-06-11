@@ -13,8 +13,8 @@
  */
 package io.trino.plugin.pulsar;
 
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.ReadOnlyCursor;
-import org.apache.pulsar.shade.org.apache.bookkeeper.mledger.proto.MLDataFormats;
+import org.apache.bookkeeper.mledger.ReadOnlyCursor;
+import org.apache.bookkeeper.mledger.proto.MLDataFormats;
 
 /**
  * Defines additional API that is used in {@link PulsarRecordCursor} but not present in {@link ReadOnlyCursor}

@@ -15,7 +15,7 @@
 
     <properties>
         <air.main.basedir>${project.parent.basedir}</air.main.basedir>
-        <pulsar.version>2.8.0-SNAPSHOT</pulsar.version>
+        <pulsar.version>2.8.0</pulsar.version>
         <bookkeeer.version>4.14.1</bookkeeer.version>
         <netty.version>4.1.63.Final</netty.version>
         <air.check.skip-dependency>true</air.check.skip-dependency>
@@ -212,7 +212,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.6.2</version>
+            <version>3.6.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
@@ -240,7 +240,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>9.4.40.v20210413</version>
+            <version>9.4.42.v20210604</version>
         </dependency>
 
         <dependency>
